@@ -68,10 +68,6 @@ const faqs = [
     q: "Como funcionam os tokens da manutenção?",
     a: "Você recebe 4 tokens por mês. Cada token vale um pedido de ajuste ou suporte: mudar um texto, ajustar uma cor, corrigir algo. Eles não acumulam. Todo mês você começa com 4 novos.",
   },
-  {
-    q: "O app é meu mesmo?",
-    a: "Sim. No plano App completo você recebe o código e a publicação. O projeto é seu.",
-  },
 ];
 
 const PREVIEW_ADDONS = [
