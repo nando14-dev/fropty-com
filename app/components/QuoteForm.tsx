@@ -47,12 +47,12 @@ export default function QuoteForm() {
 
   if (status === "success") {
     return (
-      <div className="mt-6 rounded-2xl border border-green-200 bg-green-50 p-8 text-center">
-        <i className="ti ti-circle-check" style={{ fontSize: "48px", color: "#16a34a" }} />
-        <h3 className="mt-3 text-xl font-semibold text-green-700">
+      <div className="mt-6 rounded-2xl border border-green-800/50 bg-green-900/20 p-8 text-center">
+        <i className="ti ti-circle-check" style={{ fontSize: "48px", color: "#4ade80" }} />
+        <h3 className="mt-3 text-xl font-semibold text-green-400">
           Pedido enviado!
         </h3>
-        <p className="mt-2 text-green-600">
+        <p className="mt-2 text-green-500">
           Recebemos sua ideia e vamos responder em breve com sua prévia
           gratuita.
         </p>
@@ -63,7 +63,7 @@ export default function QuoteForm() {
   return (
     <form onSubmit={handleSubmit} className="mt-6 space-y-5">
       <div>
-        <label htmlFor="nome" className="block text-sm font-medium text-slate-700">
+        <label htmlFor="nome" className="block text-sm font-medium text-slate-300">
           Seu nome
         </label>
         <input
@@ -71,13 +71,13 @@ export default function QuoteForm() {
           name="nome"
           type="text"
           required
-          className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-4 py-2 text-slate-900 placeholder-slate-400 focus:border-[#185FA5] focus:outline-none focus:ring-2 focus:ring-[#185FA5]/30"
+          className="mt-1 w-full rounded-lg border border-white/20 bg-[#0f172a] px-4 py-2 text-white placeholder-slate-500 focus:border-[#185FA5] focus:outline-none focus:ring-2 focus:ring-[#185FA5]/30"
           placeholder="Como podemos te chamar?"
         />
       </div>
 
       <div>
-        <label htmlFor="email" className="block text-sm font-medium text-slate-700">
+        <label htmlFor="email" className="block text-sm font-medium text-slate-300">
           Seu email
         </label>
         <input
@@ -85,13 +85,13 @@ export default function QuoteForm() {
           name="email"
           type="email"
           required
-          className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-4 py-2 text-slate-900 placeholder-slate-400 focus:border-[#185FA5] focus:outline-none focus:ring-2 focus:ring-[#185FA5]/30"
+          className="mt-1 w-full rounded-lg border border-white/20 bg-[#0f172a] px-4 py-2 text-white placeholder-slate-500 focus:border-[#185FA5] focus:outline-none focus:ring-2 focus:ring-[#185FA5]/30"
           placeholder="voce@exemplo.com"
         />
       </div>
 
       <div>
-        <label htmlFor="ideia" className="block text-sm font-medium text-slate-700">
+        <label htmlFor="ideia" className="block text-sm font-medium text-slate-300">
           Qual é a ideia do seu app?
         </label>
         <textarea
@@ -99,13 +99,13 @@ export default function QuoteForm() {
           name="ideia"
           required
           rows={4}
-          className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-4 py-2 text-slate-900 placeholder-slate-400 focus:border-[#185FA5] focus:outline-none focus:ring-2 focus:ring-[#185FA5]/30"
+          className="mt-1 w-full rounded-lg border border-white/20 bg-[#0f172a] px-4 py-2 text-white placeholder-slate-500 focus:border-[#185FA5] focus:outline-none focus:ring-2 focus:ring-[#185FA5]/30"
           placeholder="Descreva com suas palavras o que o app deve fazer"
         />
       </div>
 
       <div>
-        <label htmlFor="temLogo" className="block text-sm font-medium text-slate-700">
+        <label htmlFor="temLogo" className="block text-sm font-medium text-slate-300">
           Você já tem um logo?
         </label>
         <select
@@ -113,42 +113,42 @@ export default function QuoteForm() {
           name="temLogo"
           required
           defaultValue=""
-          className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-4 py-2 text-slate-900 focus:border-[#185FA5] focus:outline-none focus:ring-2 focus:ring-[#185FA5]/30"
+          className="mt-1 w-full rounded-lg border border-white/20 bg-[#0f172a] px-4 py-2 text-white focus:border-[#185FA5] focus:outline-none focus:ring-2 focus:ring-[#185FA5]/30"
         >
-          <option value="" disabled>
+          <option value="" disabled className="text-slate-500">
             Selecione uma opção
           </option>
-          <option value="sim">Sim, já tenho</option>
-          <option value="nao">Não, preciso de um</option>
-          <option value="em-andamento">Estou criando</option>
+          <option value="sim" className="text-white bg-[#0f172a]">Sim, já tenho</option>
+          <option value="nao" className="text-white bg-[#0f172a]">Não, preciso de um</option>
+          <option value="em-andamento" className="text-white bg-[#0f172a]">Estou criando</option>
         </select>
       </div>
 
       <div>
-        <label htmlFor="cores" className="block text-sm font-medium text-slate-700">
+        <label htmlFor="cores" className="block text-sm font-medium text-slate-300">
           Cores ou tema preferido
         </label>
         <input
           id="cores"
           name="cores"
           type="text"
-          className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-4 py-2 text-slate-900 placeholder-slate-400 focus:border-[#185FA5] focus:outline-none focus:ring-2 focus:ring-[#185FA5]/30"
+          className="mt-1 w-full rounded-lg border border-white/20 bg-[#0f172a] px-4 py-2 text-white placeholder-slate-500 focus:border-[#185FA5] focus:outline-none focus:ring-2 focus:ring-[#185FA5]/30"
           placeholder="Ex: azul e branco, tema escuro, moderno..."
         />
       </div>
 
       <fieldset>
-        <legend className="block text-sm font-medium text-slate-700">
+        <legend className="block text-sm font-medium text-slate-300">
           O que importa mais para você?
         </legend>
         <div className="mt-2 space-y-2">
           {priorities.map((p) => (
-            <label key={p} className="flex items-center gap-2 text-sm text-slate-700">
+            <label key={p} className="flex items-center gap-2 text-sm text-slate-300">
               <input
                 type="checkbox"
                 name="prioridades"
                 value={p}
-                className="h-4 w-4 rounded border-slate-300 accent-[#185FA5]"
+                className="h-4 w-4 rounded border-white/20 accent-[#185FA5]"
               />
               {p}
             </label>
@@ -157,7 +157,7 @@ export default function QuoteForm() {
       </fieldset>
 
       {status === "error" && (
-        <p className="rounded-lg bg-red-50 p-3 text-sm text-red-600">
+        <p className="rounded-lg bg-red-900/20 p-3 text-sm text-red-400">
           Ops, algo deu errado ao enviar. Tente novamente em instantes.
         </p>
       )}
