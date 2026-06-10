@@ -47,12 +47,12 @@ export default function QuoteForm() {
 
   if (status === "success") {
     return (
-      <div className="mt-6 rounded-2xl border border-green-200 bg-green-50 p-8 text-center">
+      <div className="mt-6 rounded-2xl border border-green-900 bg-green-950/50 p-8 text-center">
         <div className="text-4xl">🎉</div>
-        <h3 className="mt-3 text-xl font-semibold text-green-800">
+        <h3 className="mt-3 text-xl font-semibold text-green-300">
           Pedido enviado!
         </h3>
-        <p className="mt-2 text-green-700">
+        <p className="mt-2 text-green-400">
           Recebemos sua ideia e vamos responder em breve com sua prévia
           gratuita.
         </p>
@@ -63,7 +63,7 @@ export default function QuoteForm() {
   return (
     <form onSubmit={handleSubmit} className="mt-6 space-y-5">
       <div>
-        <label htmlFor="nome" className="block text-sm font-medium">
+        <label htmlFor="nome" className="block text-sm font-medium text-neutral-300">
           Seu nome
         </label>
         <input
@@ -71,13 +71,13 @@ export default function QuoteForm() {
           name="nome"
           type="text"
           required
-          className="mt-1 w-full rounded-lg border border-neutral-300 px-4 py-2 focus:border-[#185FA5] focus:outline-none focus:ring-2 focus:ring-[#185FA5]/30"
+          className="mt-1 w-full rounded-lg border border-neutral-700 bg-neutral-950 px-4 py-2 text-neutral-100 placeholder-neutral-500 focus:border-[#185FA5] focus:outline-none focus:ring-2 focus:ring-[#185FA5]/30"
           placeholder="Como podemos te chamar?"
         />
       </div>
 
       <div>
-        <label htmlFor="email" className="block text-sm font-medium">
+        <label htmlFor="email" className="block text-sm font-medium text-neutral-300">
           Seu email
         </label>
         <input
@@ -85,13 +85,13 @@ export default function QuoteForm() {
           name="email"
           type="email"
           required
-          className="mt-1 w-full rounded-lg border border-neutral-300 px-4 py-2 focus:border-[#185FA5] focus:outline-none focus:ring-2 focus:ring-[#185FA5]/30"
+          className="mt-1 w-full rounded-lg border border-neutral-700 bg-neutral-950 px-4 py-2 text-neutral-100 placeholder-neutral-500 focus:border-[#185FA5] focus:outline-none focus:ring-2 focus:ring-[#185FA5]/30"
           placeholder="voce@exemplo.com"
         />
       </div>
 
       <div>
-        <label htmlFor="ideia" className="block text-sm font-medium">
+        <label htmlFor="ideia" className="block text-sm font-medium text-neutral-300">
           Qual é a ideia do seu app?
         </label>
         <textarea
@@ -99,13 +99,13 @@ export default function QuoteForm() {
           name="ideia"
           required
           rows={4}
-          className="mt-1 w-full rounded-lg border border-neutral-300 px-4 py-2 focus:border-[#185FA5] focus:outline-none focus:ring-2 focus:ring-[#185FA5]/30"
+          className="mt-1 w-full rounded-lg border border-neutral-700 bg-neutral-950 px-4 py-2 text-neutral-100 placeholder-neutral-500 focus:border-[#185FA5] focus:outline-none focus:ring-2 focus:ring-[#185FA5]/30"
           placeholder="Descreva com suas palavras o que o app deve fazer"
         />
       </div>
 
       <div>
-        <label htmlFor="temLogo" className="block text-sm font-medium">
+        <label htmlFor="temLogo" className="block text-sm font-medium text-neutral-300">
           Você já tem um logo?
         </label>
         <select
@@ -113,7 +113,7 @@ export default function QuoteForm() {
           name="temLogo"
           required
           defaultValue=""
-          className="mt-1 w-full rounded-lg border border-neutral-300 bg-white px-4 py-2 focus:border-[#185FA5] focus:outline-none focus:ring-2 focus:ring-[#185FA5]/30"
+          className="mt-1 w-full rounded-lg border border-neutral-700 bg-neutral-950 px-4 py-2 text-neutral-100 focus:border-[#185FA5] focus:outline-none focus:ring-2 focus:ring-[#185FA5]/30"
         >
           <option value="" disabled>
             Selecione uma opção
@@ -125,30 +125,30 @@ export default function QuoteForm() {
       </div>
 
       <div>
-        <label htmlFor="cores" className="block text-sm font-medium">
+        <label htmlFor="cores" className="block text-sm font-medium text-neutral-300">
           Cores ou tema preferido
         </label>
         <input
           id="cores"
           name="cores"
           type="text"
-          className="mt-1 w-full rounded-lg border border-neutral-300 px-4 py-2 focus:border-[#185FA5] focus:outline-none focus:ring-2 focus:ring-[#185FA5]/30"
+          className="mt-1 w-full rounded-lg border border-neutral-700 bg-neutral-950 px-4 py-2 text-neutral-100 placeholder-neutral-500 focus:border-[#185FA5] focus:outline-none focus:ring-2 focus:ring-[#185FA5]/30"
           placeholder="Ex: azul e branco, tema escuro, moderno..."
         />
       </div>
 
       <fieldset>
-        <legend className="block text-sm font-medium">
+        <legend className="block text-sm font-medium text-neutral-300">
           O que importa mais para você?
         </legend>
         <div className="mt-2 space-y-2">
           {priorities.map((p) => (
-            <label key={p} className="flex items-center gap-2 text-sm">
+            <label key={p} className="flex items-center gap-2 text-sm text-neutral-300">
               <input
                 type="checkbox"
                 name="prioridades"
                 value={p}
-                className="h-4 w-4 rounded border-neutral-300 accent-[#185FA5]"
+                className="h-4 w-4 rounded border-neutral-600 accent-[#185FA5]"
               />
               {p}
             </label>
@@ -157,7 +157,7 @@ export default function QuoteForm() {
       </fieldset>
 
       {status === "error" && (
-        <p className="rounded-lg bg-red-50 p-3 text-sm text-red-700">
+        <p className="rounded-lg bg-red-950/50 p-3 text-sm text-red-400">
           Ops, algo deu errado ao enviar. Tente novamente em instantes.
         </p>
       )}

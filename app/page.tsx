@@ -79,27 +79,27 @@ export default function Home() {
   const openForm = () => setFormOpen(true);
 
   return (
-    <main className="min-h-screen bg-white text-neutral-900">
+    <main className="min-h-screen bg-neutral-950 text-neutral-300">
       {/* Navbar */}
-      <header className="sticky top-0 z-40 border-b border-neutral-100 bg-white/90 backdrop-blur">
+      <header className="sticky top-0 z-40 border-b border-neutral-800 bg-neutral-950/90 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <span className="text-lg font-bold tracking-tight">
-            Fropty<span className="text-[#185FA5]">Apps</span>
+          <span className="text-lg font-bold tracking-tight text-neutral-100">
+            Fropty<span className="text-[#4D9BE0]">Apps</span>
           </span>
-          <nav className="hidden items-center gap-6 text-sm text-neutral-600 sm:flex">
-            <a href="#planos" className="hover:text-neutral-900">
+          <nav className="hidden items-center gap-6 text-sm text-neutral-400 sm:flex">
+            <a href="#planos" className="hover:text-neutral-100">
               Planos
             </a>
-            <a href="#tokens" className="hover:text-neutral-900">
+            <a href="#tokens" className="hover:text-neutral-100">
               Tokens
             </a>
-            <a href="#faq" className="hover:text-neutral-900">
+            <a href="#faq" className="hover:text-neutral-100">
               FAQ
             </a>
           </nav>
           <button
             onClick={openForm}
-            className="rounded-full bg-neutral-900 px-5 py-2 text-sm font-semibold text-white transition hover:bg-neutral-700"
+            className="rounded-full bg-[#185FA5] px-5 py-2 text-sm font-semibold text-white transition hover:brightness-110"
           >
             Pedir orçamento
           </button>
@@ -108,20 +108,20 @@ export default function Home() {
 
       {/* Hero */}
       <section className="mx-auto max-w-4xl px-6 pb-16 pt-24 text-center">
-        <span className="inline-block rounded-full border border-neutral-200 bg-neutral-50 px-4 py-1 text-sm font-medium text-neutral-700">
+        <span className="inline-block rounded-full border border-neutral-800 bg-neutral-900 px-4 py-1 text-sm font-medium text-neutral-400">
           ⚡ Do papel ao app em semanas
         </span>
-        <h1 className="mt-6 text-4xl font-bold leading-tight tracking-tight sm:text-6xl">
+        <h1 className="mt-6 text-4xl font-bold leading-tight tracking-tight text-neutral-100 sm:text-6xl">
           Seu app sob medida,{" "}
-          <span className="text-[#185FA5]">do jeito que você imaginou</span>
+          <span className="text-[#4D9BE0]">do jeito que você imaginou</span>
         </h1>
-        <p className="mx-auto mt-6 max-w-2xl text-lg text-neutral-600">
+        <p className="mx-auto mt-6 max-w-2xl text-lg text-neutral-400">
           Conte sua ideia e receba uma prévia gratuita. Sem complicação, sem
           jargão técnico — só o seu app saindo do papel.
         </p>
         <button
           onClick={openForm}
-          className="mt-10 rounded-full bg-[#185FA5] px-8 py-4 text-lg font-semibold text-white shadow-lg shadow-blue-900/20 transition hover:brightness-110"
+          className="mt-10 rounded-full bg-[#185FA5] px-8 py-4 text-lg font-semibold text-white shadow-lg shadow-blue-500/10 transition hover:brightness-110"
         >
           Pedir orçamento grátis →
         </button>
@@ -131,16 +131,16 @@ export default function Home() {
       </section>
 
       {/* Prova social / métricas */}
-      <section className="border-y border-neutral-100 bg-neutral-50">
+      <section className="border-y border-neutral-800 bg-neutral-900">
         <div className="mx-auto grid max-w-4xl grid-cols-3 gap-4 px-6 py-10 text-center">
           <div>
-            <p className="text-2xl font-bold text-neutral-900 sm:text-3xl">
+            <p className="text-2xl font-bold text-neutral-100 sm:text-3xl">
               R$0
             </p>
             <p className="mt-1 text-sm text-neutral-500">para começar</p>
           </div>
           <div>
-            <p className="text-2xl font-bold text-neutral-900 sm:text-3xl">
+            <p className="text-2xl font-bold text-neutral-100 sm:text-3xl">
               dias
             </p>
             <p className="mt-1 text-sm text-neutral-500">
@@ -148,7 +148,7 @@ export default function Home() {
             </p>
           </div>
           <div>
-            <p className="text-2xl font-bold text-neutral-900 sm:text-3xl">
+            <p className="text-2xl font-bold text-neutral-100 sm:text-3xl">
               100%
             </p>
             <p className="mt-1 text-sm text-neutral-500">seu, com código</p>
@@ -158,10 +158,10 @@ export default function Home() {
 
       {/* Planos */}
       <section id="planos" className="mx-auto max-w-6xl scroll-mt-20 px-6 py-20">
-        <h2 className="text-center text-3xl font-bold tracking-tight sm:text-4xl">
+        <h2 className="text-center text-3xl font-bold tracking-tight text-neutral-100 sm:text-4xl">
           Planos
         </h2>
-        <p className="mt-3 text-center text-neutral-600">
+        <p className="mt-3 text-center text-neutral-400">
           Comece de graça e evolua quando fizer sentido.
         </p>
         <div className="mt-12 grid gap-6 md:grid-cols-3">
@@ -170,8 +170,8 @@ export default function Home() {
               key={plan.name}
               className={`relative flex flex-col rounded-2xl p-8 ${
                 plan.highlight
-                  ? "bg-neutral-900 text-white shadow-2xl"
-                  : "border border-neutral-200 bg-white shadow-sm"
+                  ? "border border-[#185FA5] bg-gradient-to-b from-[#10243a] to-neutral-900 shadow-2xl shadow-blue-500/10"
+                  : "border border-neutral-800 bg-neutral-900"
               }`}
             >
               {plan.badge && (
@@ -179,33 +179,23 @@ export default function Home() {
                   {plan.badge}
                 </span>
               )}
-              <h3 className="text-xl font-semibold">{plan.name}</h3>
+              <h3 className="text-xl font-semibold text-neutral-100">
+                {plan.name}
+              </h3>
               <p className="mt-4">
-                <span
-                  className={`text-2xl font-bold ${
-                    plan.highlight ? "text-white" : "text-[#185FA5]"
-                  }`}
-                >
+                <span className="text-2xl font-bold text-[#4D9BE0]">
                   {plan.price}
                 </span>
                 {plan.period && (
-                  <span
-                    className={`ml-1 text-sm ${
-                      plan.highlight ? "text-neutral-400" : "text-neutral-500"
-                    }`}
-                  >
+                  <span className="ml-1 text-sm text-neutral-500">
                     {plan.period}
                   </span>
                 )}
               </p>
-              <p
-                className={`mt-3 text-sm ${
-                  plan.highlight ? "text-neutral-300" : "text-neutral-600"
-                }`}
-              >
+              <p className="mt-3 text-sm text-neutral-400">
                 {plan.description}
               </p>
-              <ul className="mt-6 flex-1 space-y-3 text-sm">
+              <ul className="mt-6 flex-1 space-y-3 text-sm text-neutral-300">
                 {plan.features.map((f) => (
                   <li key={f} className="flex items-start gap-2">
                     <span className="mt-0.5 font-bold text-[#4D9BE0]">✓</span>
@@ -218,7 +208,7 @@ export default function Home() {
                 className={`mt-8 rounded-full px-4 py-3 text-center font-semibold transition ${
                   plan.highlight
                     ? "bg-[#185FA5] text-white hover:brightness-110"
-                    : "border border-neutral-900 text-neutral-900 hover:bg-neutral-900 hover:text-white"
+                    : "border border-neutral-600 text-neutral-200 hover:border-[#4D9BE0] hover:text-[#4D9BE0]"
                 }`}
               >
                 Quero esse →
@@ -229,9 +219,12 @@ export default function Home() {
       </section>
 
       {/* Tokens */}
-      <section id="tokens" className="scroll-mt-20 bg-neutral-950 text-white">
+      <section
+        id="tokens"
+        className="scroll-mt-20 border-y border-neutral-800 bg-neutral-900"
+      >
         <div className="mx-auto max-w-4xl px-6 py-20 text-center">
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+          <h2 className="text-3xl font-bold tracking-tight text-neutral-100 sm:text-4xl">
             Como funcionam os tokens?
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-neutral-400">
@@ -242,23 +235,29 @@ export default function Home() {
             funcionando.
           </p>
           <div className="mt-12 grid gap-6 sm:grid-cols-3">
-            <div className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
+            <div className="rounded-2xl border border-neutral-800 bg-neutral-950 p-6">
               <div className="text-3xl">🎟️</div>
-              <h3 className="mt-3 font-semibold">4 por mês</h3>
+              <h3 className="mt-3 font-semibold text-neutral-100">
+                4 por mês
+              </h3>
               <p className="mt-1 text-sm text-neutral-400">
                 Todo mês você começa com 4 tokens novinhos.
               </p>
             </div>
-            <div className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
+            <div className="rounded-2xl border border-neutral-800 bg-neutral-950 p-6">
               <div className="text-3xl">⏳</div>
-              <h3 className="mt-3 font-semibold">Não acumulam</h3>
+              <h3 className="mt-3 font-semibold text-neutral-100">
+                Não acumulam
+              </h3>
               <p className="mt-1 text-sm text-neutral-400">
                 Tokens não usados expiram no fim do mês — use sem medo.
               </p>
             </div>
-            <div className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
+            <div className="rounded-2xl border border-neutral-800 bg-neutral-950 p-6">
               <div className="text-3xl">🛠️</div>
-              <h3 className="mt-3 font-semibold">Suporte e ajustes</h3>
+              <h3 className="mt-3 font-semibold text-neutral-100">
+                Suporte e ajustes
+              </h3>
               <p className="mt-1 text-sm text-neutral-400">
                 Cada token vale um ajuste ou atendimento de suporte.
               </p>
@@ -269,23 +268,23 @@ export default function Home() {
 
       {/* FAQ */}
       <section id="faq" className="mx-auto max-w-3xl scroll-mt-20 px-6 py-20">
-        <h2 className="text-center text-3xl font-bold tracking-tight sm:text-4xl">
+        <h2 className="text-center text-3xl font-bold tracking-tight text-neutral-100 sm:text-4xl">
           Perguntas frequentes
         </h2>
-        <div className="mt-10 divide-y divide-neutral-200 rounded-2xl border border-neutral-200">
+        <div className="mt-10 divide-y divide-neutral-800 rounded-2xl border border-neutral-800 bg-neutral-900">
           {faqs.map((faq, i) => (
             <div key={faq.q}>
               <button
                 onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                className="flex w-full items-center justify-between px-6 py-5 text-left font-medium hover:bg-neutral-50"
+                className="flex w-full items-center justify-between px-6 py-5 text-left font-medium text-neutral-200 hover:bg-neutral-800/50"
               >
                 {faq.q}
-                <span className="ml-4 text-neutral-400">
+                <span className="ml-4 text-neutral-500">
                   {openFaq === i ? "−" : "+"}
                 </span>
               </button>
               {openFaq === i && (
-                <p className="px-6 pb-5 text-sm leading-relaxed text-neutral-600">
+                <p className="px-6 pb-5 text-sm leading-relaxed text-neutral-400">
                   {faq.a}
                 </p>
               )}
@@ -295,17 +294,17 @@ export default function Home() {
       </section>
 
       {/* CTA final */}
-      <section className="bg-[#185FA5] text-white">
+      <section className="border-t border-neutral-800 bg-gradient-to-b from-neutral-900 to-[#10243a]">
         <div className="mx-auto max-w-3xl px-6 py-16 text-center">
-          <h2 className="text-3xl font-bold tracking-tight">
+          <h2 className="text-3xl font-bold tracking-tight text-neutral-100">
             Pronto para tirar sua ideia do papel?
           </h2>
-          <p className="mt-3 text-blue-100">
+          <p className="mt-3 text-neutral-400">
             A prévia é grátis. Você só tem a ganhar.
           </p>
           <button
             onClick={openForm}
-            className="mt-8 rounded-full bg-white px-8 py-4 font-semibold text-[#185FA5] shadow-lg transition hover:bg-neutral-100"
+            className="mt-8 rounded-full bg-[#185FA5] px-8 py-4 font-semibold text-white shadow-lg shadow-blue-500/10 transition hover:brightness-110"
           >
             Pedir orçamento grátis →
           </button>
@@ -313,31 +312,31 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-neutral-950 py-8 text-center text-sm text-neutral-400">
+      <footer className="border-t border-neutral-800 py-8 text-center text-sm text-neutral-500">
         © 2025 Fropty Apps
       </footer>
 
       {/* Modal do formulário */}
       {formOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/60 p-4 sm:p-8"
+          className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/70 p-4 sm:p-8"
           onClick={() => setFormOpen(false)}
         >
           <div
-            className="relative w-full max-w-xl rounded-2xl bg-white p-8 shadow-2xl"
+            className="relative w-full max-w-xl rounded-2xl border border-neutral-800 bg-neutral-900 p-8 shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             <button
               onClick={() => setFormOpen(false)}
               aria-label="Fechar"
-              className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700"
+              className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full text-neutral-500 hover:bg-neutral-800 hover:text-neutral-200"
             >
               ✕
             </button>
-            <h2 className="text-2xl font-bold tracking-tight">
+            <h2 className="text-2xl font-bold tracking-tight text-neutral-100">
               Peça seu orçamento
             </h2>
-            <p className="mt-1 text-sm text-neutral-600">
+            <p className="mt-1 text-sm text-neutral-400">
               Conte sua ideia e a gente responde com uma prévia gratuita.
             </p>
             <QuoteForm />
