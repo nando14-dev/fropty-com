@@ -54,6 +54,7 @@ const plans = [
     ],
     savingsStrike: "4 tokens = R$ 600,00",
     savingsText: "Você economiza R$ 600,00",
+    href: "/configurador",
   },
   {
     name: "Manutenção Pro",
@@ -70,6 +71,7 @@ const plans = [
     ],
     savingsStrike: "8 tokens = R$ 1.200,00",
     savingsText: "Você economiza R$ 1.200,00",
+    href: "/configurador",
   },
 ];
 
@@ -227,16 +229,29 @@ export default function Home() {
                   </p>
                 </div>
               )}
-              <button
-                onClick={openForm}
-                className={`mt-8 rounded-full px-4 py-3 text-center font-semibold transition ${
-                  plan.highlight
-                    ? "bg-white text-[#185FA5] hover:bg-blue-50"
-                    : "border border-white/20 text-slate-300 hover:border-[#185FA5] hover:text-[#185FA5]"
-                }`}
-              >
-                Quero esse →
-              </button>
+              {plan.href ? (
+                <Link
+                  href={plan.href}
+                  className={`mt-8 rounded-full px-4 py-3 text-center font-semibold transition ${
+                    plan.highlight
+                      ? "bg-white text-[#185FA5] hover:bg-blue-50"
+                      : "border border-white/20 text-slate-300 hover:border-[#185FA5] hover:text-[#185FA5]"
+                  }`}
+                >
+                  Quero esse →
+                </Link>
+              ) : (
+                <button
+                  onClick={openForm}
+                  className={`mt-8 rounded-full px-4 py-3 text-center font-semibold transition ${
+                    plan.highlight
+                      ? "bg-white text-[#185FA5] hover:bg-blue-50"
+                      : "border border-white/20 text-slate-300 hover:border-[#185FA5] hover:text-[#185FA5]"
+                  }`}
+                >
+                  Quero esse →
+                </button>
+              )}
             </div>
           ))}
         </div>
