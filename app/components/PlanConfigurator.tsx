@@ -168,7 +168,7 @@ export default function PlanConfigurator({ onSubmit }: Props) {
               {ADDONS.map((addon) => {
                 const active = selected.has(addon.id);
                 return (
-                  <div key={addon.id} onClick={() => toggle(addon.id)} style={{
+                  <div key={addon.id} onClick={() => toggle(addon.id)} className="hover:-translate-y-0.5 hover:shadow-[0_8px_20px_rgba(0,0,0,0.12)]" style={{
                     background: active ? "#EBF4FF" : "#fff",
                     border: `1.5px solid ${active ? "#185FA5" : "#e2e8f0"}`,
                     borderRadius: 12, padding: "14px 16px", cursor: "pointer",
@@ -217,7 +217,7 @@ export default function PlanConfigurator({ onSubmit }: Props) {
               {MAINTENANCE.map((m) => {
                 const active = maintenance === m.id;
                 return (
-                  <div key={m.id} onClick={() => setMaintenance(m.id)} style={{
+                  <div key={m.id} onClick={() => setMaintenance(m.id)} className="hover:-translate-y-1 hover:shadow-[0_12px_28px_rgba(0,0,0,0.15)]" style={{
                     background: active ? (m.highlight ? "#185FA5" : "#EBF4FF") : "#fff",
                     border: `1.5px solid ${active ? "#185FA5" : "#e2e8f0"}`,
                     borderRadius: 12, padding: "14px 16px",
@@ -338,6 +338,7 @@ export default function PlanConfigurator({ onSubmit }: Props) {
                 value={name}
                 onChange={e => setName(e.target.value)}
                 placeholder="Seu nome"
+                className="transition duration-150 focus:border-[#185FA5] focus:ring-2 focus:ring-[#185FA5]/25 focus:shadow-[0_0_0_4px_rgba(24,95,165,0.12)]"
                 style={{ background: "#1e293b", border: "1px solid #334155", borderRadius: 10, padding: "10px 14px", color: "#fff", fontSize: 13, fontFamily: "system-ui", outline: "none" }}
               />
               <input
@@ -345,6 +346,7 @@ export default function PlanConfigurator({ onSubmit }: Props) {
                 onChange={e => setEmail(e.target.value)}
                 placeholder="Seu e-mail"
                 type="email"
+                className="transition duration-150 focus:border-[#185FA5] focus:ring-2 focus:ring-[#185FA5]/25 focus:shadow-[0_0_0_4px_rgba(24,95,165,0.12)]"
                 style={{ background: "#1e293b", border: "1px solid #334155", borderRadius: 10, padding: "10px 14px", color: "#fff", fontSize: 13, fontFamily: "system-ui", outline: "none" }}
               />
               <button

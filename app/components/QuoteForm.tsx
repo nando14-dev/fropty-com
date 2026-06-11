@@ -71,7 +71,7 @@ export default function QuoteForm() {
           name="nome"
           type="text"
           required
-          className="mt-1 w-full rounded-lg border border-white/20 bg-[#0f172a] px-4 py-2 text-white placeholder-slate-500 focus:border-[#185FA5] focus:outline-none focus:ring-2 focus:ring-[#185FA5]/30"
+          className="mt-1 w-full rounded-lg border border-white/20 bg-[#0f172a] px-4 py-2 text-white placeholder-slate-500 transition duration-150 focus:border-[#185FA5] focus:outline-none focus:ring-2 focus:ring-[#185FA5]/25 focus:shadow-[0_0_0_4px_rgba(24,95,165,0.12)]"
         />
       </div>
 
@@ -84,7 +84,7 @@ export default function QuoteForm() {
           name="email"
           type="email"
           required
-          className="mt-1 w-full rounded-lg border border-white/20 bg-[#0f172a] px-4 py-2 text-white placeholder-slate-500 focus:border-[#185FA5] focus:outline-none focus:ring-2 focus:ring-[#185FA5]/30"
+          className="mt-1 w-full rounded-lg border border-white/20 bg-[#0f172a] px-4 py-2 text-white placeholder-slate-500 transition duration-150 focus:border-[#185FA5] focus:outline-none focus:ring-2 focus:ring-[#185FA5]/25 focus:shadow-[0_0_0_4px_rgba(24,95,165,0.12)]"
         />
       </div>
 
@@ -97,7 +97,7 @@ export default function QuoteForm() {
           name="ideia"
           required
           rows={4}
-          className="mt-1 w-full rounded-lg border border-white/20 bg-[#0f172a] px-4 py-2 text-white placeholder-slate-500 focus:border-[#185FA5] focus:outline-none focus:ring-2 focus:ring-[#185FA5]/30"
+          className="mt-1 w-full rounded-lg border border-white/20 bg-[#0f172a] px-4 py-2 text-white placeholder-slate-500 transition duration-150 focus:border-[#185FA5] focus:outline-none focus:ring-2 focus:ring-[#185FA5]/25 focus:shadow-[0_0_0_4px_rgba(24,95,165,0.12)]"
         />
       </div>
 
@@ -129,7 +129,7 @@ export default function QuoteForm() {
           id="cores"
           name="cores"
           type="text"
-          className="mt-1 w-full rounded-lg border border-white/20 bg-[#0f172a] px-4 py-2 text-white placeholder-slate-500 focus:border-[#185FA5] focus:outline-none focus:ring-2 focus:ring-[#185FA5]/30"
+          className="mt-1 w-full rounded-lg border border-white/20 bg-[#0f172a] px-4 py-2 text-white placeholder-slate-500 transition duration-150 focus:border-[#185FA5] focus:outline-none focus:ring-2 focus:ring-[#185FA5]/25 focus:shadow-[0_0_0_4px_rgba(24,95,165,0.12)]"
           placeholder="Ex: azul e branco, tema escuro, moderno..."
         />
       </div>
