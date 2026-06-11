@@ -23,6 +23,8 @@ interface MaintenancePlan {
   tokens: number;
   price: number;
   highlight: boolean;
+  savingsStrike?: string;
+  savingsText?: string;
 }
 
 export interface PlanSummary {
@@ -49,8 +51,8 @@ const ADDONS: Addon[] = [
 ];
 
 const MAINTENANCE: MaintenancePlan[] = [
-  { id: "m_basic", label: "Básico", tokens: 4, price: 49.90, highlight: false },
-  { id: "m_pro", label: "Pro", tokens: 8, price: 89.90, highlight: true },
+  { id: "m_basic", label: "Básico", tokens: 4, price: 49.90, highlight: false, savingsStrike: "R$ 600,00 avulso", savingsText: "Você economiza R$ 600,00" },
+  { id: "m_pro", label: "Pro", tokens: 8, price: 89.90, highlight: true, savingsStrike: "R$ 1.200,00 avulso", savingsText: "Você economiza R$ 1.200,00" },
   { id: "m_none", label: "Sem plano", tokens: 0, price: 0, highlight: false },
 ];
 
@@ -237,6 +239,12 @@ export default function PlanConfigurator({ onSubmit }: Props) {
                         "sem mensalidade"
                       )}
                     </div>
+                    {m.savingsStrike && (
+                      <div style={{ marginTop: 8, paddingTop: 8, borderTop: `1px solid ${active ? (m.highlight ? "rgba(255,255,255,0.2)" : "#bfdbfe") : "#e2e8f0"}` }}>
+                        <div style={{ textDecoration: "line-through", color: "rgba(239,68,68,0.65)", fontSize: 11 }}>{m.savingsStrike}</div>
+                        <div style={{ color: "#16a34a", fontWeight: 700, fontSize: 12, marginTop: 2 }}>{m.savingsText}</div>
+                      </div>
+                    )}
                   </div>
                 );
               })}
@@ -248,52 +256,19 @@ export default function PlanConfigurator({ onSubmit }: Props) {
 
           {/* Sem plano warning */}
           {maintenance === "m_none" && (
-            <div style={{ background: "#fffbeb", border: "1.5px solid #f59e0b", borderRadius: 12, padding: "14px 16px", display: "flex", gap: 10, alignItems: "flex-start" }}>
-              <i className="ti ti-alert-triangle" style={{ color: "#f59e0b", fontSize: 20, flexShrink: 0, marginTop: 1 }} />
-              <p style={{ fontSize: 13, color: "#92400e", lineHeight: 1.5, margin: 0 }}>
-                Sem um plano ativo, nenhuma manutenção ou suporte poderá ser contratado após a entrega do app. Tokens avulsos custam R$ 300,00 cada.
-              </p>
+            <div style={{ background: "#fef2f2", border: "1.5px solid #ef4444", borderRadius: 12, padding: "14px 16px", display: "flex", gap: 10, alignItems: "flex-start" }}>
+              <i className="ti ti-alert-circle" style={{ color: "#ef4444", fontSize: 20, flexShrink: 0, marginTop: 1 }} />
+              <div>
+                <p style={{ fontSize: 13, color: "#991b1b", fontWeight: 700, margin: "0 0 4px" }}>
+                  Sem plano, sem suporte após a entrega.
+                </p>
+                <p style={{ fontSize: 12, color: "#b91c1c", lineHeight: 1.5, margin: 0 }}>
+                  Nenhuma manutenção poderá ser contratada. Tokens avulsos custam{" "}
+                  <strong>R$ 300,00 cada</strong> — o dobro do valor incluso nos planos.
+                </p>
+              </div>
             </div>
           )}
-
-          {/* Token value section */}
-          <div>
-            <div style={{ fontSize: 13, fontWeight: 700, color: "#e2e8f0", marginBottom: 12, display: "flex", alignItems: "center", gap: 6 }}>
-              <i className="ti ti-coin" style={{ fontSize: "16px", color: "#185FA5" }} />
-              O valor real de cada token
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3" style={{ gap: 10 }}>
-
-              {/* Básico */}
-              <div style={{ background: "#0f172a", border: "1.5px solid #334155", borderRadius: 12, padding: "18px 16px", textAlign: "center" }}>
-                <div style={{ fontSize: 11, color: "#94a3b8", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.05em" }}>Plano Básico</div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: "#e2e8f0" }}>4 tokens inclusos</div>
-                <div style={{ textDecoration: "line-through", color: "rgba(239,68,68,0.6)", fontSize: 13, marginTop: 10 }}>R$ 600,00</div>
-                <div style={{ color: "#16a34a", fontWeight: 700, fontSize: 15, marginTop: 4 }}>Incluso no plano</div>
-                <div style={{ fontSize: 12, color: "#94a3b8", marginTop: 8 }}>Você paga apenas R$ 49,90/mês</div>
-              </div>
-
-              {/* Pro */}
-              <div style={{ background: "#185FA5", border: "2px solid #EF9F27", borderRadius: 12, padding: "18px 16px", textAlign: "center", position: "relative" }}>
-                <div style={{ position: "absolute", top: -10, left: "50%", transform: "translateX(-50%)", background: "#EF9F27", color: "#fff", fontSize: 9, fontWeight: 700, padding: "2px 10px", borderRadius: 20, whiteSpace: "nowrap" }}>Melhor custo-benefício</div>
-                <div style={{ fontSize: 11, color: "#bfdbfe", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.05em" }}>Plano Pro</div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>8 tokens inclusos</div>
-                <div style={{ textDecoration: "line-through", color: "rgba(239,68,68,0.6)", fontSize: 13, marginTop: 10 }}>R$ 1.200,00</div>
-                <div style={{ color: "#4ade80", fontWeight: 700, fontSize: 15, marginTop: 4 }}>Incluso no plano</div>
-                <div style={{ fontSize: 12, color: "#bfdbfe", marginTop: 8 }}>Você paga apenas R$ 89,90/mês</div>
-              </div>
-
-              {/* Sem plano */}
-              <div style={{ background: "#f1f5f9", border: "1.5px solid #e2e8f0", borderRadius: 12, padding: "18px 16px", textAlign: "center" }}>
-                <div style={{ fontSize: 11, color: "#64748b", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.05em" }}>Sem plano</div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: "#0f172a" }}>Token avulso</div>
-                <div style={{ fontSize: 20, fontWeight: 800, color: "#185FA5", marginTop: 10 }}>R$ 300,00 cada</div>
-                <div style={{ fontSize: 12, color: "#64748b", marginTop: 4 }}>Sem compromisso mensal</div>
-                <div style={{ fontSize: 11, color: "#ef4444", fontWeight: 600, marginTop: 8 }}>Tokens fora do plano custam o dobro</div>
-              </div>
-
-            </div>
-          </div>
 
         </div>
 

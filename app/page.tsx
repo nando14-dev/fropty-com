@@ -218,11 +218,11 @@ export default function Home() {
                 ))}
               </ul>
               {plan.savingsStrike && (
-                <div className="mt-4 space-y-1">
-                  <p className="text-sm line-through" style={{ color: "rgba(239,68,68,0.6)" }}>
+                <div className="mt-4 border-t pt-3" style={{ borderColor: "rgba(255,255,255,0.1)" }}>
+                  <p className="text-xs line-through" style={{ color: "rgba(239,68,68,0.65)" }}>
                     {plan.savingsStrike}
                   </p>
-                  <p className="text-sm font-bold" style={{ color: "#16a34a" }}>
+                  <p className="mt-1 text-sm font-bold" style={{ color: "#16a34a" }}>
                     {plan.savingsText}
                   </p>
                 </div>
