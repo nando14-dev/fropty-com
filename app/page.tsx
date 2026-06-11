@@ -355,7 +355,7 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="border-t border-white/10 py-8 text-center text-sm text-slate-500" style={{ background: "#111c30" }}>
-        © 2025 Fropty Apps
+        © 2026 Fropty Apps
       </footer>
 
       {/* Modal do formulário */}
