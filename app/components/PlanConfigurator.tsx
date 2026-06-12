@@ -45,15 +45,15 @@ const ADDONS: Addon[] = [
   { id: "multiuser", icon: "users", label: "Membro administrativo adicional", desc: "Cada novo membro do seu time que precisar de acesso ao painel administrativo é cobrado à parte.", tech: "Role-based access control", price: 129, type: "once", unit: "membro" },
   { id: "reports", icon: "chart-bar", label: "Relatórios e exportação", desc: "Baixe seus dados em PDF ou Excel quando quiser.", tech: "Exportação estruturada de dados", price: 89, type: "once" },
   { id: "whatsapp", icon: "brand-whatsapp", label: "Integração com WhatsApp", desc: "Notificações e confirmações automáticas via WhatsApp para seus clientes.", tech: "WhatsApp Business API", price: 119, type: "once" },
-  { id: "backup", icon: "database", label: "Backup automático diário", desc: "Seus dados salvos todo dia, com restauração em caso de qualquer problema.", tech: "Backup incremental · retenção 30 dias", price: 29, type: "month" },
-  { id: "domain", icon: "world", label: "Domínio próprio", desc: "Seu app em seudominio.com.br em vez de seuapp.fropty.com. Setup incluso.", tech: "DNS · SSL · configuração completa", disclaimer: "* Sujeito à disponibilidade do domínio. O registro é por conta do cliente (~R$40/ano).", price: 49, type: "once" },
+  { id: "backup", icon: "database", label: "Backup automático diário", desc: "Seus dados salvos todo dia, com restauração em caso de qualquer problema.", tech: "Backup incremental · retenção 30 dias", disclaimer: "* Sem esse recurso, a Fropty Apps não se responsabiliza por perda de dados.", price: 29, type: "month" },
+  { id: "domain", icon: "world", label: "Domínio próprio", desc: "Seu app em seudominio.com.br em vez de seuapp.fropty.com. Setup incluso.", tech: "DNS · SSL · configuração completa", disclaimer: "* Sujeito à disponibilidade do domínio. O registro é por conta do cliente (~R$40/ano). A Fropty Apps realiza apenas a configuração técnica (DNS, SSL). A titularidade e renovação do domínio são de responsabilidade exclusiva do cliente.", price: 49, type: "once" },
   { id: "onboarding", icon: "school", label: "Treinamento e onboarding", desc: "Videochamada de até 1h ensinando você e sua equipe a usar o app.", tech: "Sessão gravada + material de apoio", price: 79, type: "once" },
   { id: "sourcecode", icon: "package", label: "Licença do código-fonte", desc: "Receba todos os arquivos do seu app. A partir daí, o código é seu.", tech: "Repositório GitHub transferido · você gerencia hospedagem", disclaimer: "* Inclui o código, mas não a infraestrutura (banco de dados, hospedagem, domínio).", price: 299, type: "once" },
 ];
 
 const MAINTENANCE: MaintenancePlan[] = [
-  { id: "m_basic", label: "Básico", tokens: 4, price: 49.90, highlight: false, savingsStrike: "R$ 600,00 avulso", savingsText: "Você economiza R$ 600,00" },
-  { id: "m_pro", label: "Pro", tokens: 8, price: 89.90, highlight: true, savingsStrike: "R$ 1.200,00 avulso", savingsText: "Você economiza R$ 1.200,00" },
+  { id: "m_basic", label: "Básico", tokens: 4, price: 49.90, highlight: false, savingsStrike: "R$ 1.200,00 avulso", savingsText: "Você economiza R$ 1.150,10" },
+  { id: "m_pro", label: "Pro", tokens: 8, price: 89.90, highlight: true, savingsStrike: "R$ 2.400,00 avulso", savingsText: "Você economiza R$ 2.310,10" },
   { id: "m_none", label: "Sem plano", tokens: 0, price: 0, highlight: false },
 ];
 
@@ -142,6 +142,9 @@ export default function PlanConfigurator({ onSubmit }: Props) {
               </div>
               <div style={{ fontSize: 18, fontWeight: 800, color: "#185FA5", whiteSpace: "nowrap", marginLeft: 16 }}>{formatPrice(BASE_PRICE)}</div>
             </div>
+            <div style={{ fontSize: 11, color: "#b45309", fontWeight: 700, marginTop: 8 }}>
+              O plano base não inclui backup automático. Recomendamos fortemente a contratação do add-on de backup.
+            </div>
           </div>
 
           {/* Addons */}
@@ -213,6 +216,9 @@ export default function PlanConfigurator({ onSubmit }: Props) {
             <div style={{ fontSize: 13, fontWeight: 700, color: "#e2e8f0", marginBottom: 12, display: "flex", alignItems: "center", gap: 6 }}>
               <i className="ti ti-tool" style={{ fontSize: "16px", color: "#185FA5" }} />
               Plano de manutenção mensal
+              <span style={{ background: "rgba(239,159,39,0.15)", color: "#EF9F27", fontSize: 10, fontWeight: 700, padding: "2px 10px", borderRadius: 20, whiteSpace: "nowrap" }}>
+                Fidelidade mínima: 3 meses
+              </span>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 items-stretch" style={{ gap: 10 }}>
               {MAINTENANCE.map((m) => {
@@ -252,6 +258,21 @@ export default function PlanConfigurator({ onSubmit }: Props) {
             </div>
             <div style={{ fontSize: 11, color: "#94a3b8", marginTop: 8, fontStyle: "italic" }}>
               Tokens são usados para suporte, ajustes visuais, correções ou edições de conteúdo. Não acumulam entre os meses.
+            </div>
+            <div style={{ fontSize: 11, color: "#94a3b8", marginTop: 4, fontStyle: "italic" }}>
+              Valor de referência considerando token avulso de R$ 300,00 para não assinantes.
+            </div>
+            <div style={{ background: "#fffbeb", border: "1.5px solid #f59e0b", borderRadius: 12, padding: "12px 14px", marginTop: 10 }}>
+              <p style={{ fontSize: 12, color: "#92400e", lineHeight: 1.6, margin: 0 }}>
+                <strong>Fidelidade mínima: 3 meses.</strong> Os planos de manutenção têm fidelidade mínima de 3 meses. O
+                cancelamento antes desse período sujeita o cliente ao pagamento da diferença entre os tokens utilizados e o
+                valor avulso (<strong>R$ 300,00/token</strong>). Após o período mínimo, o cancelamento pode ser feito a
+                qualquer momento sem multa.
+              </p>
+              <p style={{ fontSize: 12, color: "#92400e", lineHeight: 1.6, margin: "8px 0 0" }}>
+                <strong>Reativação:</strong> clientes que cancelaram e desejam reativar o plano pagam{" "}
+                <strong>R$ 79,90</strong> no primeiro mês de retorno.
+              </p>
             </div>
           </div>
 

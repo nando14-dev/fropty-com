@@ -21,6 +21,7 @@ const plans = [
     ],
     savingsStrike: "",
     savingsText: "",
+    note: "",
   },
   {
     name: "App completo",
@@ -38,6 +39,7 @@ const plans = [
     ],
     savingsStrike: "",
     savingsText: "",
+    note: "O plano base não inclui backup automático. Recomendamos fortemente a contratação do add-on de backup.",
   },
   {
     name: "Manutenção Básico",
@@ -52,8 +54,9 @@ const plans = [
       "Correções e pequenas melhorias",
       "Atendimento prioritário",
     ],
-    savingsStrike: "4 tokens = R$ 600,00",
-    savingsText: "Você economiza R$ 600,00",
+    savingsStrike: "4 tokens = R$ 1.200,00 avulso",
+    savingsText: "Você economiza R$ 1.150,10",
+    note: "Fidelidade mínima: 3 meses",
     href: "/configurador",
   },
   {
@@ -69,8 +72,9 @@ const plans = [
       "Correções e pequenas melhorias",
       "Atendimento prioritário",
     ],
-    savingsStrike: "8 tokens = R$ 1.200,00",
-    savingsText: "Você economiza R$ 1.200,00",
+    savingsStrike: "8 tokens = R$ 2.400,00 avulso",
+    savingsText: "Você economiza R$ 2.310,10",
+    note: "Fidelidade mínima: 3 meses",
     href: "/configurador",
   },
 ];
@@ -91,6 +95,30 @@ const faqs = [
   {
     q: "Como funcionam os tokens da manutenção?",
     a: "Você recebe tokens mensais de acordo com seu plano: 4 no Básico e 8 no Pro. Cada token vale um pedido de ajuste ou suporte: mudar um texto, ajustar uma cor, corrigir algo. Os tokens não acumulam. Tokens extras podem ser comprados avulsos sempre que precisar.",
+  },
+  {
+    q: "O que é um token exatamente?",
+    a: "Um token representa uma demanda de suporte ou ajuste no seu app: correção de bug, alteração visual, mudança de texto, atualização de conteúdo ou pequena melhoria funcional. Demandas mais complexas podem consumir mais de um token — isso é combinado antes da execução.",
+  },
+  {
+    q: "Os tokens acumulam se eu não usar?",
+    a: "Não. Tokens não utilizados expiram no fim de cada mês e não são transferidos para o mês seguinte. Use sem medo, mas planeje suas demandas.",
+  },
+  {
+    q: "Posso cancelar o plano quando quiser?",
+    a: "Os planos têm fidelidade mínima de 3 meses. Após esse período, o cancelamento é livre e sem multa. Cancelamentos antecipados estão sujeitos à cobrança da diferença entre os tokens utilizados e o valor avulso (R$300,00/token). Clientes que cancelaram e desejam retornar pagam uma taxa de reativação de R$79,90 no primeiro mês.",
+  },
+  {
+    q: "Posso cancelar e assinar novamente depois?",
+    a: "Sim, desde que respeitada a fidelidade mínima de 3 meses do plano. Clientes que cancelaram e desejam reativar o plano pagam uma taxa de reativação de R$79,90 no primeiro mês de retorno. A partir do segundo mês, a mensalidade volta ao valor normal do plano escolhido.",
+  },
+  {
+    q: "O que acontece com meu app se eu não tiver plano?",
+    a: "O app continua funcionando normalmente — ele é seu. Mas sem plano ativo, nenhum suporte, ajuste ou melhoria pode ser solicitado. Para demandas pontuais sem plano, o valor é de R$300,00 por token avulso.",
+  },
+  {
+    q: "Tenho direito a reembolso?",
+    a: "Sim. Para contratos celebrados online, o CDC garante 7 dias de arrependimento a partir da contratação (Art. 49). Fora desse prazo, reembolsos são analisados caso a caso conforme os termos de uso.",
   },
 ];
 
@@ -229,6 +257,13 @@ export default function Home() {
                   </p>
                 </div>
               )}
+              {plan.note && (
+                <p className={`mt-3 text-xs font-bold ${plan.highlight ? "text-blue-100" : ""}`}
+                  style={plan.highlight ? undefined : { color: "#EF9F27" }}
+                >
+                  {plan.note}
+                </p>
+              )}
               {plan.href ? (
                 <Link
                   href={plan.href}
@@ -255,6 +290,9 @@ export default function Home() {
             </div>
           ))}
         </div>
+        <p className="mt-6 text-center text-xs text-slate-500">
+          Valor de referência considerando token avulso de R$ 300,00 para não assinantes.
+        </p>
 
         {/* Card configurador */}
         <Link href="/configurador" className="group mt-10 block">
@@ -402,7 +440,12 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="border-t border-white/10 py-8 text-center text-sm text-slate-500" style={{ background: "#111c30" }}>
-        © 2026 Fropty Apps
+        <p>© 2026 Fropty Apps</p>
+        <div className="mt-2 flex items-center justify-center gap-4">
+          <Link href="/termos" className="hover:text-slate-300 transition">Termos de Uso</Link>
+          <span className="text-slate-700">·</span>
+          <Link href="/privacidade" className="hover:text-slate-300 transition">Política de Privacidade</Link>
+        </div>
       </footer>
 
       {/* Modal do formulário */}

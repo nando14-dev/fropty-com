@@ -101,6 +101,16 @@ export default function ConfiguradorPage() {
         </div>
       </div>
 
+      {/* Footer */}
+      <footer className="relative border-t border-white/5 py-8 text-center text-sm text-slate-500">
+        <p>© 2026 Fropty Apps</p>
+        <div className="mt-2 flex items-center justify-center gap-4">
+          <Link href="/termos" className="transition hover:text-slate-300">Termos de Uso</Link>
+          <span className="text-slate-700">·</span>
+          <Link href="/privacidade" className="transition hover:text-slate-300">Política de Privacidade</Link>
+        </div>
+      </footer>
+
     </div>
   );
 }
