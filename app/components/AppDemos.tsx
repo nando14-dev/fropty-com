@@ -112,8 +112,10 @@ function Carousel({ items, type }: {
   type: "mobile" | "desktop";
 }) {
   const [active, setActive] = useState(0);
-  const [paused, setPaused] = useState(false);
   const [winW, setWinW] = useState(1200);
+  const pausedRef = useRef(false);
+  const countRef  = useRef(items.length);
+  countRef.current = items.length;
 
   // Detecta largura da janela para escala mobile
   useEffect(() => {
@@ -123,30 +125,38 @@ function Carousel({ items, type }: {
     return () => window.removeEventListener("resize", update);
   }, []);
 
-  // Auto-avanço — pausa ao passar o mouse
+  // Auto-avanço: intervalo fixo, pausedRef controla se avança ou não
   useEffect(() => {
-    if (paused) return;
-    const t = setInterval(() => setActive(i => (i + 1) % items.length), 3800);
+    const t = setInterval(() => {
+      if (!pausedRef.current) {
+        setActive(i => (i + 1) % countRef.current);
+      }
+    }, 3500);
     return () => clearInterval(t);
-  }, [paused, items.length]);
+  }, []); // roda uma vez — sem dependências que causem recriação
 
   const FRAME_W = type === "mobile" ? 240 : 580;
   const GAP     = type === "mobile" ? 32  : 40;
-  const STEP    = FRAME_W + GAP;
 
   // Escala o frame desktop em telas pequenas
   const desktopScale = type === "desktop" && winW < 640
     ? Math.max(0.45, (winW - 32) / FRAME_W)
     : 1;
 
-  const prev = () => { setPaused(true); setActive(i => Math.max(0, i - 1)); };
-  const next = () => { setPaused(true); setActive(i => Math.min(items.length - 1, i + 1)); };
+  const prev = () => {
+    pausedRef.current = true;
+    setActive(i => Math.max(0, i - 1));
+  };
+  const next = () => {
+    pausedRef.current = true;
+    setActive(i => Math.min(countRef.current - 1, i + 1));
+  };
 
   return (
     <div
       style={{ position: "relative" }}
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
+      onMouseEnter={() => { pausedRef.current = true; }}
+      onMouseLeave={() => { pausedRef.current = false; }}
     >
       {/* Track — 50vw centraliza em relação ao viewport */}
       <div style={{ overflow: "hidden", position: "relative" }}>
@@ -165,7 +175,7 @@ function Carousel({ items, type }: {
             return (
               <div
                 key={i}
-                onClick={() => { if (!isActive) { setPaused(true); setActive(i); } }}
+                onClick={() => { if (!isActive) { pausedRef.current = true; setActive(i); } }}
                 style={{
                   flexShrink: 0,
                   display: "flex",
@@ -250,7 +260,7 @@ function Carousel({ items, type }: {
         {items.map((_, i) => (
           <button
             key={i}
-            onClick={() => { setPaused(true); setActive(i); }}
+            onClick={() => { pausedRef.current = true; setActive(i); }}
             aria-label={`Ir para demo ${i + 1}`}
             style={{
               width: i === active ? 24 : 7,

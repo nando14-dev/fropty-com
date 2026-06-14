@@ -4,6 +4,7 @@ import Image from "next/image";
 import PlanConfigurator from "../components/PlanConfigurator";
 import { ThemeToggle } from "../components/ThemeToggle";
 import { WhatsAppFloat } from "../components/WhatsAppFloat";
+import { Footer } from "../components/Footer";
 import { SITE_URL } from "../lib/config";
 
 export const metadata: Metadata = {
@@ -71,21 +72,15 @@ export default function ConfiguradorPage() {
       </div>
 
       {/* Configurador */}
-      <div className="relative mx-auto max-w-5xl px-4 pb-24">
-        <div className="rounded-3xl p-4 sm:p-8" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
-          <PlanConfigurator />
+      <div className="dot-bg">
+        <div className="relative mx-auto max-w-5xl px-4 pb-24">
+          <div className="rounded-3xl p-4 sm:p-8" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+            <PlanConfigurator />
+          </div>
         </div>
-      </div>
 
-      {/* Footer */}
-      <footer className="relative border-t py-8 text-center text-sm" style={{ borderColor: "var(--border)", color: "var(--text-faint)" }}>
-        <p>© 2026 Fropty Apps</p>
-        <div className="mt-2 flex items-center justify-center gap-4">
-          <Link href="/termos" className="transition hover:text-white">Termos de Uso</Link>
-          <span style={{ color: "var(--border)" }}>·</span>
-          <Link href="/privacidade" className="transition hover:text-white">Política de Privacidade</Link>
-        </div>
-      </footer>
+        <Footer />
+      </div>
 
       <WhatsAppFloat />
     </div>

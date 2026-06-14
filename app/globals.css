@@ -199,6 +199,27 @@ body {
   background-size: 26px 26px;
 }
 
+/* Ícones de redes sociais no footer — monocromáticos e suaves */
+.social-icon-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-faint);
+  text-decoration: none;
+  flex-shrink: 0;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+.social-icon-btn:hover {
+  color: var(--text);
+  border-color: var(--border-hover);
+  background: var(--surface);
+}
+
 /* Section chip label */
 .section-chip {
   display: inline-flex;
