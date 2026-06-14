@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { ConsultorioApp } from "./demos/ConsultorioApp";
 import { OficinaApp } from "./demos/OficinaApp";
 import { DocesApp } from "./demos/DocesApp";
@@ -112,22 +112,50 @@ function Carousel({ items, type }: {
   type: "mobile" | "desktop";
 }) {
   const [active, setActive] = useState(0);
-  const trackRef = useRef<HTMLDivElement>(null);
+  const [paused, setPaused] = useState(false);
+  const [winW, setWinW] = useState(1200);
 
-  const prev = () => setActive(i => Math.max(0, i - 1));
-  const next = () => setActive(i => Math.min(items.length - 1, i + 1));
+  // Detecta largura da janela para escala mobile
+  useEffect(() => {
+    const update = () => setWinW(window.innerWidth);
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+
+  // Auto-avanço — pausa ao passar o mouse
+  useEffect(() => {
+    if (paused) return;
+    const t = setInterval(() => setActive(i => (i + 1) % items.length), 3800);
+    return () => clearInterval(t);
+  }, [paused, items.length]);
+
+  const FRAME_W = type === "mobile" ? 240 : 580;
+  const GAP     = type === "mobile" ? 32  : 40;
+  const STEP    = FRAME_W + GAP;
+
+  // Escala o frame desktop em telas pequenas
+  const desktopScale = type === "desktop" && winW < 640
+    ? Math.max(0.45, (winW - 32) / FRAME_W)
+    : 1;
+
+  const prev = () => { setPaused(true); setActive(i => Math.max(0, i - 1)); };
+  const next = () => { setPaused(true); setActive(i => Math.min(items.length - 1, i + 1)); };
 
   return (
-    <div style={{ position: "relative" }}>
-      {/* Track */}
+    <div
+      style={{ position: "relative" }}
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+    >
+      {/* Track — 50vw centraliza em relação ao viewport */}
       <div style={{ overflow: "hidden", position: "relative" }}>
         <div
-          ref={trackRef}
           style={{
             display: "flex",
-            gap: type === "mobile" ? 32 : 40,
+            gap: GAP,
             transition: "transform 0.45s cubic-bezier(0.4,0,0.2,1)",
-            transform: `translateX(calc(50% - ${type === "mobile" ? 120 : 290}px - ${active * (type === "mobile" ? 272 : 620)}px))`,
+            transform: `translateX(calc(50vw - ${(FRAME_W * desktopScale) / 2}px - ${active * (FRAME_W * desktopScale + GAP)}px))`,
             willChange: "transform",
             padding: "32px 0 48px",
           }}
@@ -137,7 +165,7 @@ function Carousel({ items, type }: {
             return (
               <div
                 key={i}
-                onClick={() => !isActive && setActive(i)}
+                onClick={() => { if (!isActive) { setPaused(true); setActive(i); } }}
                 style={{
                   flexShrink: 0,
                   display: "flex",
@@ -155,9 +183,15 @@ function Carousel({ items, type }: {
                     {item.component}
                   </PhoneFrame>
                 ) : (
-                  <DesktopFrame accent={item.accent}>
-                    {item.component}
-                  </DesktopFrame>
+                  <div style={{
+                    transform: `scale(${desktopScale})`,
+                    transformOrigin: "top center",
+                    marginBottom: desktopScale < 1 ? -360 * (1 - desktopScale) : 0,
+                  }}>
+                    <DesktopFrame accent={item.accent}>
+                      {item.component}
+                    </DesktopFrame>
+                  </div>
                 )}
                 <div style={{ textAlign: "center", opacity: isActive ? 1 : 0, transition: "opacity 0.4s", pointerEvents: "none" }}>
                   <div style={{ fontWeight: 700, fontSize: 16, color: "var(--text)" }}>{item.label}</div>
@@ -176,8 +210,8 @@ function Carousel({ items, type }: {
         aria-label="Anterior"
         style={{
           position: "absolute",
-          left: 16, top: "50%", transform: "translateY(-80%)",
-          width: 44, height: 44, borderRadius: "50%",
+          left: 12, top: "50%", transform: "translateY(-80%)",
+          width: 40, height: 40, borderRadius: "50%",
           border: "1px solid var(--border)",
           background: "var(--surface)",
           color: active === 0 ? "var(--text-faint)" : "var(--text)",
@@ -196,8 +230,8 @@ function Carousel({ items, type }: {
         aria-label="Próximo"
         style={{
           position: "absolute",
-          right: 16, top: "50%", transform: "translateY(-80%)",
-          width: 44, height: 44, borderRadius: "50%",
+          right: 12, top: "50%", transform: "translateY(-80%)",
+          width: 40, height: 40, borderRadius: "50%",
           border: "1px solid var(--border)",
           background: "var(--surface)",
           color: active === items.length - 1 ? "var(--text-faint)" : "var(--text)",
@@ -212,11 +246,11 @@ function Carousel({ items, type }: {
       </button>
 
       {/* Dots */}
-      <div style={{ display: "flex", justifyContent: "center", gap: 6, marginTop: 4 }}>
+      <div style={{ display: "flex", justifyContent: "center", gap: 6, marginTop: 4, paddingBottom: 8 }}>
         {items.map((_, i) => (
           <button
             key={i}
-            onClick={() => setActive(i)}
+            onClick={() => { setPaused(true); setActive(i); }}
             aria-label={`Ir para demo ${i + 1}`}
             style={{
               width: i === active ? 24 : 7,

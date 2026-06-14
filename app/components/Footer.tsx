@@ -19,6 +19,34 @@ export function Footer() {
             <p className="text-sm leading-relaxed" style={{ color: "var(--text-muted)" }}>
               Seu app sob medida, do jeito que você imaginou. Prévia gratuita, sem compromisso.
             </p>
+
+            {/* Redes sociais */}
+            <div className="mt-5 flex gap-2">
+              {[
+                { href: "https://instagram.com/froptyapps", icon: "ti-brand-instagram", label: "Instagram",  color: "#E1306C" },
+                { href: "https://facebook.com/froptyapps",  icon: "ti-brand-facebook",  label: "Facebook",   color: "#1877F2" },
+                { href: "https://tiktok.com/@froptyapps",   icon: "ti-brand-tiktok",    label: "TikTok",     color: "var(--text)" },
+                { href: "https://wa.me/5519983317645",      icon: "ti-brand-whatsapp",  label: "WhatsApp",   color: "#22c55e" },
+              ].map(({ href, icon, label, color }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  className="transition hover:opacity-75 hover:scale-110"
+                  style={{
+                    width: 36, height: 36, borderRadius: 10,
+                    border: "1px solid var(--border)",
+                    background: "var(--surface)",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    color, textDecoration: "none", flexShrink: 0,
+                  }}
+                >
+                  <i className={`ti ${icon}`} style={{ fontSize: 18 }} />
+                </a>
+              ))}
+            </div>
           </div>
 
           {/* Produto */}
