@@ -42,6 +42,7 @@ export const metadata: Metadata = {
     title: "Fropty Apps — Seu app sob medida",
     description:
       "Transforme sua ideia em um app de verdade. Prévia gratuita, app completo a partir de R$499 e manutenção mensal com tokens de suporte.",
+    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Fropty Apps" }],
   },
   twitter: {
     card: "summary_large_image",
