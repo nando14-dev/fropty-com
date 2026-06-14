@@ -8,11 +8,11 @@ import { Footer } from "../components/Footer";
 import { SITE_URL } from "../lib/config";
 
 export const metadata: Metadata = {
-  title: "Configurador de Planos",
-  description: "Monte seu app sob medida, escolha os recursos e veja o preço em tempo real. Orçamento sem compromisso.",
+  title: "Configurador de Orçamento",
+  description: "Monte seu projeto digital sob medida — app, site, SaaS, dashboard ou e-commerce. Escolha os recursos e veja o preço em tempo real.",
   openGraph: {
-    title: "Configurador de Planos — Fropty Apps",
-    description: "Monte seu app sob medida, escolha os recursos e veja o preço em tempo real.",
+    title: "Configurador de Orçamento — Fropty Apps",
+    description: "Monte seu projeto digital sob medida e peça seu orçamento em minutos.",
     url: `${SITE_URL}/configurador`,
     siteName: "Fropty Apps",
     locale: "pt_BR",
@@ -53,13 +53,13 @@ export default function ConfiguradorPage() {
       <div className="relative mx-auto max-w-3xl px-6 pb-10 pt-14 text-center">
         <span className="section-chip mb-5 inline-flex items-center gap-2">
           <i className="ti ti-adjustments-horizontal" />
-          Configuração personalizada
+          Orçamento personalizado
         </span>
         <h1 className="text-3xl font-bold leading-tight sm:text-5xl" style={{ color: "var(--text)", fontFamily: "var(--font-plus-jakarta), sans-serif" }}>
-          Monte seu app <span style={{ color: "var(--primary)" }}>do seu jeito</span>
+          Monte seu projeto <span style={{ color: "var(--primary)" }}>do seu jeito</span>
         </h1>
         <p className="mx-auto mt-4 max-w-xl text-lg" style={{ color: "var(--text-muted)" }}>
-          Escolha cada recurso, veja o preço mudar em tempo real e peça seu orçamento. Sem surpresa, sem enrolação.
+          App, site, SaaS, dashboard ou e-commerce — escolha o tipo de projeto, adicione os recursos e veja o preço em tempo real.
         </p>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-sm" style={{ color: "var(--text-faint)" }}>
           {["Preço em tempo real", "Sem compromisso", "Resposta em 48h"].map(t => (

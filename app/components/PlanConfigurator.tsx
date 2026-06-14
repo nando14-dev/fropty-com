@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { submitQuote } from "@/app/actions/submitQuote";
-import { BASE_PRICE, ADDONS, MAINTENANCE, type MaintenancePlan } from "@/app/lib/data/configurador";
+import { SERVICE_TYPES, ADDONS, MAINTENANCE, type MaintenancePlan } from "@/app/lib/data/configurador";
 
 export interface PlanSummary {
   name: string;
@@ -21,13 +21,18 @@ function formatPrice(val: number): string {
 const FONT = "var(--font-plus-jakarta), var(--font-inter), sans-serif";
 
 export default function PlanConfigurator() {
+  const [serviceId, setServiceId] = useState<string>("app_mobile");
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [maintenance, setMaintenance] = useState("m_none");
   const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
   const [isPending, startTransition] = useTransition();
+
+  const service = SERVICE_TYPES.find(s => s.id === serviceId) ?? SERVICE_TYPES[0];
+  const BASE_PRICE = service.price;
 
   const allAddonIds = ADDONS.map(a => a.id);
   const allSelected = allAddonIds.every(id => selected.has(id));
@@ -57,10 +62,16 @@ export default function PlanConfigurator() {
 
     const addonNames = selectedAddons.map(a => a.label).join(", ") || "nenhum";
     const maintenanceName = mPlan?.price ? mPlan.label : "sem plano";
-    const ideia = `Pedido via configurador de planos.\nExtras: ${addonNames}.\nManutenção: ${maintenanceName}.\nTotal único: ${formatPrice(onceTotal)}${monthTotal > 0 ? ` + ${formatPrice(monthTotal)}/mês` : ""}.`;
+    const ideia = `Pedido via configurador de planos.\nTipo: ${service.label}.\nExtras: ${addonNames}.\nManutenção: ${maintenanceName}.\nTotal único: ${formatPrice(onceTotal)}${monthTotal > 0 ? ` + ${formatPrice(monthTotal)}/mês` : ""}.`;
 
     startTransition(async () => {
-      const result = await submitQuote({ nome: name.trim(), email: email.trim(), ideia });
+      const result = await submitQuote({
+        nome: name.trim(),
+        telefone: phone.trim() || undefined,
+        email: email.trim(),
+        ideia,
+        servicoTipo: service.label,
+      });
       if (result.ok) {
         setSubmitted(true);
       } else {
@@ -99,7 +110,53 @@ export default function PlanConfigurator() {
         {/* ── Coluna esquerda ─────────────────────────────────────── */}
         <div className="flex-[2] min-w-0 space-y-6">
 
-          {/* App base */}
+          {/* Tipo de projeto */}
+          <div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: "var(--text)", marginBottom: 14, display: "flex", alignItems: "center", gap: 8 }}>
+              <i className="ti ti-layers-difference" style={{ fontSize: 16, color: "var(--primary)" }} />
+              Que tipo de projeto você precisa?
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 200px), 1fr))", gap: 10 }}>
+              {SERVICE_TYPES.map((svc) => {
+                const active = serviceId === svc.id;
+                return (
+                  <div
+                    key={svc.id}
+                    role="radio"
+                    aria-checked={active}
+                    tabIndex={0}
+                    onClick={() => setServiceId(svc.id)}
+                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setServiceId(svc.id); } }}
+                    className="clickable-card"
+                    style={{
+                      background: active ? "rgba(91,87,232,0.1)" : "var(--card-bg)",
+                      border: `1.5px solid ${active ? "var(--primary)" : "var(--card-border)"}`,
+                      borderRadius: 14, padding: "14px 16px",
+                      transition: "all 0.18s", display: "flex", gap: 12, alignItems: "flex-start",
+                    }}
+                  >
+                    <div style={{
+                      width: 36, height: 36, borderRadius: 10,
+                      background: active ? "var(--primary)" : "rgba(91,87,232,0.08)",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      flexShrink: 0, transition: "all 0.18s",
+                    }}>
+                      <i className={`ti ti-${svc.icon}`} style={{ fontSize: 17, color: active ? "#fff" : "var(--primary)" }} />
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: "var(--text)", marginBottom: 2 }}>{svc.label}</div>
+                      <div style={{ fontSize: 11, color: "var(--text-muted)", lineHeight: 1.4 }}>{svc.desc}</div>
+                      <div style={{ fontSize: 12, fontWeight: 700, color: active ? "var(--primary)" : "var(--text-faint)", marginTop: 6 }}>
+                        a partir de {formatPrice(svc.price)}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Projeto selecionado — base */}
           <div
             style={{
               background: "rgba(91,87,232,0.06)",
@@ -111,11 +168,11 @@ export default function PlanConfigurator() {
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 16 }}>
               <div style={{ flex: 1 }}>
                 <div style={{ fontSize: 15, fontWeight: 800, color: "var(--text)", display: "flex", alignItems: "center", gap: 8 }}>
-                  <i className="ti ti-rocket" style={{ fontSize: 18, color: "var(--primary)" }} />
-                  App / Site completo
+                  <i className={`ti ti-${service.icon}`} style={{ fontSize: 18, color: "var(--primary)" }} />
+                  {service.label} completo
                 </div>
                 <div style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 4, lineHeight: 1.5 }}>
-                  Login, banco de dados, deploy, 1 rodada de ajustes. Tudo funcionando.
+                  {service.desc}. Inclui deploy, 1 rodada de ajustes e tudo funcionando.
                 </div>
               </div>
               <div style={{ fontSize: 20, fontWeight: 800, color: "var(--primary)", whiteSpace: "nowrap" }}>
@@ -385,14 +442,30 @@ export default function PlanConfigurator() {
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 18 }}>
               <i className="ti ti-receipt" style={{ fontSize: 16, color: "var(--primary)" }} />
               <span style={{ fontSize: 13, fontWeight: 700, color: "var(--text-muted)" }}>
-                Resumo do seu plano
+                Resumo do orçamento
               </span>
             </div>
 
+            {/* Tipo de projeto selecionado */}
+            <div
+              style={{
+                background: "rgba(91,87,232,0.08)",
+                border: "1px solid rgba(91,87,232,0.2)",
+                borderRadius: 10, padding: "10px 12px", marginBottom: 14,
+                display: "flex", alignItems: "center", gap: 8,
+              }}
+            >
+              <i className={`ti ti-${service.icon}`} style={{ fontSize: 16, color: "var(--primary)", flexShrink: 0 }} />
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: "var(--text)" }}>{service.label}</div>
+                <div style={{ fontSize: 11, color: "var(--text-muted)" }}>{service.desc}</div>
+              </div>
+            </div>
+
             <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 16 }}>
-              {/* App base */}
+              {/* Base */}
               <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13 }}>
-                <span style={{ color: "var(--text-muted)" }}>App / Site base</span>
+                <span style={{ color: "var(--text-muted)" }}>{service.label} base</span>
                 <span style={{ color: "var(--text)", fontWeight: 600 }}>{formatPrice(BASE_PRICE)}</span>
               </div>
 
@@ -414,7 +487,7 @@ export default function PlanConfigurator() {
                   display: "flex", justifyContent: "space-between", alignItems: "center",
                 }}
               >
-                <span style={{ fontWeight: 700, color: "var(--text)", fontSize: 14 }}>Total do app</span>
+                <span style={{ fontWeight: 700, color: "var(--text)", fontSize: 14 }}>Total do projeto</span>
                 <span style={{ fontWeight: 800, fontSize: 20, color: "var(--primary)" }}>
                   {formatPrice(onceTotal)}
                 </span>
@@ -478,45 +551,35 @@ export default function PlanConfigurator() {
               }}
             >
               <div style={{ fontSize: 12, fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 2 }}>
-                Seus dados
+                Seus dados para contato
               </div>
-              <input
-                value={name}
-                onChange={e => setName(e.target.value)}
-                placeholder="Seu nome"
-                disabled={isPending}
-                className="transition duration-150 focus:border-[#5B57E8] focus:ring-2 focus:ring-[#5B57E8]/25"
-                style={{
-                  background: "var(--bg)",
-                  border: "1px solid var(--border)",
-                  borderRadius: 10,
-                  padding: "11px 14px",
-                  color: "var(--text)",
-                  fontSize: 13,
-                  outline: "none",
-                  opacity: isPending ? 0.6 : 1,
-                  fontFamily: FONT,
-                }}
-              />
-              <input
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                placeholder="Seu e-mail"
-                type="email"
-                disabled={isPending}
-                className="transition duration-150 focus:border-[#5B57E8] focus:ring-2 focus:ring-[#5B57E8]/25"
-                style={{
-                  background: "var(--bg)",
-                  border: "1px solid var(--border)",
-                  borderRadius: 10,
-                  padding: "11px 14px",
-                  color: "var(--text)",
-                  fontSize: 13,
-                  outline: "none",
-                  opacity: isPending ? 0.6 : 1,
-                  fontFamily: FONT,
-                }}
-              />
+
+              {[
+                { value: name, setter: setName, placeholder: "Seu nome", type: "text" },
+                { value: phone, setter: setPhone, placeholder: "Telefone / WhatsApp", type: "tel" },
+                { value: email, setter: setEmail, placeholder: "Seu e-mail", type: "email" },
+              ].map(({ value, setter, placeholder, type }) => (
+                <input
+                  key={placeholder}
+                  value={value}
+                  onChange={e => setter(e.target.value)}
+                  placeholder={placeholder}
+                  type={type}
+                  disabled={isPending}
+                  className="transition duration-150 focus:border-[#5B57E8] focus:ring-2 focus:ring-[#5B57E8]/25"
+                  style={{
+                    background: "var(--bg)",
+                    border: "1px solid var(--border)",
+                    borderRadius: 10,
+                    padding: "11px 14px",
+                    color: "var(--text)",
+                    fontSize: 13,
+                    outline: "none",
+                    opacity: isPending ? 0.6 : 1,
+                    fontFamily: FONT,
+                  }}
+                />
+              ))}
 
               {submitError && (
                 <div
@@ -558,7 +621,7 @@ export default function PlanConfigurator() {
                   </>
                 ) : (
                   <>
-                    Solicitar orçamento com esse plano
+                    Solicitar orçamento
                     <i className="ti ti-arrow-right" style={{ fontSize: 14 }} />
                   </>
                 )}

@@ -4,11 +4,13 @@ import { Resend } from "resend";
 
 export type QuotePayload = {
   nome: string;
+  telefone?: string;
   email: string;
   ideia: string;
   temLogo?: string;
   cores?: string;
   prioridades?: string[];
+  servicoTipo?: string;
 };
 
 export type QuoteResult = { ok: true } | { ok: false; error: string };
@@ -27,10 +29,12 @@ export async function submitQuote(payload: QuotePayload): Promise<QuoteResult> {
   }
 
   const nome = sanitize(payload.nome, 100);
+  const telefone = sanitize(payload.telefone, 30);
   const email = sanitize(payload.email, 200);
   const ideia = sanitize(payload.ideia, 3000);
   const temLogo = sanitize(payload.temLogo, 50);
   const cores = sanitize(payload.cores, 200);
+  const servicoTipo = sanitize(payload.servicoTipo, 100);
   const prioridades = (payload.prioridades ?? [])
     .map((p) => sanitize(p, 100))
     .filter(Boolean)
@@ -55,22 +59,26 @@ export async function submitQuote(payload: QuotePayload): Promise<QuoteResult> {
     html: `
       <h2>Novo pedido de orçamento</h2>
       <table style="border-collapse:collapse;width:100%">
+        ${servicoTipo ? `<tr><td style="padding:8px;font-weight:700;background:#ede9fe;color:#5B57E8">Tipo de projeto</td><td style="padding:8px;background:#ede9fe;color:#5B57E8;font-weight:600">${servicoTipo}</td></tr>` : ""}
         <tr><td style="padding:8px;font-weight:700;background:#f8f8f8">Nome</td><td style="padding:8px">${nome}</td></tr>
+        ${telefone ? `<tr><td style="padding:8px;font-weight:700;background:#f8f8f8">Telefone / WhatsApp</td><td style="padding:8px">${telefone}</td></tr>` : ""}
         <tr><td style="padding:8px;font-weight:700;background:#f8f8f8">Email</td><td style="padding:8px"><a href="mailto:${email}">${email}</a></td></tr>
-        <tr><td style="padding:8px;font-weight:700;background:#f8f8f8">Ideia</td><td style="padding:8px">${ideia.replace(/\n/g, "<br>")}</td></tr>
+        <tr><td style="padding:8px;font-weight:700;background:#f8f8f8">Ideia / Descrição</td><td style="padding:8px">${ideia.replace(/\n/g, "<br>")}</td></tr>
         <tr><td style="padding:8px;font-weight:700;background:#f8f8f8">Tem logo?</td><td style="padding:8px">${temLogo || "não informado"}</td></tr>
         <tr><td style="padding:8px;font-weight:700;background:#f8f8f8">Cores/tema</td><td style="padding:8px">${cores || "não informado"}</td></tr>
         <tr><td style="padding:8px;font-weight:700;background:#f8f8f8">Prioridades</td><td style="padding:8px">${prioridades.length ? prioridades.join(", ") : "não informado"}</td></tr>
       </table>
     `,
     text: [
+      servicoTipo ? `Tipo de projeto: ${servicoTipo}` : "",
       `Nome: ${nome}`,
+      telefone ? `Telefone: ${telefone}` : "",
       `Email: ${email}`,
       `Ideia: ${ideia}`,
       `Tem logo: ${temLogo || "não informado"}`,
       `Cores: ${cores || "não informado"}`,
       `Prioridades: ${prioridades.join(", ") || "não informado"}`,
-    ].join("\n"),
+    ].filter(Boolean).join("\n"),
   });
 
   if (error) {
