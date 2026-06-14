@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { MOCK_USER } from "../../lib/data/mockCliente";
 import { ClientSidebar } from "../../components/cliente/ClientSidebar";
 

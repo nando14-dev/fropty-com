@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
 import { MOCK_USER } from "../../lib/data/mockCliente";
 import { ProjectCard } from "../../components/cliente/ProjectCard";
 import { ClientSidebar } from "../../components/cliente/ClientSidebar";
