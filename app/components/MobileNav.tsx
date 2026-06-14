@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { QuoteButton } from "./QuoteModal";
 
 const links = [
   { href: "#planos",   label: "Planos" },
@@ -63,12 +62,14 @@ export function MobileNav() {
               >
                 Configurador de planos
               </Link>
-              <QuoteButton
+              <a
+                href="#orcamento"
+                onClick={() => setOpen(false)}
                 className="rounded-xl px-4 py-4 text-center text-base font-semibold text-white transition"
-                style={{ background: "var(--primary)" }}
+                style={{ background: "var(--primary)", textDecoration: "none", display: "block" }}
               >
                 Pedir orçamento grátis →
-              </QuoteButton>
+              </a>
             </div>
           </nav>
         </div>

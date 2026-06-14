@@ -37,7 +37,6 @@ export function PetShopApp() {
     ];
     const timers = seq.map(([d, fn]) => setTimeout(fn, d));
     return () => timers.forEach(clearTimeout);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const filtered = activeTab === 0 ? PRODUCTS : PRODUCTS.filter(p => p.cat === CATEGORIES[activeTab]);

@@ -7,6 +7,7 @@ import { ThemeToggle } from "./components/ThemeToggle";
 import { MobileNav } from "./components/MobileNav";
 import { Footer } from "./components/Footer";
 import { WhatsAppFloat } from "./components/WhatsAppFloat";
+import { QuoteSection } from "./components/QuoteSection";
 import { plans, faqs, previewAddons } from "./lib/data/plans";
 
 const AppDemos = dynamic(() => import("./components/AppDemos"), {
@@ -984,24 +985,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── CTA final ───────────────────────────────────────────────── */}
-      <section style={{ background: "var(--primary)" }}>
-        <div className="mx-auto max-w-3xl px-6 py-16 text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-white">
-            Pronto para tirar sua ideia do papel?
-          </h2>
-          <p className="mt-3 text-base" style={{ color: "rgba(255,255,255,0.72)" }}>
-            Prévia gratuita. Sem compromisso. Do seu jeito.
-          </p>
-          <QuoteButton
-            className="mt-8 inline-flex items-center gap-2 rounded-full bg-white px-8 py-4 font-semibold transition hover:bg-[#E9E9FC]"
-            style={{ color: "var(--primary)" }}
-          >
-            Pedir orçamento grátis
-            <i className="ti ti-arrow-right" style={{ fontSize: 15 }} />
-          </QuoteButton>
-        </div>
-      </section>
+      {/* ── Formulário de orçamento inline ──────────────────────────── */}
+      <QuoteSection />
 
       </div>{/* fim .dot-bg */}
 
