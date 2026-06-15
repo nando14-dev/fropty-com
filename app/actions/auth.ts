@@ -31,7 +31,8 @@ export async function signIn(formData: FormData) {
     .single();
 
   const role = (profile?.role as UserRole) ?? DEFAULT_ROLE;
-  redirect(ROLE_HOME[role]);
+  // Retorna a URL em vez de redirect() para evitar problemas com startTransition no React 19
+  return { redirectTo: ROLE_HOME[role] };
 }
 
 /**
@@ -77,7 +78,7 @@ export async function signUp(formData: FormData) {
     return { success: "Verifique seu e-mail para ativar a conta." };
   }
 
-  redirect(ROLE_HOME["cliente"]);
+  return { redirectTo: ROLE_HOME["cliente"] };
 }
 
 export async function signOut() {

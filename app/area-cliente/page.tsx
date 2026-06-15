@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { signIn, signUp, requestPasswordReset } from "@/app/actions/auth";
@@ -8,6 +9,7 @@ import { signIn, signUp, requestPasswordReset } from "@/app/actions/auth";
 type Mode = "login" | "cadastro" | "reset";
 
 export default function AreaClientePage() {
+  const router = useRouter();
   const [mode, setMode]       = useState<Mode>("login");
   const [error, setError]     = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -30,8 +32,10 @@ export default function AreaClientePage() {
       }
       const action = mode === "login" ? signIn : signUp;
       const result = await action(formData);
-      if (result && "error"   in result) setError(result.error ?? null);
-      if (result && "success" in result) setSuccess(result.success as string);
+      if (!result) return;
+      if ("error"      in result) { setError(result.error ?? null); return; }
+      if ("success"    in result) { setSuccess(result.success as string); return; }
+      if ("redirectTo" in result) { router.push(result.redirectTo as string); }
     });
   }
 
