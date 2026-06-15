@@ -177,8 +177,16 @@ export function TicketConversation({
         overflow: "hidden",
       }}
     >
+    <style>{`
+      @media (max-width: 640px) {
+        .conv-messages { padding: 14px !important; gap: 12px !important; max-height: 60vh !important; }
+        .conv-reply { padding: 12px !important; }
+        .conv-bubble { max-width: 90% !important; font-size: 13px !important; }
+      }
+    `}</style>
       {/* Thread de mensagens */}
       <div
+        className="conv-messages"
         style={{
           flex: 1,
           overflowY: "auto",
@@ -236,6 +244,7 @@ export function TicketConversation({
 
               {/* Bubble */}
               <div
+                className="conv-bubble"
                 style={{
                   maxWidth: "76%",
                   padding: "10px 14px",
@@ -310,7 +319,7 @@ export function TicketConversation({
           Este chamado está encerrado.
         </div>
       ) : (
-        <div style={{ padding: "16px 20px" }}>
+        <div className="conv-reply" style={{ padding: "16px 20px" }}>
           {error && (
             <p style={{ margin: "0 0 10px", fontSize: "12px", color: "#ef4444", display: "flex", alignItems: "center", gap: 5 }}>
               <i className="ti ti-alert-circle" /> {error}

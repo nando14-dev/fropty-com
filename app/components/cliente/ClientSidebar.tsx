@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useTransition } from "react";
+import { useTransition, useState } from "react";
 import { signOut } from "../../actions/auth";
 import { AvatarUpload } from "./AvatarUpload";
 import { PortalThemeToggle } from "./PortalThemeToggle";
@@ -19,9 +19,8 @@ interface NavItem {
 
 interface Props {
   user: ClientUser;
-  /** Itens de navegação. Se omitido, usa o padrão da área-cliente legada. */
-  navItems?:    NavItem[];
-  avatarUrl?:   string | null;
+  navItems?:     NavItem[];
+  avatarUrl?:    string | null;
   initialTheme?: "dark" | "light";
 }
 
@@ -33,10 +32,12 @@ const DEFAULT_NAV: NavItem[] = [
 export function ClientSidebar({ user, navItems, avatarUrl, initialTheme = "dark" }: Props) {
   const pathname = usePathname();
   const NAV = navItems ?? DEFAULT_NAV;
-  const [pending, startTransition] = useTransition();
+  const [pending,    startTransition] = useTransition();
+  const [mobileOpen, setMobileOpen]   = useState(false);
 
-  return (
+  const sidebarContent = (
     <aside
+      className={`portal-sidebar${mobileOpen ? " open" : ""}`}
       style={{
         width: 220,
         minHeight: "100vh",
@@ -46,8 +47,18 @@ export function ClientSidebar({ user, navItems, avatarUrl, initialTheme = "dark"
         flexDirection: "column",
         padding: "24px 16px",
         flexShrink: 0,
+        position: "relative",
       }}
     >
+      {/* Close button — mobile only */}
+      <button
+        className="portal-sidebar-close"
+        onClick={() => setMobileOpen(false)}
+        aria-label="Fechar menu"
+      >
+        <i className="ti ti-x" />
+      </button>
+
       {/* Logo */}
       <Link href="/" style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 32, textDecoration: "none" }}>
         <Image src="/logo-icon.png" alt="Fropty Apps" width={26} height={26} className="rounded-md" />
@@ -58,12 +69,7 @@ export function ClientSidebar({ user, navItems, avatarUrl, initialTheme = "dark"
 
       {/* User */}
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 28, padding: "10px 12px", background: "var(--surface-2)", borderRadius: 12 }}>
-        <AvatarUpload
-          userId={user.id}
-          currentUrl={avatarUrl ?? null}
-          initials={user.avatarInitials}
-          size={36}
-        />
+        <AvatarUpload userId={user.id} currentUrl={avatarUrl ?? null} initials={user.avatarInitials} size={36} />
         <div style={{ overflow: "hidden", flex: 1 }}>
           <p style={{ margin: 0, fontSize: "13px", fontWeight: 700, color: "var(--text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
             {user.name.split(" ")[0]}
@@ -83,15 +89,11 @@ export function ClientSidebar({ user, navItems, avatarUrl, initialTheme = "dark"
             <Link
               key={id}
               href={href}
+              onClick={() => setMobileOpen(false)}
               style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 10,
-                padding: "9px 12px",
-                borderRadius: 9,
-                fontSize: "13px",
-                fontWeight: 600,
-                textDecoration: "none",
+                display: "flex", alignItems: "center", gap: 10,
+                padding: "9px 12px", borderRadius: 9,
+                fontSize: "13px", fontWeight: 600, textDecoration: "none",
                 background: isActive ? "rgba(91,87,232,0.15)" : "transparent",
                 color: isActive ? "var(--primary)" : "var(--text-muted)",
                 transition: "background 0.15s, color 0.15s",
@@ -101,17 +103,10 @@ export function ClientSidebar({ user, navItems, avatarUrl, initialTheme = "dark"
               <span style={{ flex: 1 }}>{label}</span>
               {badge != null && badge > 0 && (
                 <span style={{
-                  minWidth: 18, height: 18,
-                  padding: "0 5px",
-                  borderRadius: 999,
-                  background: "var(--primary)",
-                  color: "#fff",
-                  fontSize: 10,
-                  fontWeight: 800,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  lineHeight: 1,
+                  minWidth: 18, height: 18, padding: "0 5px", borderRadius: 999,
+                  background: "var(--primary)", color: "#fff",
+                  fontSize: 10, fontWeight: 800,
+                  display: "flex", alignItems: "center", justifyContent: "center", lineHeight: 1,
                 }}>
                   {badge > 99 ? "99+" : badge}
                 </span>
@@ -129,27 +124,55 @@ export function ClientSidebar({ user, navItems, avatarUrl, initialTheme = "dark"
         })}
         disabled={pending}
         style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 8,
-          padding: "9px 12px",
-          borderRadius: 9,
-          fontSize: "13px",
-          fontWeight: 600,
-          color: "var(--text-faint)",
-          background: "none",
-          border: "none",
+          display: "flex", alignItems: "center", gap: 8,
+          padding: "9px 12px", borderRadius: 9,
+          fontSize: "13px", fontWeight: 600,
+          color: "var(--text-faint)", background: "none", border: "none",
           cursor: pending ? "not-allowed" : "pointer",
-          opacity: pending ? 0.6 : 1,
-          marginTop: 8,
-          fontFamily: "inherit",
-          width: "100%",
-          textAlign: "left",
+          opacity: pending ? 0.6 : 1, marginTop: 8,
+          fontFamily: "inherit", width: "100%", textAlign: "left",
         }}
       >
         <i className={`ti ${pending ? "ti-loader-2" : "ti-logout"}`} style={{ fontSize: 16 }} />
         {pending ? "Saindo..." : "Sair"}
       </button>
     </aside>
+  );
+
+  return (
+    <>
+      {/* Mobile topbar */}
+      <div className="portal-topbar">
+        <button
+          onClick={() => setMobileOpen(true)}
+          aria-label="Abrir menu"
+          style={{
+            width: 36, height: 36, borderRadius: 9,
+            background: "var(--surface)", border: "1px solid var(--border)",
+            cursor: "pointer", color: "var(--text-muted)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            flexShrink: 0,
+          }}
+        >
+          <i className="ti ti-menu-2" style={{ fontSize: 18 }} />
+        </button>
+        <Link href="/" style={{ display: "flex", alignItems: "center", gap: 7, textDecoration: "none", flex: 1 }}>
+          <Image src="/logo-icon.png" alt="Fropty" width={22} height={22} className="rounded-md" />
+          <span style={{ fontWeight: 700, fontSize: "0.9rem", color: "var(--text)" }}>
+            Fropty<span style={{ color: "var(--primary)" }}>Apps</span>
+          </span>
+        </Link>
+        <PortalThemeToggle initialTheme={initialTheme} />
+      </div>
+
+      {/* Overlay */}
+      <div
+        className={`portal-overlay${mobileOpen ? " open" : ""}`}
+        onClick={() => setMobileOpen(false)}
+        aria-hidden
+      />
+
+      {sidebarContent}
+    </>
   );
 }

@@ -220,6 +220,85 @@ body {
   background: var(--surface);
 }
 
+/* ── Portal — Mobile responsive ─────────────────────────────── */
+
+/* Topbar: hidden on desktop, visible on mobile */
+.portal-topbar {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 56px;
+  background: var(--nav-bg);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  z-index: 150;
+  align-items: center;
+  padding: 0 16px;
+  gap: 12px;
+}
+
+/* Overlay behind the open drawer */
+.portal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(4,3,22,0.65);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  z-index: 190;
+  cursor: pointer;
+}
+
+/* Close button inside sidebar — hidden on desktop */
+.portal-sidebar-close {
+  display: none;
+  position: absolute;
+  top: 14px; right: 14px;
+  width: 30px; height: 30px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface-2, rgba(255,255,255,0.06));
+  cursor: pointer;
+  color: var(--text-faint);
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  z-index: 1;
+}
+
+@media (max-width: 768px) {
+  .portal-topbar {
+    display: flex;
+  }
+
+  .portal-sidebar {
+    position: fixed !important;
+    left: -240px !important;
+    top: 0 !important; bottom: 0 !important;
+    z-index: 200 !important;
+    transition: left 0.28s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: none !important;
+  }
+
+  .portal-sidebar.open {
+    left: 0 !important;
+    box-shadow: 8px 0 40px rgba(4,3,22,0.6) !important;
+  }
+
+  .portal-overlay.open {
+    display: block;
+  }
+
+  .portal-sidebar-close {
+    display: flex;
+  }
+
+  .portal-main-content {
+    padding-top: 56px;
+  }
+}
+
 /* Section chip label */
 .section-chip {
   display: inline-flex;

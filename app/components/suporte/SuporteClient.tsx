@@ -39,7 +39,22 @@ export function SuporteClient({ tickets, projects }: Props) {
   const totalHigh     = tickets.filter((t) => t.priority === "alta" && (t.status === "aberto" || t.status === "em_andamento")).length;
 
   return (
-    <div style={{ padding: "36px 32px", maxWidth: 940, margin: "0 auto" }}>
+    <div className="suporte-root" style={{ padding: "36px 32px", maxWidth: 940, margin: "0 auto" }}>
+    <style>{`
+      @media (max-width: 640px) {
+        .suporte-root { padding: 16px 14px !important; }
+        .suporte-header-row { flex-direction: column !important; align-items: flex-start !important; }
+        .suporte-stats { grid-template-columns: 1fr 1fr !important; }
+        .suporte-filter-row { flex-direction: column !important; }
+        .suporte-filter-buttons { width: 100% !important; justify-content: stretch !important; }
+        .suporte-filter-buttons button { flex: 1 !important; }
+        .suporte-ticket-badges { display: none !important; }
+        .suporte-ticket-date { display: none !important; }
+        .ticket-meta-grid { flex-direction: column !important; gap: 8px !important; }
+        .ticket-detail-root { padding: 16px 14px !important; }
+        .breadcrumb-title { display: none !important; }
+      }
+    `}</style>
 
       {/* ── Header ─────────────────────────────────────────────── */}
       <div
@@ -63,7 +78,7 @@ export function SuporteClient({ tickets, projects }: Props) {
           pointerEvents: "none",
         }} />
 
-        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
+        <div className="suporte-header-row" style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
           <div>
             <span className="section-chip" style={{ marginBottom: 12 }}>
               <i className="ti ti-headset" style={{ fontSize: 11 }} />
@@ -103,7 +118,7 @@ export function SuporteClient({ tickets, projects }: Props) {
         </div>
 
         {/* Stats row */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, marginTop: 24 }}>
+        <div className="suporte-stats" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, marginTop: 24 }}>
           <StatCard
             label="Total de chamados"
             value={tickets.length}
@@ -135,7 +150,7 @@ export function SuporteClient({ tickets, projects }: Props) {
       </div>
 
       {/* ── Busca + filtros ─────────────────────────────────────── */}
-      <div style={{ display: "flex", gap: 10, marginBottom: 28, flexWrap: "wrap" }}>
+      <div className="suporte-filter-row" style={{ display: "flex", gap: 10, marginBottom: 28, flexWrap: "wrap" }}>
         <div
           style={{
             flex: 1,
@@ -178,7 +193,7 @@ export function SuporteClient({ tickets, projects }: Props) {
           )}
         </div>
 
-        <div style={{ display: "flex", gap: 6 }}>
+        <div className="suporte-filter-buttons" style={{ display: "flex", gap: 6 }}>
           {(["todos", "abertos", "fechados"] as FilterMode[]).map((f) => (
             <button
               key={f}
@@ -474,17 +489,18 @@ function TicketCard({ ticket, dimmed }: { ticket: Ticket; dimmed?: boolean }) {
       </div>
 
       {/* Info principal */}
-      <div style={{ flex: 1, minWidth: 140 }}>
-        <p style={{ margin: "0 0 3px", fontWeight: 700, fontSize: "13px", color: "var(--text)", lineHeight: 1.3 }}>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <p style={{ margin: "0 0 3px", fontWeight: 700, fontSize: "13px", color: "var(--text)", lineHeight: 1.3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
           {ticket.subject}
         </p>
         <p style={{ margin: 0, fontSize: "11px", color: "var(--text-faint)" }}>
-          {ticket.category} · {updatedDate}
+          <span>{ticket.category}</span>
+          <span className="suporte-ticket-date"> · {updatedDate}</span>
         </p>
       </div>
 
       {/* Badges */}
-      <div style={{ display: "flex", gap: 6, flexShrink: 0, alignItems: "center" }}>
+      <div className="suporte-ticket-badges" style={{ display: "flex", gap: 6, flexShrink: 0, alignItems: "center" }}>
         <span style={{
           fontSize: "10px", fontWeight: 700, padding: "3px 9px", borderRadius: 999,
           background: `${statusInfo.color}15`, color: statusInfo.color,

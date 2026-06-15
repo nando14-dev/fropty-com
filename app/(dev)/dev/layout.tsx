@@ -17,7 +17,7 @@ export default async function DevPortalLayout({ children }: { children: React.Re
   return (
     <div style={{ display: "flex", minHeight: "100vh", background: "var(--bg)", color: "var(--text)" }}>
       <DevSidebar name={name} initials={initials} initialTheme={initialTheme} />
-      <main style={{ flex: 1, overflow: "hidden" }}>{children}</main>
+      <main className="portal-main-content" style={{ flex: 1, overflow: "hidden" }}>{children}</main>
     </div>
   );
 }

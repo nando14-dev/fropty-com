@@ -57,7 +57,7 @@ export default async function TicketDetailPage({ params }: Props) {
   const priorityInfo = TICKET_PRIORITY_MAP[ticket.priority];
 
   return (
-    <div style={{ padding: "36px 32px", maxWidth: 800, margin: "0 auto" }}>
+    <div className="ticket-detail-root" style={{ padding: "36px 32px", maxWidth: 800, margin: "0 auto" }}>
 
       {/* Breadcrumb */}
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20, fontSize: "12px" }}>
@@ -83,7 +83,7 @@ export default async function TicketDetailPage({ params }: Props) {
           Suporte
         </Link>
         <i className="ti ti-chevron-right" style={{ color: "var(--text-faint)", fontSize: 12 }} />
-        <span style={{ color: "var(--text-muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 360 }}>
+        <span className="breadcrumb-title" style={{ color: "var(--text-muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 360 }}>
           {ticket.subject}
         </span>
       </div>
@@ -117,7 +117,7 @@ export default async function TicketDetailPage({ params }: Props) {
         </div>
 
         {/* Metadata grid */}
-        <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
+        <div className="ticket-meta-grid" style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
           <MetaItem icon="ti-tag" label="Categoria" value={ticket.category} />
           <MetaItem icon="ti-flag" label="Prioridade" value={priorityInfo.label} color={priorityInfo.color} />
           <MetaItem icon="ti-calendar" label="Aberto em" value={new Date(ticket.createdAt).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" })} />

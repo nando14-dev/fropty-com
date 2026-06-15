@@ -85,7 +85,7 @@ export default async function PortalLayout({
         />
       </div>
 
-      <main style={{ flex: 1, overflow: "hidden" }}>
+      <main className="portal-main-content" style={{ flex: 1, overflow: "hidden" }}>
         {children}
       </main>
     </div>
