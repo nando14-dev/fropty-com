@@ -131,7 +131,7 @@ export default function Mecanicos({ addToast }: { addToast: (type: "success"|"er
                       <span style={{ fontWeight: 700, color: "var(--text)", minWidth: 50, fontSize: 13 }}>OS #{o.id}</span>
                       <span style={{ flex: 1, fontSize: 13, color: "var(--text-muted)" }}>{o.clienteNome}</span>
                       <span style={{ background: st.bg, color: st.color, borderRadius: 6, padding: "2px 8px", fontSize: 11, fontWeight: 600, whiteSpace: "nowrap" }}>{st.label}</span>
-                      <span style={{ fontSize: 13, fontWeight: 600, color: "var(--text)", whiteSpace: "nowrap" }}>{o.valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>
+                      <span style={{ fontSize: 13, fontWeight: 600, color: "var(--text)", whiteSpace: "nowrap" }}>{o.valorTotal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>
                     </div>
                   );
                 })

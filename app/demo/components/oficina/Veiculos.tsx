@@ -308,7 +308,7 @@ export default function Veiculos({ addToast }: Props) {
                 Histórico de Ordens de Serviço
               </div>
               {(() => {
-                const osVeiculo = ORDENS.filter((o) => o.placa === selected.placa);
+                const osVeiculo = ORDENS.filter((o) => o.veiculo.placa === selected.placa);
                 if (osVeiculo.length === 0) {
                   return (
                     <div

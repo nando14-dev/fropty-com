@@ -155,11 +155,11 @@ export default function ClientesVeiculos({ addToast }: { addToast: (type: "succe
                     <div key={o.id} style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 12px", background: "var(--surface-2)", borderRadius: 8, flexWrap: "wrap" }}>
                       <span style={{ fontWeight: 700, color: "var(--text)", fontSize: 13, minWidth: 50 }}>OS #{o.id}</span>
                       <span style={{ flex: 1, fontSize: 13, color: "var(--text-muted)", minWidth: 100 }}>
-                        {o.defeito.length > 50 ? o.defeito.slice(0, 50) + "…" : o.defeito}
+                        {o.defeitoRelatado.length > 50 ? o.defeitoRelatado.slice(0, 50) + "…" : o.defeitoRelatado}
                       </span>
                       <span style={{ background: st.bg, color: st.color, borderRadius: 6, padding: "2px 8px", fontSize: 11, fontWeight: 600 }}>{st.label}</span>
-                      <span style={{ fontSize: 13, fontWeight: 600, color: "var(--text)" }}>{o.valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>
-                      <span style={{ fontSize: 11, color: "var(--text-faint)" }}>{o.data}</span>
+                      <span style={{ fontSize: 13, fontWeight: 600, color: "var(--text)" }}>{o.valorTotal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>
+                      <span style={{ fontSize: 11, color: "var(--text-faint)" }}>{o.dataEntrada}</span>
                     </div>
                   );
                 })
