@@ -118,12 +118,12 @@ export const ORDENS: OrdemServico[] = [
 ];
 
 export const VEICULOS: Veiculo[] = [
-  { id: 1, placa: "ABC-1234", marca: "Chevrolet", modelo: "Onix", ano: 2021, cor: "Prata", corHex: "#C0C0C0", km: 48200, clienteNome: "Roberto Almeida", proximaRevisao: "60.000 km ou Dez/2026", image: "https://picsum.photos/seed/chevrolet-onix-silver/400/250" },
-  { id: 2, placa: "DEF-5678", marca: "Toyota", modelo: "Corolla", ano: 2020, cor: "Branco", corHex: "#F5F5F5", km: 62400, clienteNome: "Fernanda Lima", proximaRevisao: "70.000 km ou Mar/2027", image: "https://picsum.photos/seed/toyota-corolla-white/400/250" },
-  { id: 3, placa: "GHI-9012", marca: "Volkswagen", modelo: "Gol", ano: 2018, cor: "Vermelho", corHex: "#DC2626", km: 87300, clienteNome: "Paulo Santos", proximaRevisao: "90.000 km ou Jun/2026", image: "https://picsum.photos/seed/volkswagen-gol-red/400/250" },
-  { id: 4, placa: "JKL-3456", marca: "Fiat", modelo: "Strada", ano: 2022, cor: "Preto", corHex: "#1F2937", km: 31800, clienteNome: "Claudia Pereira", proximaRevisao: "40.000 km ou Nov/2026", image: "https://picsum.photos/seed/fiat-strada-black/400/250" },
-  { id: 5, placa: "MNO-7890", marca: "Honda", modelo: "Civic", ano: 2019, cor: "Azul", corHex: "#1D4ED8", km: 55100, clienteNome: "Bruno Castilho", proximaRevisao: "60.000 km ou Ago/2026", image: "https://picsum.photos/seed/honda-civic-blue/400/250" },
-  { id: 6, placa: "STU-5678", marca: "Jeep", modelo: "Renegade", ano: 2021, cor: "Cinza", corHex: "#6B7280", km: 42000, clienteNome: "Gustavo Ramos", proximaRevisao: "50.000 km ou Jan/2027", image: "https://picsum.photos/seed/jeep-renegade-gray/400/250" },
+  { id: 1, placa: "ABC-1234", marca: "Chevrolet", modelo: "Onix", ano: 2021, cor: "Prata", corHex: "#C0C0C0", km: 48200, clienteNome: "Roberto Almeida", proximaRevisao: "60.000 km ou Dez/2026", image: "https://loremflickr.com/400/250/sedan,car,silver,automobile" },
+  { id: 2, placa: "DEF-5678", marca: "Toyota", modelo: "Corolla", ano: 2020, cor: "Branco", corHex: "#F5F5F5", km: 62400, clienteNome: "Fernanda Lima", proximaRevisao: "70.000 km ou Mar/2027", image: "https://loremflickr.com/400/250/car,white,sedan,vehicle" },
+  { id: 3, placa: "GHI-9012", marca: "Volkswagen", modelo: "Gol", ano: 2018, cor: "Vermelho", corHex: "#DC2626", km: 87300, clienteNome: "Paulo Santos", proximaRevisao: "90.000 km ou Jun/2026", image: "https://loremflickr.com/400/250/car,red,hatchback,vehicle" },
+  { id: 4, placa: "JKL-3456", marca: "Fiat", modelo: "Strada", ano: 2022, cor: "Preto", corHex: "#1F2937", km: 31800, clienteNome: "Claudia Pereira", proximaRevisao: "40.000 km ou Nov/2026", image: "https://loremflickr.com/400/250/pickup,truck,black,vehicle" },
+  { id: 5, placa: "MNO-7890", marca: "Honda", modelo: "Civic", ano: 2019, cor: "Azul", corHex: "#1D4ED8", km: 55100, clienteNome: "Bruno Castilho", proximaRevisao: "60.000 km ou Ago/2026", image: "https://loremflickr.com/400/250/car,blue,sedan,automobile" },
+  { id: 6, placa: "STU-5678", marca: "Jeep", modelo: "Renegade", ano: 2021, cor: "Cinza", corHex: "#6B7280", km: 42000, clienteNome: "Gustavo Ramos", proximaRevisao: "50.000 km ou Jan/2027", image: "https://loremflickr.com/400/250/suv,jeep,gray,automobile" },
 ];
 
 export const PECAS: Peca[] = [

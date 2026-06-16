@@ -27,19 +27,19 @@ export type FilaItem = {
 };
 
 export const SERVICOS: Servico[] = [
-  { id: 1, nome: "Corte Masculino", preco: 45, duracao: 30, ativo: true, descricao: "Corte tradicional ou moderno, tesoura ou máquina", image: "https://picsum.photos/seed/mens-haircut/400/240" },
-  { id: 2, nome: "Barba", preco: 35, duracao: 30, ativo: true, descricao: "Aparar, modelar ou fazer a barba na navalha", image: "https://picsum.photos/seed/beard-grooming/400/240" },
-  { id: 3, nome: "Combo (Corte + Barba)", preco: 70, duracao: 55, ativo: true, descricao: "Corte completo + barba na navalha. Nosso mais pedido!", image: "https://picsum.photos/seed/barber-combo/400/240" },
-  { id: 4, nome: "Progressiva Masculina", preco: 120, duracao: 90, ativo: true, descricao: "Alinhamento e progressiva para cabelos rebeldes", image: "https://picsum.photos/seed/hair-straightening/400/240" },
-  { id: 5, nome: "Coloração", preco: 90, duracao: 75, ativo: false, descricao: "Coloração profissional com produtos premium", image: "https://picsum.photos/seed/hair-coloring/400/240" },
-  { id: 6, nome: "Sobrancelha", preco: 20, duracao: 15, ativo: true, descricao: "Design de sobrancelha com pinça e navalha", image: "https://picsum.photos/seed/eyebrow-design/400/240" },
+  { id: 1, nome: "Corte Masculino", preco: 45, duracao: 30, ativo: true, descricao: "Corte tradicional ou moderno, tesoura ou máquina", image: "https://loremflickr.com/400/240/haircut,barber,scissors" },
+  { id: 2, nome: "Barba", preco: 35, duracao: 30, ativo: true, descricao: "Aparar, modelar ou fazer a barba na navalha", image: "https://loremflickr.com/400/240/beard,shaving,razor" },
+  { id: 3, nome: "Combo (Corte + Barba)", preco: 70, duracao: 55, ativo: true, descricao: "Corte completo + barba na navalha. Nosso mais pedido!", image: "https://loremflickr.com/400/240/barbershop,grooming,hair" },
+  { id: 4, nome: "Progressiva Masculina", preco: 120, duracao: 90, ativo: true, descricao: "Alinhamento e progressiva para cabelos rebeldes", image: "https://loremflickr.com/400/240/hairstyle,salon,treatment" },
+  { id: 5, nome: "Coloração", preco: 90, duracao: 75, ativo: false, descricao: "Coloração profissional com produtos premium", image: "https://loremflickr.com/400/240/hair,color,dye" },
+  { id: 6, nome: "Sobrancelha", preco: 20, duracao: 15, ativo: true, descricao: "Design de sobrancelha com pinça e navalha", image: "https://loremflickr.com/400/240/eyebrow,beauty,makeup" },
 ];
 
 export const BARBEIROS: Barbeiro[] = [
-  { id: 1, name: "Rafael Costa", specialty: "Cortes clássicos e degradê", status: "disponivel", rating: 4.9, reviewCount: 312, color: "#c9a84c", monthlyCount: 87, image: "https://picsum.photos/seed/barber-rafael-costa/300/300" },
-  { id: 2, name: "Marcos Vinicius", specialty: "Barbas e navalha", status: "atendendo", rating: 4.7, reviewCount: 198, color: "#5B57E8", monthlyCount: 64, image: "https://picsum.photos/seed/barber-marcos-vinicius/300/300" },
-  { id: 3, name: "Bruno Alves", specialty: "Progressivas e coloração", status: "atendendo", rating: 4.8, reviewCount: 241, color: "#10B981", monthlyCount: 72, image: "https://picsum.photos/seed/barber-bruno-alves/300/300" },
-  { id: 4, name: "Diego Santos", specialty: "Cortes modernos e desenho", status: "folga", rating: 4.6, reviewCount: 156, color: "#EF9F27", monthlyCount: 53, image: "https://picsum.photos/seed/barber-diego-santos/300/300" },
+  { id: 1, name: "Rafael Costa", specialty: "Cortes clássicos e degradê", status: "disponivel", rating: 4.9, reviewCount: 312, color: "#c9a84c", monthlyCount: 87, image: "https://randomuser.me/api/portraits/men/32.jpg" },
+  { id: 2, name: "Marcos Vinicius", specialty: "Barbas e navalha", status: "atendendo", rating: 4.7, reviewCount: 198, color: "#5B57E8", monthlyCount: 64, image: "https://randomuser.me/api/portraits/men/44.jpg" },
+  { id: 3, name: "Bruno Alves", specialty: "Progressivas e coloração", status: "atendendo", rating: 4.8, reviewCount: 241, color: "#10B981", monthlyCount: 72, image: "https://randomuser.me/api/portraits/men/56.jpg" },
+  { id: 4, name: "Diego Santos", specialty: "Cortes modernos e desenho", status: "folga", rating: 4.6, reviewCount: 156, color: "#EF9F27", monthlyCount: 53, image: "https://randomuser.me/api/portraits/men/23.jpg" },
 ];
 
 export const AGENDAMENTOS: Agendamento[] = [
