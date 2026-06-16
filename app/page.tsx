@@ -262,7 +262,7 @@ export default function Home() {
               style={{ color: "var(--text-muted)" }}
             >
               Conte sua ideia e receba uma prévia real em forma de app, totalmente gratuita.
-              Sem tecnicismo, sem complicação.
+              Sem complicação, sem precisar falar difícil. Se expresse com suas palavras e deixe o resto por nossa conta!
             </p>
 
             <div className="mt-8 flex flex-wrap items-center justify-center gap-4 lg:justify-start">
