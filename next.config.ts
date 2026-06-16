@@ -14,7 +14,7 @@ const securityHeaders = [
       "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com data:",
-      "img-src 'self' data: blob: https://picsum.photos https://fastly.picsum.photos https://cdn.jsdelivr.net",
+      "img-src 'self' data: blob: https://cdn.jsdelivr.net https://randomuser.me https://loremflickr.com https://loremflickr.com/cache",
       "connect-src 'self' https://*.supabase.co https://api.resend.com",
       "frame-ancestors 'none'",
     ].join("; "),
