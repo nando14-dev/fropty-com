@@ -250,6 +250,17 @@ body {
   cursor: pointer;
 }
 
+/* Sidebar — fixed on desktop */
+.portal-sidebar {
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  width: 220px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
 /* Close button inside sidebar — hidden on desktop */
 .portal-sidebar-close {
   display: none;
