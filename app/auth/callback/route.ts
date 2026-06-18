@@ -1,17 +1,25 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/app/lib/supabase/server";
+import type { EmailOtpType } from "@supabase/supabase-js";
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
-  const code = searchParams.get("code");
   const next = searchParams.get("next") ?? "/area-cliente/dashboard";
+  const supabase = await createClient();
 
+  // Fluxo 1: token_hash (recovery, invite, signup) — sem PKCE, sem cookie
+  const tokenHash = searchParams.get("token_hash");
+  const type = searchParams.get("type") as EmailOtpType | null;
+  if (tokenHash && type) {
+    const { error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type });
+    if (!error) return NextResponse.redirect(`${origin}${next}`);
+  }
+
+  // Fluxo 2: PKCE code exchange (OAuth, magic link)
+  const code = searchParams.get("code");
   if (code) {
-    const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
-    if (!error) {
-      return NextResponse.redirect(`${origin}${next}`);
-    }
+    if (!error) return NextResponse.redirect(`${origin}${next}`);
   }
 
   return NextResponse.redirect(`${origin}/area-cliente?error=link-expirado`);
