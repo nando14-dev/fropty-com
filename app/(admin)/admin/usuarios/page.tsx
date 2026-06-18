@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@/app/lib/supabase/server";
-import { adminCreditTokens, adminUpdateUserRole, adminRevokeAccess, adminRestoreAccess } from "@/app/actions/admin";
+import { adminCreditTokens, adminUpdateUserRole, adminRevokeAccess, adminRestoreAccess, adminSetTokenBalance, adminUpdateUserPlan } from "@/app/actions/admin";
 import InviteForm from "./InviteForm";
 
 export const metadata: Metadata = { title: "Usuários — Admin" };
@@ -50,33 +50,69 @@ export default async function AdminUsuariosPage({ searchParams }: Props) {
         </p>
       </div>
 
+      {/* Invite form — convidar novo cliente */}
       <InviteForm />
 
       <div style={{ background: "var(--card-bg)", border: "1px solid var(--card-border)", borderRadius: 14, overflow: "hidden" }}>
         <div style={{ overflowX: "auto" }}>
         {/* Header */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 180px 100px 100px 80px 100px 260px", padding: "12px 20px", borderBottom: "1px solid var(--border)", fontSize: "11px", fontWeight: 700, color: "var(--text-faint)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-          <span>Nome</span>
-          <span>Email</span>
+        <div style={{ display: "grid", gridTemplateColumns: "1.4fr 180px 90px 130px 130px 80px 90px", padding: "12px 20px", borderBottom: "1px solid var(--border)", fontSize: "11px", fontWeight: 700, color: "var(--text-faint)", textTransform: "uppercase", letterSpacing: "0.05em", minWidth: 860 }}>
+          <span>Nome / Email</span>
+          <span>ID</span>
           <span>Role</span>
           <span>Plano</span>
-          <span style={{ textAlign: "right" }}>Tokens</span>
+          <span>Tokens</span>
           <span style={{ textAlign: "center" }}>Status</span>
-          <span style={{ textAlign: "center" }}>Ações</span>
+          <span style={{ textAlign: "center" }}>Acesso</span>
         </div>
 
         {list.map((u, i) => (
-          <div key={u.id} style={{ display: "grid", gridTemplateColumns: "1fr 180px 100px 100px 80px 100px 260px", padding: "14px 20px", borderBottom: i < list.length - 1 ? "1px solid var(--border)" : "none", alignItems: "center", gap: 8 }}>
+          <div key={u.id} style={{ display: "grid", gridTemplateColumns: "1.4fr 180px 90px 130px 130px 80px 90px", padding: "14px 20px", borderBottom: i < list.length - 1 ? "1px solid var(--border)" : "none", alignItems: "center", gap: 8, minWidth: 860 }}>
+
+            {/* Nome + email */}
             <div>
-              <p style={{ margin: "0 0 2px", fontSize: "13px", fontWeight: 700, color: "var(--text)" }}>{u.name}</p>
-              <p style={{ margin: 0, fontSize: "11px", color: "var(--text-faint)" }}>{u.id.slice(0, 8)}…</p>
+              <p style={{ margin: "0 0 2px", fontSize: "13px", fontWeight: 700, color: "var(--text)" }}>{u.name || "—"}</p>
+              <p style={{ margin: 0, fontSize: "11px", color: "var(--text-faint)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={u.email ?? ""}>{u.email ?? "—"}</p>
             </div>
-            <span style={{ fontSize: "11px", color: "var(--text-muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={u.email ?? ""}>{u.email ?? "—"}</span>
-            <span style={{ fontSize: "11px", fontWeight: 700, padding: "3px 9px", borderRadius: 999, background: `${ROLE_COLOR[u.role]}15`, color: ROLE_COLOR[u.role], border: `1px solid ${ROLE_COLOR[u.role]}30`, display: "inline-block" }}>
-              {u.role}
-            </span>
-            <span style={{ fontSize: "12px", color: "var(--text-muted)" }}>{PLAN_LABEL[u.plan ?? "sem_plano"] ?? "—"}</span>
-            <span style={{ fontSize: "13px", fontWeight: 700, color: "var(--text)", textAlign: "right" }}>{u.token_balance ?? 0}</span>
+
+            {/* ID curto */}
+            <span style={{ fontSize: "11px", color: "var(--text-faint)", fontFamily: "monospace" }}>{u.id.slice(0, 8)}…</span>
+
+            {/* Role */}
+            <form action={adminUpdateUserRole} style={{ display: "flex", gap: 3, alignItems: "center" }}>
+              <input type="hidden" name="user_id" value={u.id} />
+              <select name="role" defaultValue={u.role} style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 7, color: ROLE_COLOR[u.role] ?? "var(--text)", padding: "4px 5px", fontSize: "11px", fontWeight: 700, fontFamily: "inherit", cursor: "pointer", width: "100%" }}>
+                <option value="cliente">cliente</option>
+                <option value="admin">admin</option>
+              </select>
+              <button type="submit" title="Salvar role" style={{ padding: "4px 6px", borderRadius: 6, border: "1px solid var(--border)", background: "var(--surface)", color: "var(--text-muted)", fontSize: "10px", cursor: "pointer", fontFamily: "inherit", flexShrink: 0 }}>✓</button>
+            </form>
+
+            {/* Plano */}
+            <form action={adminUpdateUserPlan} style={{ display: "flex", gap: 3, alignItems: "center" }}>
+              <input type="hidden" name="user_id" value={u.id} />
+              <select name="plan" defaultValue={u.plan ?? "sem_plano"} style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 7, color: "var(--text)", padding: "4px 5px", fontSize: "11px", fontFamily: "inherit", cursor: "pointer", width: "100%" }}>
+                <option value="sem_plano">Sem plano</option>
+                <option value="basico">Básico</option>
+                <option value="pro">Pro</option>
+              </select>
+              <button type="submit" title="Salvar plano" style={{ padding: "4px 6px", borderRadius: 6, border: "1px solid var(--border)", background: "var(--surface)", color: "var(--text-muted)", fontSize: "10px", cursor: "pointer", fontFamily: "inherit", flexShrink: 0 }}>✓</button>
+            </form>
+
+            {/* Tokens — set direto + crédito rápido */}
+            <div style={{ display: "flex", gap: 3, alignItems: "center" }}>
+              <form action={adminSetTokenBalance} style={{ display: "flex", gap: 2, flex: 1 }}>
+                <input type="hidden" name="user_id" value={u.id} />
+                <input type="number" name="balance" defaultValue={u.token_balance ?? 0} min={0} max={99999} style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 7, color: "var(--text)", padding: "4px 6px", fontSize: "12px", fontWeight: 700, fontFamily: "inherit", width: "70px" }} />
+                <button type="submit" title="Definir saldo" style={{ padding: "4px 6px", borderRadius: 6, border: "1px solid var(--border)", background: "var(--surface)", color: "var(--text-muted)", fontSize: "10px", cursor: "pointer", fontFamily: "inherit" }}>✓</button>
+              </form>
+              <form action={adminCreditTokens}>
+                <input type="hidden" name="user_id" value={u.id} />
+                <input type="hidden" name="amount" value="1" />
+                <input type="hidden" name="description" value="Crédito admin" />
+                <button type="submit" title="Adicionar 1 token" style={{ padding: "4px 7px", borderRadius: 6, border: "1px solid rgba(34,197,94,0.3)", background: "rgba(34,197,94,0.08)", color: "#22c55e", fontSize: "11px", fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>+1</button>
+              </form>
+            </div>
 
             {/* Status badge */}
             <span style={{ textAlign: "center" }}>
@@ -87,42 +123,21 @@ export default async function AdminUsuariosPage({ searchParams }: Props) {
               )}
             </span>
 
-            {/* Ações */}
-            <div style={{ display: "flex", gap: 6, justifyContent: "center", flexWrap: "wrap" }}>
-              {/* Creditar tokens */}
-              <form action={adminCreditTokens}>
-                <input type="hidden" name="user_id" value={u.id} />
-                <input type="hidden" name="amount" value="1" />
-                <input type="hidden" name="description" value="Crédito admin" />
-                <button type="submit" title="Creditar 1 token" style={{ padding: "5px 10px", borderRadius: 7, border: "1px solid rgba(34,197,94,0.3)", background: "rgba(34,197,94,0.08)", color: "#22c55e", fontSize: "11px", fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
-                  <i className="ti ti-plus" /> Token
-                </button>
-              </form>
-              {/* Mudar role */}
-              <form action={adminUpdateUserRole} style={{ display: "flex", gap: 4 }}>
-                <input type="hidden" name="user_id" value={u.id} />
-                <select name="role" defaultValue={u.role} style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 7, color: "var(--text)", padding: "4px 6px", fontSize: "11px", fontFamily: "inherit", cursor: "pointer" }}>
-                  <option value="cliente">cliente</option>
-                  <option value="admin">admin</option>
-                </select>
-                <button type="submit" style={{ padding: "5px 8px", borderRadius: 7, border: "1px solid var(--border)", background: "var(--surface)", color: "var(--text-muted)", fontSize: "11px", fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
-                  OK
-                </button>
-              </form>
-              {/* Revogar / Restaurar (apenas para clientes) */}
+            {/* Revogar / Restaurar */}
+            <div style={{ display: "flex", justifyContent: "center" }}>
               {u.role !== "admin" && (
                 u.is_active !== false ? (
                   <form action={adminRevokeAccess}>
                     <input type="hidden" name="user_id" value={u.id} />
-                    <button type="submit" title="Revogar acesso" style={{ padding: "5px 10px", borderRadius: 7, border: "1px solid rgba(239,68,68,0.3)", background: "rgba(239,68,68,0.08)", color: "#ef4444", fontSize: "11px", fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
-                      <i className="ti ti-ban" /> Revogar
+                    <button type="submit" title="Revogar acesso" style={{ padding: "5px 9px", borderRadius: 7, border: "1px solid rgba(239,68,68,0.3)", background: "rgba(239,68,68,0.08)", color: "#ef4444", fontSize: "11px", fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
+                      <i className="ti ti-ban" />
                     </button>
                   </form>
                 ) : (
                   <form action={adminRestoreAccess}>
                     <input type="hidden" name="user_id" value={u.id} />
-                    <button type="submit" title="Restaurar acesso" style={{ padding: "5px 10px", borderRadius: 7, border: "1px solid rgba(34,197,94,0.3)", background: "rgba(34,197,94,0.08)", color: "#22c55e", fontSize: "11px", fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
-                      <i className="ti ti-rotate" /> Restaurar
+                    <button type="submit" title="Restaurar acesso" style={{ padding: "5px 9px", borderRadius: 7, border: "1px solid rgba(34,197,94,0.3)", background: "rgba(34,197,94,0.08)", color: "#22c55e", fontSize: "11px", fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
+                      <i className="ti ti-rotate" />
                     </button>
                   </form>
                 )
@@ -132,7 +147,7 @@ export default async function AdminUsuariosPage({ searchParams }: Props) {
         ))}
 
         {list.length === 0 && <p style={{ padding: "32px", textAlign: "center", color: "var(--text-faint)", fontSize: "13px", margin: 0 }}>Nenhum usuário ainda.</p>}
-        </div>{/* end overflow-x: auto */}
+        </div>
       </div>
 
       {/* Paginação */}

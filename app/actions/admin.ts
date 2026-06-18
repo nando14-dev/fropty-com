@@ -117,6 +117,32 @@ export async function adminRestoreAccess(formData: FormData): Promise<void> {
   revalidatePath("/admin/usuarios");
 }
 
+export async function adminSetTokenBalance(formData: FormData): Promise<void> {
+  const adminId = await requireRole("admin");
+  const userId  = (formData.get("user_id") as string)?.trim();
+  const balance = parseInt((formData.get("balance") as string) ?? "0", 10);
+
+  if (!userId || isNaN(balance) || balance < 0 || balance > 99999) return;
+
+  const supabase = await createClient();
+  await supabase.from("profiles").update({ token_balance: balance }).eq("id", userId);
+  logAdminAction({ adminId, action: "set_token_balance", targetType: "user", targetId: userId, metadata: { balance } });
+  revalidatePath("/admin/usuarios");
+}
+
+export async function adminUpdateUserPlan(formData: FormData): Promise<void> {
+  const adminId = await requireRole("admin");
+  const userId  = (formData.get("user_id") as string)?.trim();
+  const plan    = (formData.get("plan") as string)?.trim();
+
+  if (!userId || !["sem_plano", "basico", "pro"].includes(plan)) return;
+
+  const supabase = await createClient();
+  await supabase.from("profiles").update({ plan: plan as "sem_plano" | "basico" | "pro" }).eq("id", userId);
+  logAdminAction({ adminId, action: "update_plan", targetType: "user", targetId: userId, metadata: { plan } });
+  revalidatePath("/admin/usuarios");
+}
+
 export async function adminUpdateUserRole(formData: FormData): Promise<void> {
   const adminId = await requireRole("admin");
   const userId  = (formData.get("user_id") as string)?.trim();
