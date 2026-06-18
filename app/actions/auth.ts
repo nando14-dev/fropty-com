@@ -101,7 +101,7 @@ export async function requestPasswordReset(formData: FormData) {
   const siteUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://fropty.com";
 
   await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${siteUrl}/area-cliente/nova-senha`,
+    redirectTo: `${siteUrl}/auth/callback?next=/area-cliente/nova-senha`,
   });
 
   // Sempre retorna sucesso (não revela se e-mail existe)
