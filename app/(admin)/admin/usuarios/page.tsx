@@ -53,6 +53,7 @@ export default async function AdminUsuariosPage({ searchParams }: Props) {
       <InviteForm />
 
       <div style={{ background: "var(--card-bg)", border: "1px solid var(--card-border)", borderRadius: 14, overflow: "hidden" }}>
+        <div style={{ overflowX: "auto" }}>
         {/* Header */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 180px 100px 100px 80px 100px 260px", padding: "12px 20px", borderBottom: "1px solid var(--border)", fontSize: "11px", fontWeight: 700, color: "var(--text-faint)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
           <span>Nome</span>
@@ -131,6 +132,7 @@ export default async function AdminUsuariosPage({ searchParams }: Props) {
         ))}
 
         {list.length === 0 && <p style={{ padding: "32px", textAlign: "center", color: "var(--text-faint)", fontSize: "13px", margin: 0 }}>Nenhum usuário ainda.</p>}
+        </div>{/* end overflow-x: auto */}
       </div>
 
       {/* Paginação */}
