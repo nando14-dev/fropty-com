@@ -24,15 +24,19 @@ export async function signIn(formData: FormData) {
 
     if (error) return { error: "Email ou senha incorretos." };
 
-    // Busca o role para redirecionar para a home correta de cada tipo de usuário
+    // Busca role e is_active para bloquear usuários revogados antes de redirecionar
     const { data: profile } = await supabase
       .from("profiles")
-      .select("role")
+      .select("role, is_active")
       .eq("id", user!.id)
       .single();
 
+    if (profile?.is_active === false) {
+      await supabase.auth.signOut();
+      return { error: "Seu acesso foi revogado. Entre em contato com o suporte." };
+    }
+
     const role = (profile?.role as UserRole) ?? DEFAULT_ROLE;
-    // Retorna a URL em vez de redirect() para evitar problemas com startTransition no React 19
     return { redirectTo: ROLE_HOME[role] };
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
@@ -120,7 +124,7 @@ export async function updatePassword(formData: FormData) {
 
   if (error) return { error: "Não foi possível atualizar a senha. O link pode ter expirado." };
 
-  redirect("/area-cliente/dashboard");
+  redirect("/portal/dashboard");
 }
 
 /**

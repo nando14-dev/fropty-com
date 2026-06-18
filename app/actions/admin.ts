@@ -96,11 +96,14 @@ export async function adminInviteClient(formData: FormData): Promise<{ error?: s
 }
 
 export async function adminRevokeAccess(formData: FormData): Promise<void> {
-  await requireRole("admin");
-  const userId = (formData.get("user_id") as string)?.trim();
-  if (!userId) return;
+  const adminId = await requireRole("admin");
+  const userId  = (formData.get("user_id") as string)?.trim();
+  if (!userId || userId === adminId) return; // impede auto-revogação
 
   const service = createServiceClient();
+  const { data: target } = await service.from("profiles").select("role").eq("id", userId).single();
+  if (target?.role === "admin") return; // nunca revogar outro admin
+
   await service.auth.admin.updateUserById(userId, { ban_duration: "87600h" });
   await service.from("profiles").update({ is_active: false }).eq("id", userId);
   revalidatePath("/admin/usuarios");

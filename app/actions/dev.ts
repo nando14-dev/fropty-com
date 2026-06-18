@@ -23,7 +23,7 @@ export async function updateTicketStatus(ticketId: string, status: TicketStatus)
 
   if (error) return;
   revalidatePath("/admin/suporte");
-  revalidatePath(`/area-cliente/suporte/${ticketId}`);
+  revalidatePath(`/portal/suporte/${ticketId}`);
 }
 
 export async function updateTicketPriority(ticketId: string, priority: TicketPriority): Promise<void> {
@@ -47,7 +47,7 @@ export async function updateProjectStatus(projectId: string, status: ProjectStat
   }).eq("id", projectId);
 
   revalidatePath("/admin/projetos");
-  revalidatePath("/area-cliente/projetos");
+  revalidatePath("/portal/projetos");
 }
 
 export async function sendDevMessage(formData: FormData): Promise<void> {
@@ -66,5 +66,5 @@ export async function sendDevMessage(formData: FormData): Promise<void> {
   });
 
   revalidatePath(`/admin/suporte/${ticketId}`);
-  revalidatePath(`/area-cliente/suporte/${ticketId}`);
+  revalidatePath(`/portal/suporte/${ticketId}`);
 }

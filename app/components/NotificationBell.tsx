@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { createClient } from "@/app/lib/supabase/browser";
 import type { Database } from "@/app/lib/supabase/types";
 
@@ -32,7 +32,7 @@ export function NotificationBell({ userId }: { userId: string }) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [open, setOpen]                   = useState(false);
   const ref                               = useRef<HTMLDivElement>(null);
-  const supabase                          = createClient();
+  const supabase                          = useMemo(() => createClient(), []);
 
   const unread = notifications.filter((n) => !n.read_at).length;
 

@@ -40,7 +40,7 @@ export function AvatarUpload({ userId, currentUrl, initials, size = 36 }: Props)
     const urlWithBust = `${publicUrl}?t=${Date.now()}`;
     setAvatarUrl(urlWithBust);
 
-    startTransition(() => updateAvatarUrl(publicUrl));
+    startTransition(() => updateAvatarUrl(urlWithBust));
     setUploading(false);
     e.target.value = "";
   }

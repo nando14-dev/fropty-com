@@ -43,10 +43,12 @@ export async function requireAuth() {
 /**
  * Exige role específico — redireciona para login se não autenticado
  * ou para a home do role correto se o acesso for negado.
+ * Bloqueia usuários com is_active = false mesmo que autenticados.
  */
 export async function requireRole(role: UserRole | UserRole[]) {
   const profile = await getProfile();
   if (!profile) redirect("/area-cliente");
+  if (profile.is_active === false) redirect("/area-cliente?error=acesso-revogado");
   const allowed = Array.isArray(role) ? role : [role];
   if (!allowed.includes(profile.role as UserRole)) {
     redirect("/area-cliente");

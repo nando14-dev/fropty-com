@@ -58,7 +58,7 @@ export async function createTicket(formData: FormData) {
     ticketId:    result.ticketId!,
   });
 
-  revalidatePath("/area-cliente/suporte");
+  revalidatePath("/portal/suporte");
   return { success: true, ticketId: result.ticketId };
 }
 
@@ -143,7 +143,7 @@ export async function sendMessage(formData: FormData) {
     }
   }
 
-  revalidatePath(`/area-cliente/suporte/${ticketId}`);
+  revalidatePath(`/portal/suporte/${ticketId}`);
   revalidatePath(`/admin/suporte/${ticketId}`);
   return { success: true };
 }

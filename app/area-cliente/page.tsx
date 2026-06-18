@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { signIn } from "@/app/actions/auth";
@@ -10,9 +10,14 @@ import { createClient } from "@/app/lib/supabase/browser";
 type Mode = "login" | "reset";
 
 export default function AreaClientePage() {
-  const router = useRouter();
+  const router       = useRouter();
+  const searchParams = useSearchParams();
   const [mode, setMode]       = useState<Mode>("login");
-  const [error, setError]     = useState<string | null>(null);
+  const [error, setError]     = useState<string | null>(() =>
+    searchParams.get("error") === "acesso-revogado"
+      ? "Seu acesso foi revogado. Entre em contato com o suporte."
+      : null
+  );
   const [success, setSuccess] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const [theme, setTheme] = useState<"dark" | "light">("dark");
