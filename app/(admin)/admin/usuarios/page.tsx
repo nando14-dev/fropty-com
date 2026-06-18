@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@/app/lib/supabase/server";
-import { adminCreditTokens, adminUpdateUserRole } from "@/app/actions/admin";
+import { adminCreditTokens, adminUpdateUserRole, adminRevokeAccess, adminRestoreAccess } from "@/app/actions/admin";
+import InviteForm from "./InviteForm";
 
 export const metadata: Metadata = { title: "Usuários — Admin" };
 
@@ -41,7 +42,7 @@ export default async function AdminUsuariosPage({ searchParams }: Props) {
   const totalPages = Math.ceil((total ?? 0) / PAGE_SIZE);
 
   return (
-    <div style={{ padding: "40px 32px", maxWidth: 1000, margin: "0 auto" }}>
+    <div style={{ padding: "40px 32px", maxWidth: 1100, margin: "0 auto" }}>
       <div style={{ marginBottom: 28 }}>
         <h1 style={{ fontSize: "1.75rem", fontWeight: 800, margin: "0 0 4px", color: "var(--text)" }}>Usuários</h1>
         <p style={{ margin: 0, fontSize: "13px", color: "var(--text-faint)" }}>
@@ -49,27 +50,41 @@ export default async function AdminUsuariosPage({ searchParams }: Props) {
         </p>
       </div>
 
+      <InviteForm />
+
       <div style={{ background: "var(--card-bg)", border: "1px solid var(--card-border)", borderRadius: 14, overflow: "hidden" }}>
         {/* Header */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 100px 100px 110px 220px", padding: "12px 20px", borderBottom: "1px solid var(--border)", fontSize: "11px", fontWeight: 700, color: "var(--text-faint)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 180px 100px 100px 80px 100px 260px", padding: "12px 20px", borderBottom: "1px solid var(--border)", fontSize: "11px", fontWeight: 700, color: "var(--text-faint)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
           <span>Nome</span>
+          <span>Email</span>
           <span>Role</span>
           <span>Plano</span>
           <span style={{ textAlign: "right" }}>Tokens</span>
+          <span style={{ textAlign: "center" }}>Status</span>
           <span style={{ textAlign: "center" }}>Ações</span>
         </div>
 
         {list.map((u, i) => (
-          <div key={u.id} style={{ display: "grid", gridTemplateColumns: "1fr 100px 100px 110px 220px", padding: "14px 20px", borderBottom: i < list.length - 1 ? "1px solid var(--border)" : "none", alignItems: "center", gap: 8 }}>
+          <div key={u.id} style={{ display: "grid", gridTemplateColumns: "1fr 180px 100px 100px 80px 100px 260px", padding: "14px 20px", borderBottom: i < list.length - 1 ? "1px solid var(--border)" : "none", alignItems: "center", gap: 8 }}>
             <div>
               <p style={{ margin: "0 0 2px", fontSize: "13px", fontWeight: 700, color: "var(--text)" }}>{u.name}</p>
               <p style={{ margin: 0, fontSize: "11px", color: "var(--text-faint)" }}>{u.id.slice(0, 8)}…</p>
             </div>
+            <span style={{ fontSize: "11px", color: "var(--text-muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={u.email ?? ""}>{u.email ?? "—"}</span>
             <span style={{ fontSize: "11px", fontWeight: 700, padding: "3px 9px", borderRadius: 999, background: `${ROLE_COLOR[u.role]}15`, color: ROLE_COLOR[u.role], border: `1px solid ${ROLE_COLOR[u.role]}30`, display: "inline-block" }}>
               {u.role}
             </span>
             <span style={{ fontSize: "12px", color: "var(--text-muted)" }}>{PLAN_LABEL[u.plan ?? "sem_plano"] ?? "—"}</span>
             <span style={{ fontSize: "13px", fontWeight: 700, color: "var(--text)", textAlign: "right" }}>{u.token_balance ?? 0}</span>
+
+            {/* Status badge */}
+            <span style={{ textAlign: "center" }}>
+              {u.is_active !== false ? (
+                <span style={{ fontSize: "11px", fontWeight: 700, padding: "3px 9px", borderRadius: 999, background: "rgba(34,197,94,0.1)", color: "#22c55e", border: "1px solid rgba(34,197,94,0.3)", display: "inline-block" }}>Ativo</span>
+              ) : (
+                <span style={{ fontSize: "11px", fontWeight: 700, padding: "3px 9px", borderRadius: 999, background: "rgba(239,68,68,0.1)", color: "#ef4444", border: "1px solid rgba(239,68,68,0.3)", display: "inline-block" }}>Revogado</span>
+              )}
+            </span>
 
             {/* Ações */}
             <div style={{ display: "flex", gap: 6, justifyContent: "center", flexWrap: "wrap" }}>
@@ -93,6 +108,24 @@ export default async function AdminUsuariosPage({ searchParams }: Props) {
                   OK
                 </button>
               </form>
+              {/* Revogar / Restaurar (apenas para clientes) */}
+              {u.role !== "admin" && (
+                u.is_active !== false ? (
+                  <form action={adminRevokeAccess}>
+                    <input type="hidden" name="user_id" value={u.id} />
+                    <button type="submit" title="Revogar acesso" style={{ padding: "5px 10px", borderRadius: 7, border: "1px solid rgba(239,68,68,0.3)", background: "rgba(239,68,68,0.08)", color: "#ef4444", fontSize: "11px", fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
+                      <i className="ti ti-ban" /> Revogar
+                    </button>
+                  </form>
+                ) : (
+                  <form action={adminRestoreAccess}>
+                    <input type="hidden" name="user_id" value={u.id} />
+                    <button type="submit" title="Restaurar acesso" style={{ padding: "5px 10px", borderRadius: 7, border: "1px solid rgba(34,197,94,0.3)", background: "rgba(34,197,94,0.08)", color: "#22c55e", fontSize: "11px", fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
+                      <i className="ti ti-rotate" /> Restaurar
+                    </button>
+                  </form>
+                )
+              )}
             </div>
           </div>
         ))}
