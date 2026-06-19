@@ -23,6 +23,8 @@ export async function createTicket(formData: FormData) {
   const body        = (formData.get("body")           as string)?.trim().slice(0, 10000);
   const projectId   = (formData.get("project_id")    as string)?.trim() || null;
   const onBehalfOf  = (formData.get("on_behalf_of")  as string)?.trim() || null;
+  const priorityRaw = (formData.get("priority")      as string)?.trim();
+  const priority    = (["baixa", "media", "alta"].includes(priorityRaw) ? priorityRaw : "media") as "baixa" | "media" | "alta";
   const attachments = formData.getAll("attachments[]")
     .map((v) => (v as string).trim())
     .filter((url) => url && isValidAttachmentUrl(url))
@@ -40,9 +42,10 @@ export async function createTicket(formData: FormData) {
 
   const isAdmin = callerProfile?.role === "admin";
 
-  // Admin pode criar em nome de outro cliente; valida que o ID pertence a um cliente ativo
+  // Admin abre em nome de um cliente; cliente abre o próprio chamado.
   let clientId = userId;
-  if (isAdmin && onBehalfOf) {
+  if (isAdmin) {
+    if (!onBehalfOf) return { error: "Selecione o cliente." };
     const { data: target } = await supabase
       .from("profiles")
       .select("id, role, is_active")
@@ -61,9 +64,7 @@ export async function createTicket(formData: FormData) {
     .single();
 
   const { data: authUser } = await supabase.auth.getUser();
-  const clientEmail = isAdmin && onBehalfOf
-    ? "" // email do cliente não disponível aqui sem service client — alerta vai só para admin
-    : (authUser.user?.email ?? "");
+  const clientEmail = isAdmin ? "" : (authUser.user?.email ?? "");
 
   const result = await dbCreateTicket({
     clientId,
@@ -71,6 +72,10 @@ export async function createTicket(formData: FormData) {
     subject,
     category:    category || "Geral",
     body,
+    priority,
+    senderId:    clientId,        // a mensagem inicial pertence ao cliente do chamado
+    senderRole:  "cliente",
+    useService:  isAdmin,         // admin em nome de cliente precisa bypassar RLS
     attachments: attachments.length > 0 ? attachments : undefined,
   });
 

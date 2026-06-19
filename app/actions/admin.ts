@@ -76,7 +76,7 @@ export async function adminUpdateProject(formData: FormData): Promise<void> {
 }
 
 export async function adminInviteClient(formData: FormData): Promise<{ error?: string; success?: string }> {
-  await requireRole("admin");
+  const adminId      = await requireRole("admin");
   const email        = (formData.get("email") as string)?.trim().toLowerCase();
   const name         = (formData.get("name") as string)?.trim() || email.split("@")[0];
   const tokenBalance = Math.max(0, parseInt((formData.get("token_balance") as string) ?? "0", 10));
@@ -85,12 +85,14 @@ export async function adminInviteClient(formData: FormData): Promise<{ error?: s
   if (!email) return { error: "Informe o e-mail." };
 
   const service = createServiceClient();
-  const { error } = await service.auth.admin.inviteUserByEmail(email, {
+  const { data, error } = await service.auth.admin.inviteUserByEmail(email, {
     redirectTo: `${process.env.NEXT_PUBLIC_APP_URL ?? "https://www.fropty.com"}/auth/callback?next=/area-cliente/nova-senha`,
     data: { name, role: "cliente", token_balance: tokenBalance, plan },
   });
 
   if (error) return { error: error.message };
+
+  logAdminAction({ adminId, action: "invite_client", targetType: "user", targetId: data?.user?.id, metadata: { email, name, plan, tokenBalance } });
   revalidatePath("/admin/usuarios");
   return { success: `Convite enviado para ${email}` };
 }
@@ -101,22 +103,25 @@ export async function adminRevokeAccess(formData: FormData): Promise<void> {
   if (!userId || userId === adminId) return; // impede auto-revogação
 
   const service = createServiceClient();
-  const { data: target } = await service.from("profiles").select("role").eq("id", userId).single();
+  const { data: target } = await service.from("profiles").select("role, name, email").eq("id", userId).single();
   if (target?.role === "admin") return; // nunca revogar outro admin
 
   await service.auth.admin.updateUserById(userId, { ban_duration: "87600h" });
   await service.from("profiles").update({ is_active: false }).eq("id", userId);
+  logAdminAction({ adminId, action: "revoke_access", targetType: "user", targetId: userId, metadata: { name: target?.name, email: target?.email } });
   revalidatePath("/admin/usuarios");
 }
 
 export async function adminRestoreAccess(formData: FormData): Promise<void> {
-  await requireRole("admin");
-  const userId = (formData.get("user_id") as string)?.trim();
+  const adminId = await requireRole("admin");
+  const userId  = (formData.get("user_id") as string)?.trim();
   if (!userId) return;
 
   const service = createServiceClient();
+  const { data: target } = await service.from("profiles").select("name, email").eq("id", userId).single();
   await service.auth.admin.updateUserById(userId, { ban_duration: "none" });
   await service.from("profiles").update({ is_active: true }).eq("id", userId);
+  logAdminAction({ adminId, action: "restore_access", targetType: "user", targetId: userId, metadata: { name: target?.name, email: target?.email } });
   revalidatePath("/admin/usuarios");
 }
 

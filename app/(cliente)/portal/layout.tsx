@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getProfile } from "@/app/lib/auth/session";
 import { createClient } from "@/app/lib/supabase/server";
 import { ClientSidebar } from "@/app/components/cliente/ClientSidebar";
+import { AdminSidebar } from "@/app/components/admin/AdminSidebar";
 import { UserAvatarMenu } from "@/app/components/auth/UserAvatarMenu";
 import { PullToRefresh } from "@/app/components/PullToRefresh";
 
@@ -43,19 +44,13 @@ export default async function PortalLayout({
 
   const isAdmin = profile?.role === "admin";
 
-  const portalNav = isAdmin
-    ? [
-        { id: "painel",  href: "/admin/overview", icon: "ti-layout-dashboard", label: "Painel admin" },
-        { id: "suporte", href: "/portal/suporte", icon: "ti-message-circle",   label: "Suporte" },
-        { id: "perfil",  href: "/admin/perfil",   icon: "ti-user-circle",      label: "Meu Perfil" },
-      ]
-    : [
-        { id: "dashboard",  href: "/portal/dashboard",  icon: "ti-layout-dashboard", label: "Painel" },
-        { id: "projetos",   href: "/portal/projetos",   icon: "ti-folder",           label: "Projetos" },
-        { id: "suporte",    href: "/portal/suporte",    icon: "ti-message-circle",   label: "Suporte", badge: openTickets ?? 0 },
-        { id: "financeiro", href: "/portal/financeiro", icon: "ti-credit-card",      label: "Financeiro" },
-        { id: "perfil",     href: "/portal/perfil",     icon: "ti-user-circle",      label: "Meu Perfil" },
-      ];
+  const portalNav = [
+    { id: "dashboard",  href: "/portal/dashboard",  icon: "ti-layout-dashboard", label: "Painel" },
+    { id: "projetos",   href: "/portal/projetos",   icon: "ti-folder",           label: "Projetos" },
+    { id: "suporte",    href: "/portal/suporte",    icon: "ti-message-circle",   label: "Suporte", badge: openTickets ?? 0 },
+    { id: "financeiro", href: "/portal/financeiro", icon: "ti-credit-card",      label: "Financeiro" },
+    { id: "perfil",     href: "/portal/perfil",     icon: "ti-user-circle",      label: "Meu Perfil" },
+  ];
 
   // Objeto compatível com ClientUser (campos mínimos necessários)
   const sidebarUser = {
@@ -73,12 +68,22 @@ export default async function PortalLayout({
 
   return (
     <div style={{ display: "flex", minHeight: "100vh", background: "var(--bg)", color: "var(--text)" }}>
-      {/* Sidebar com nav do portal — substitui links legados do area-cliente */}
-      <ClientSidebar
-        user={sidebarUser}
-        navItems={portalNav}
-        initialTheme={profile?.theme ?? "dark"}
-      />
+      {/* Admin mantém a navegação completa do painel mesmo no suporte;
+          cliente usa a sidebar do portal. */}
+      {isAdmin ? (
+        <AdminSidebar
+          name={displayName}
+          initials={initials}
+          userId={profile?.id ?? ""}
+          initialTheme={profile?.theme ?? "dark"}
+        />
+      ) : (
+        <ClientSidebar
+          user={sidebarUser}
+          navItems={portalNav}
+          initialTheme={profile?.theme ?? "dark"}
+        />
+      )}
 
       {/* Menu de usuário fora do sidebar — visível no mobile futuramente */}
       {/* UserAvatarMenu é usado aqui como overlay alternativo; no desktop

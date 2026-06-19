@@ -1,4 +1,7 @@
 import { createClient } from "@/app/lib/supabase/server";
+import { createServiceClient } from "@/app/lib/supabase/service";
+
+type TicketPriority = "baixa" | "media" | "alta";
 
 interface CreateTicketInput {
   clientId:    string;
@@ -6,11 +9,16 @@ interface CreateTicketInput {
   subject:     string;
   category:    string;
   body:        string;
+  priority?:   TicketPriority;
+  senderId:    string;
+  senderRole:  "cliente" | "admin";
   attachments?: string[];
+  // Quando true, usa service role (bypassa RLS) — necessário p/ admin abrir em nome de cliente
+  useService?: boolean;
 }
 
 export async function dbCreateTicket(input: CreateTicketInput) {
-  const supabase = await createClient();
+  const supabase = input.useService ? createServiceClient() : await createClient();
 
   const { data: ticket, error: ticketError } = await supabase
     .from("tickets")
@@ -19,8 +27,8 @@ export async function dbCreateTicket(input: CreateTicketInput) {
       project_id: input.projectId,
       subject:    input.subject,
       category:   input.category,
-      status:     "aberto"  as const,
-      priority:   "media"   as const,
+      status:     "aberto" as const,
+      priority:   (input.priority ?? "media") as TicketPriority,
     })
     .select("id")
     .single();
@@ -31,8 +39,8 @@ export async function dbCreateTicket(input: CreateTicketInput) {
     .from("ticket_messages")
     .insert({
       ticket_id:   ticket.id,
-      sender_id:   input.clientId,
-      sender_role: "cliente" as const,
+      sender_id:   input.senderId,
+      sender_role: input.senderRole,
       body:        input.body,
       ...(input.attachments?.length ? { attachments: input.attachments } : {}),
     });
