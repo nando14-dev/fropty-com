@@ -23,7 +23,7 @@ export async function createTicket(formData: FormData) {
   const body        = (formData.get("body")           as string)?.trim().slice(0, 10000);
   const projectId   = (formData.get("project_id")    as string)?.trim() || null;
   const onBehalfOf  = (formData.get("on_behalf_of")  as string)?.trim() || null;
-  const priorityRaw = (formData.get("priority")      as string)?.trim();
+  const priorityRaw = ((formData.get("priority")     as string) ?? "").trim();
   const priority    = (["baixa", "media", "alta"].includes(priorityRaw) ? priorityRaw : "media") as "baixa" | "media" | "alta";
   const attachments = formData.getAll("attachments[]")
     .map((v) => (v as string).trim())

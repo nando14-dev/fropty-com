@@ -39,14 +39,18 @@ export async function queryAuditLogs(
   if (filters.from)    query = query.gte("created_at", `${filters.from}T00:00:00`);
   if (filters.to)      query = query.lte("created_at", `${filters.to}T23:59:59`);
 
-  if (opts.paginate) {
+  const usingSearch = !!filters.q?.trim();
+
+  // Com busca textual (sobre nomes resolvidos/metadata) precisamos filtrar tudo
+  // em memória, então não paginamos no banco nesse caso.
+  if (opts.paginate && !usingSearch) {
     query = query.range(page * pageSize, page * pageSize + pageSize - 1);
   } else {
     query = query.limit(5000);
   }
 
   const { data, count } = await query;
-  let logs = data ?? [];
+  const logs = data ?? [];
 
   // Resolve nomes de admins e alvos em lote
   const adminIds   = [...new Set(logs.map((l) => l.admin_id).filter(Boolean))];
@@ -90,15 +94,22 @@ export async function queryAuditLogs(
     };
   });
 
-  const filtered = q
-    ? rows.filter((r) =>
-        r.adminName.toLowerCase().includes(q) ||
-        (r.targetName?.toLowerCase().includes(q) ?? false) ||
-        r.action.toLowerCase().includes(q) ||
-        JSON.stringify(r.metadata ?? {}).toLowerCase().includes(q))
-    : rows;
+  if (!usingSearch) {
+    return { rows, total: count ?? rows.length };
+  }
 
-  return { rows: filtered, total: count ?? filtered.length };
+  // Filtra por busca textual e pagina em memória
+  const filtered = rows.filter((r) =>
+    r.adminName.toLowerCase().includes(q!) ||
+    (r.targetName?.toLowerCase().includes(q!) ?? false) ||
+    r.action.toLowerCase().includes(q!) ||
+    JSON.stringify(r.metadata ?? {}).toLowerCase().includes(q!));
+
+  if (opts.paginate) {
+    const start = page * pageSize;
+    return { rows: filtered.slice(start, start + pageSize), total: filtered.length };
+  }
+  return { rows: filtered, total: filtered.length };
 }
 
 export async function logAdminAction(opts: {
