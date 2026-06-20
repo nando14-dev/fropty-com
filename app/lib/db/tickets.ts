@@ -30,7 +30,7 @@ export async function dbCreateTicket(input: CreateTicketInput) {
       status:     "aberto" as const,
       priority:   (input.priority ?? "media") as TicketPriority,
     })
-    .select("id")
+    .select("id, ticket_number")
     .single();
 
   if (ticketError || !ticket) return { error: ticketError?.message ?? "Erro ao criar ticket" };
@@ -47,5 +47,5 @@ export async function dbCreateTicket(input: CreateTicketInput) {
 
   if (msgError) console.error("[db/tickets] create message error:", msgError.message);
 
-  return { ticketId: ticket.id };
+  return { ticketId: ticket.id, ticketNumber: ticket.ticket_number as number | undefined };
 }

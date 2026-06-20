@@ -42,6 +42,16 @@ function tag(text: string, color = "#5B57E8") {
   return `<span style="display:inline-block;padding:2px 10px;border-radius:999px;background:${color}22;color:${color};font-size:11px;font-weight:700;border:1px solid ${color}30;">${text}</span>`;
 }
 
+// Escapa conteúdo fornecido pelo usuário antes de injetar no HTML do e-mail
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 // ── Boas-vindas ao novo cliente ───────────────────────────────────
 export async function sendWelcomeEmail(opts: {
   toEmail: string;
@@ -126,6 +136,109 @@ export async function sendNewTicketAlert(opts: {
       ${btn("Abrir chamado", `${APP_URL}/admin/suporte/${opts.ticketId}`)}
     `),
   }).catch((e) => console.error("[email] sendNewTicketAlert:", e));
+}
+
+// ── Confirmação de chamado aberto (para o cliente) ────────────────
+export async function sendTicketOpenedToClient(opts: {
+  toEmail: string;
+  toName: string;
+  subject: string;
+  category: string;
+  priority: "baixa" | "media" | "alta";
+  body: string;
+  ticketNumber?: number;
+  ticketId: string;
+}) {
+  if (!opts.toEmail) return;
+
+  const priorityLabel: Record<string, string> = { baixa: "Baixa", media: "Média", alta: "Alta" };
+  const priorityColor: Record<string, string> = { baixa: "#94a3b8", media: "#EF9F27", alta: "#ef4444" };
+  const ref = opts.ticketNumber ? `UFT${String(opts.ticketNumber).padStart(4, "0")}` : null;
+
+  await getResend().emails.send({
+    from: FROM,
+    to:   opts.toEmail,
+    subject: `Chamado recebido${ref ? ` (${ref})` : ""}: ${opts.subject}`,
+    html: baseTemplate(`
+      <p style="margin:0 0 6px;font-size:13px;color:#22c55e;">&#10003; Recebemos seu chamado</p>
+      <h2 style="margin:0 0 8px;font-size:20px;font-weight:800;color:#F7F8FC;line-height:1.3;">${escapeHtml(opts.subject)}</h2>
+      ${ref ? `<p style="margin:0 0 16px;font-size:12px;font-weight:700;color:#5B57E8;letter-spacing:0.05em;">${ref}</p>` : ""}
+      <p style="font-size:14px;color:#94a3b8;line-height:1.7;margin:0 0 20px;">
+        Olá, <strong style="color:#F7F8FC;">${escapeHtml(opts.toName.split(" ")[0])}</strong>! Recebemos seu chamado e nossa equipe já está de olho. Você será avisado por aqui a cada atualização.
+      </p>
+
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:18px 20px;margin-bottom:20px;">
+        <p style="margin:0 0 12px;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;">Resumo do chamado</p>
+        <table cellpadding="0" cellspacing="0" style="width:100%;">
+          <tr>
+            <td style="padding:6px 0;font-size:13px;color:#94a3b8;">Categoria</td>
+            <td style="padding:6px 0;font-size:13px;font-weight:700;color:#F7F8FC;text-align:right;">${escapeHtml(opts.category)}</td>
+          </tr>
+          <tr>
+            <td style="padding:6px 0;font-size:13px;color:#94a3b8;border-top:1px solid rgba(255,255,255,0.06);">Prioridade</td>
+            <td style="padding:6px 0;font-size:13px;font-weight:700;text-align:right;border-top:1px solid rgba(255,255,255,0.06);">
+              <span style="color:${priorityColor[opts.priority]};">${priorityLabel[opts.priority]}</span>
+            </td>
+          </tr>
+        </table>
+        <div style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.06);">
+          <p style="margin:0 0 6px;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;">O que você pediu</p>
+          <p style="margin:0;font-size:13px;color:#cbd5e1;line-height:1.7;white-space:pre-wrap;">${escapeHtml(opts.body).slice(0, 600)}${opts.body.length > 600 ? "…" : ""}</p>
+        </div>
+      </div>
+
+      <p style="font-size:13px;color:#94a3b8;line-height:1.7;margin:0;">
+        Acompanhe e responda diretamente pelo portal.
+      </p>
+      ${btn("Ver meu chamado", `${APP_URL}/portal/suporte/${opts.ticketId}`)}
+    `),
+  }).catch((e) => console.error("[email] sendTicketOpenedToClient:", e));
+}
+
+// ── Mudança de status do chamado (para o cliente) ─────────────────
+export async function sendTicketStatusChange(opts: {
+  toEmail: string;
+  toName: string;
+  subject: string;
+  oldStatus: string;
+  newStatus: string;
+  ticketNumber?: number;
+  ticketId: string;
+}) {
+  if (!opts.toEmail) return;
+
+  const statusInfo: Record<string, { label: string; color: string; msg: string }> = {
+    aberto:       { label: "Aberto",       color: "#3b82f6", msg: "Seu chamado foi reaberto e está na nossa fila." },
+    em_andamento: { label: "Em andamento", color: "#EF9F27", msg: "Boa notícia: já estamos trabalhando no seu chamado." },
+    resolvido:    { label: "Resolvido",    color: "#22c55e", msg: "Seu chamado foi resolvido! Se precisar, é só responder para reabrir." },
+    fechado:      { label: "Fechado",      color: "#94a3b8", msg: "Seu chamado foi encerrado. Obrigado pelo contato!" },
+  };
+
+  const info = statusInfo[opts.newStatus] ?? { label: opts.newStatus, color: "#5B57E8", msg: "O status do seu chamado foi atualizado." };
+  const oldLabel = statusInfo[opts.oldStatus]?.label ?? opts.oldStatus;
+  const ref = opts.ticketNumber ? `UFT${String(opts.ticketNumber).padStart(4, "0")}` : null;
+
+  await getResend().emails.send({
+    from: FROM,
+    to:   opts.toEmail,
+    subject: `Chamado ${info.label.toLowerCase()}${ref ? ` (${ref})` : ""}: ${opts.subject}`,
+    html: baseTemplate(`
+      <p style="margin:0 0 6px;font-size:13px;color:${info.color};">Atualização no seu chamado</p>
+      <h2 style="margin:0 0 8px;font-size:20px;font-weight:800;color:#F7F8FC;line-height:1.3;">${escapeHtml(opts.subject)}</h2>
+      ${ref ? `<p style="margin:0 0 16px;font-size:12px;font-weight:700;color:#5B57E8;letter-spacing:0.05em;">${ref}</p>` : ""}
+      <p style="font-size:14px;color:#94a3b8;line-height:1.7;margin:0 0 20px;">
+        Olá, <strong style="color:#F7F8FC;">${escapeHtml(opts.toName.split(" ")[0])}</strong>! ${info.msg}
+      </p>
+
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:18px 20px;margin-bottom:20px;text-align:center;">
+        <span style="display:inline-block;padding:4px 12px;border-radius:999px;background:rgba(148,163,184,0.12);color:#94a3b8;font-size:12px;font-weight:700;">${oldLabel}</span>
+        <span style="display:inline-block;margin:0 10px;color:#475569;font-size:16px;">&rarr;</span>
+        <span style="display:inline-block;padding:4px 14px;border-radius:999px;background:${info.color}22;color:${info.color};font-size:12px;font-weight:700;border:1px solid ${info.color}40;">${info.label}</span>
+      </div>
+
+      ${btn("Ver meu chamado", `${APP_URL}/portal/suporte/${opts.ticketId}`)}
+    `),
+  }).catch((e) => console.error("[email] sendTicketStatusChange:", e));
 }
 
 // ── Nova mensagem no ticket (para o destinatário) ────────────────

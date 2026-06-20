@@ -8,6 +8,8 @@ import { dbCreateTicket } from "@/app/lib/db/tickets";
 import {
   sendNewTicketAlert,
   sendNewMessageAlert,
+  sendTicketOpenedToClient,
+  sendTicketStatusChange,
 } from "@/app/lib/email/send";
 
 function isValidAttachmentUrl(url: string): boolean {
@@ -64,7 +66,13 @@ export async function createTicket(formData: FormData) {
     .single();
 
   const { data: authUser } = await supabase.auth.getUser();
-  const clientEmail = isAdmin ? "" : (authUser.user?.email ?? "");
+  // E-mail do cliente: quando admin abre em nome, busca via service role
+  let clientEmail = isAdmin ? "" : (authUser.user?.email ?? "");
+  if (isAdmin) {
+    const serviceSupabase = createServiceClient();
+    const { data: clientAuth } = await serviceSupabase.auth.admin.getUserById(clientId);
+    clientEmail = clientAuth?.user?.email ?? "";
+  }
 
   const result = await dbCreateTicket({
     clientId,
@@ -81,6 +89,7 @@ export async function createTicket(formData: FormData) {
 
   if (result.error) return { error: "Erro ao abrir chamado. Tente novamente." };
 
+  // Alerta para o time interno
   sendNewTicketAlert({
     subject,
     category: category || "Geral",
@@ -88,6 +97,20 @@ export async function createTicket(formData: FormData) {
     clientEmail,
     ticketId:    result.ticketId!,
   });
+
+  // Confirmação para o cliente com resumo do pedido
+  if (clientEmail) {
+    sendTicketOpenedToClient({
+      toEmail:      clientEmail,
+      toName:       clientProfile?.name ?? "Cliente",
+      subject,
+      category:     category || "Geral",
+      priority,
+      body,
+      ticketNumber: result.ticketNumber,
+      ticketId:     result.ticketId!,
+    });
+  }
 
   revalidatePath("/portal/suporte");
   return { success: true, ticketId: result.ticketId };
@@ -201,12 +224,43 @@ export async function updateTicket(formData: FormData) {
   if (Object.keys(update).length === 0) return { error: "Nenhum campo para atualizar." };
 
   const supabase = createServiceClient();
+
+  // Estado anterior para detectar mudança de status e notificar o cliente
+  const { data: before } = await supabase
+    .from("tickets")
+    .select("status, subject, client_id, ticket_number")
+    .eq("id", ticketId)
+    .single();
+
   const { error } = await supabase
     .from("tickets")
     .update(update)
     .eq("id", ticketId);
 
   if (error) return { error: "Erro ao atualizar chamado." };
+
+  // Notifica o cliente por e-mail quando o status muda
+  if (before && update.status && update.status !== before.status) {
+    const { data: clientAuth } = await supabase.auth.admin.getUserById(before.client_id);
+    const { data: clientProfile } = await supabase
+      .from("profiles")
+      .select("name")
+      .eq("id", before.client_id)
+      .single();
+
+    const clientEmail = clientAuth?.user?.email;
+    if (clientEmail) {
+      sendTicketStatusChange({
+        toEmail:      clientEmail,
+        toName:       clientProfile?.name ?? "Cliente",
+        subject:      before.subject,
+        oldStatus:    before.status,
+        newStatus:    update.status,
+        ticketNumber: before.ticket_number ?? undefined,
+        ticketId,
+      });
+    }
+  }
 
   revalidatePath(`/portal/suporte/${ticketId}`);
   revalidatePath(`/portal/suporte`);
