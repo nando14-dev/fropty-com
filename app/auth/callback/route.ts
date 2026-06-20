@@ -2,11 +2,12 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/app/lib/supabase/server";
 import type { EmailOtpType } from "@supabase/supabase-js";
 
+const ALLOWED_NEXT_PREFIXES = ["/area-cliente", "/portal", "/admin"];
+
 function sanitizeNext(next: string | null): string {
   const fallback = "/area-cliente/dashboard";
   if (!next) return fallback;
-  // Aceita apenas caminhos internos: começa com "/" mas não com "//" ou "/\"
-  if (/^\/(?![/\\])/.test(next)) return next;
+  if (ALLOWED_NEXT_PREFIXES.some((p) => next.startsWith(p))) return next;
   return fallback;
 }
 

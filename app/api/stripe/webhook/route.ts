@@ -115,10 +115,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
-  // Replay protection — marca ANTES de processar (unique constraint em event_id).
-  // Se já foi processado, insert retorna conflito → skipped.
-  // Se o handler falhar após o insert, o Stripe vai retentar e o insert vai conflitar → skipped também.
-  // Isso é intencional: preferimos perder uma retentativa a creditar tokens duplicados.
+  // Replay protection — reserva o event_id ANTES de processar (unique constraint).
+  // Se já foi processado com sucesso → insert conflita → skipped (duplicate).
+  // Se o handler falhar → deleta a reserva no catch → Stripe pode retentar limpo.
   const supabaseIdempotent = createServiceClient();
   const { error: dupError } = await supabaseIdempotent
     .from("processed_webhook_events")
@@ -147,6 +146,8 @@ export async function POST(req: NextRequest) {
     }
   } catch (err) {
     console.error("[stripe/webhook]", err);
+    // Remove a reserva de idempotência para permitir que o Stripe retente com sucesso.
+    await supabaseIdempotent.from("processed_webhook_events").delete().eq("event_id", event.id);
     return NextResponse.json({ error: "Handler failed" }, { status: 500 });
   }
 
