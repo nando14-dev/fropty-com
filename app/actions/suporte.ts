@@ -38,11 +38,16 @@ export async function createTicket(formData: FormData) {
 
   const { data: callerProfile } = await supabase
     .from("profiles")
-    .select("role, name")
+    .select("role, name, token_balance")
     .eq("id", userId)
     .single();
 
   const isAdmin = callerProfile?.role === "admin";
+
+  // Clientes sem tokens não podem abrir chamados
+  if (!isAdmin && (callerProfile?.token_balance ?? 0) <= 0) {
+    return { error: "Você não possui tokens disponíveis para abrir um chamado. Adquira tokens para continuar." };
+  }
 
   // Admin abre em nome de um cliente; cliente abre o próprio chamado.
   let clientId = userId;
