@@ -5,6 +5,7 @@ import { createClient } from "@/app/lib/supabase/server";
 import { createServiceClient } from "@/app/lib/supabase/service";
 import { requireRole } from "@/app/lib/auth/require-role";
 import { logAdminAction } from "@/app/lib/db/audit";
+import { sanitizeServiceIds } from "@/app/lib/constants/services";
 import type { ProjectStatus } from "@/app/lib/types/cliente";
 
 const VALID_PROJECT_STATUSES: ProjectStatus[] = [
@@ -81,18 +82,21 @@ export async function adminInviteClient(formData: FormData): Promise<{ error?: s
   const name         = (formData.get("name") as string)?.trim() || email.split("@")[0];
   const tokenBalance = Math.max(0, parseInt((formData.get("token_balance") as string) ?? "0", 10));
   const plan         = (formData.get("plan") as string)?.trim() || "sem_plano";
+  const services     = sanitizeServiceIds(formData.getAll("services").map((s) => String(s)));
+  const contractRaw  = (formData.get("contract_start") as string | null)?.trim() || "";
+  const contractStart = /^\d{4}-\d{2}-\d{2}$/.test(contractRaw) ? contractRaw : null;
 
   if (!email) return { error: "Informe o e-mail." };
 
   const service = createServiceClient();
   const { data, error } = await service.auth.admin.inviteUserByEmail(email, {
     redirectTo: `${process.env.NEXT_PUBLIC_APP_URL ?? "https://www.fropty.com"}/auth/callback?next=/area-cliente/nova-senha`,
-    data: { name, role: "cliente", token_balance: tokenBalance, plan },
+    data: { name, role: "cliente", token_balance: tokenBalance, plan, services, contract_start: contractStart },
   });
 
   if (error) return { error: error.message };
 
-  logAdminAction({ adminId, action: "invite_client", targetType: "user", targetId: data?.user?.id, metadata: { email, name, plan, tokenBalance } });
+  logAdminAction({ adminId, action: "invite_client", targetType: "user", targetId: data?.user?.id, metadata: { email, name, plan, tokenBalance, services, contractStart } });
   revalidatePath("/admin/usuarios");
   return { success: `Convite enviado para ${email}` };
 }

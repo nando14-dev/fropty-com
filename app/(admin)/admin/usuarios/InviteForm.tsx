@@ -2,6 +2,7 @@
 
 import { useRef, useState, useTransition } from "react";
 import { adminInviteClient } from "@/app/actions/admin";
+import { SERVICES } from "@/app/lib/constants/services";
 
 export default function InviteForm() {
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
@@ -70,6 +71,32 @@ export default function InviteForm() {
             <option value="pro">Pro</option>
           </select>
         </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 4, minWidth: 150, flex: "0 1 150px" }}>
+          <label style={{ fontSize: "11px", fontWeight: 700, color: "var(--text-faint)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Início do contrato</label>
+          <input
+            type="date"
+            name="contract_start"
+            style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, color: "var(--text)", padding: "8px 12px", fontSize: "13px", fontFamily: "inherit", outline: "none" }}
+          />
+        </div>
+
+        {/* Serviços contratados — multi-seleção */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 8, flex: "1 1 100%" }}>
+          <label style={{ fontSize: "11px", fontWeight: 700, color: "var(--text-faint)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Serviços contratados</label>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+            {SERVICES.map((s) => (
+              <label
+                key={s.id}
+                style={{ display: "inline-flex", alignItems: "center", gap: 7, background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 999, padding: "6px 12px", fontSize: "12px", fontWeight: 600, color: "var(--text-muted)", cursor: "pointer", userSelect: "none" }}
+              >
+                <input type="checkbox" name="services" value={s.id} style={{ accentColor: s.color, cursor: "pointer" }} />
+                <i className={`ti ${s.icon}`} style={{ color: s.color, fontSize: 14 }} />
+                {s.label}
+              </label>
+            ))}
+          </div>
+        </div>
+
         <button
           type="submit"
           disabled={isPending}

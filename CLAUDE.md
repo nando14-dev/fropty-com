@@ -4,7 +4,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-fropty.com — landing page, configurador de planos e portal de clientes da Fropty Apps, serviço de desenvolvimento de apps sob medida (prévia gratuita, app completo a partir de R$499, planos de manutenção mensal com tokens de suporte). Todo o conteúdo é em português brasileiro (pt-BR).
+fropty.com — landing page, configurador e portal de clientes da **Fropty (Intelligent Software Ecosystem)**. Todo o conteúdo é em português brasileiro (pt-BR).
+
+### Modelo de produto
+
+- A **Fropty** vende módulos/serviços do ecossistema: FroptyCash, FroptyInvest, FroptyBoost, FroptySentinel (security), FroptyAI, FroptyAds, FroptyCRM, FroptyApps.
+- **FroptyApps** é uma perna à parte: um **catálogo** de micro-SaaS, apps mobile e dashboards. É onde a pessoa olha o que existe e escolhe o que se aplica; a Fropty então copia e customiza (logo, cores, identidade do cliente). **Não** é uma ferramenta para o cliente montar o próprio app.
+- A **área de cliente** (`/area-cliente` → `/portal/*`) é para quem **já contratou** um serviço. Serve para: abrir/consultar chamados de suporte, ver saldo de tokens, e consultar o contrato financeiro (serviços contratados, início do contrato, próxima renovação, histórico de tokens).
+- **Não existe** mais, no portal, o fluxo de "configurar seu app", "aguardar prévia" ou acompanhar "projetos". A lista de serviços disponíveis fica em `app/lib/constants/services.ts` (`SERVICES`), gravada em `profiles.services` (text[]).
 
 ## Commands
 
@@ -30,9 +37,11 @@ Next.js 15 (App Router) + React 19 + Tailwind CSS 4. Supabase para auth e banco 
 
 ### Portal do cliente (`/area-cliente/*` → route group `(cliente)`)
 
-- `dashboard` — visão geral com tokens, projetos, chamados
+- `dashboard` — visão geral: serviços contratados, tokens, chamados abertos
+- `suporte` — abrir e acompanhar chamados (consomem tokens)
+- `financeiro` — saldo de tokens, plano, contrato (serviços + início + renovação) e extrato
 - `nova-senha` — definir senha após invite/reset
-- Sidebar: `PortalSidebar.tsx` com toggle de tema (dark/light)
+- Sidebar: `ClientSidebar.tsx` (marca "Fropty", logo `/logo-icon.png`) com toggle de tema (dark/light). **Sem** item "Projetos".
 
 ### Painel admin (`/admin/*` → route group `(admin)`)
 
@@ -51,7 +60,8 @@ Next.js 15 (App Router) + React 19 + Tailwind CSS 4. Supabase para auth e banco 
 
 - Roles: `"cliente"` | `"admin"` (sem `dev`).
 - Clientes **nunca se cadastram sozinhos** — admin convida via `/admin/usuarios` usando `adminInviteClient`.
-- Convite usa `supabase.auth.admin.inviteUserByEmail()` com `data: { name, role, token_balance, plan }`.
+- Convite usa `supabase.auth.admin.inviteUserByEmail()` com `data: { name, role, token_balance, plan, services, contract_start }`.
+- **Importante:** o trigger detecta convite pela presença de chaves em `raw_user_meta_data` (`role`/`token_balance`/`plan`), **não** por `invited_at` — no INSERT do GoTrue o `invited_at` ainda é NULL (ver migration 0017).
 - O trigger `fn_on_auth_user_created` cria o perfil com esses dados ao aceitar o convite.
 - Auth flow de email (invite/reset): `token_hash` + `verifyOtp` — **não** PKCE, para evitar problemas de cookie em SSR.
 - `createClient()` — cliente SSR com anon key (cookies do usuário).
@@ -62,7 +72,7 @@ Next.js 15 (App Router) + React 19 + Tailwind CSS 4. Supabase para auth e banco 
 Projeto ID: `rflnhzpepbnhanuxpqag`
 
 Tabelas principais:
-- `profiles` — `id, name, email, role, plan, token_balance, is_active, avatar_url, theme, ...`
+- `profiles` — `id, name, email, role, plan, token_balance, services (text[]), contract_start (date), is_active, avatar_url, theme, ...`
 - `projects` — `id, client_id, name, description, status, progress, addons, preview_url, ...`
 - `token_transactions` — `id, client_id, amount, type (credit|debit), description, ...`
 - `audit_log` — registro de ações admin

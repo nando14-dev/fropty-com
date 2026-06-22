@@ -4,6 +4,7 @@ import { getProfile } from "@/app/lib/auth/session";
 import { createClient } from "@/app/lib/supabase/server";
 import { buyTokens, subscribePlan } from "@/app/actions/financeiro";
 import { TokenChart } from "@/app/components/cliente/TokenChart";
+import { getService } from "@/app/lib/constants/services";
 import type { TokenTransaction } from "@/app/lib/types/cliente";
 import type { Database } from "@/app/lib/supabase/types";
 
@@ -44,9 +45,11 @@ export default async function FinanceiroPage({ searchParams }: Props) {
     balance:     t.balance,
   }));
 
-  const plan         = profile?.plan ?? "sem_plano";
-  const planRenewal  = profile?.plan_renewal ?? null;
-  const tokenBalance = profile?.token_balance ?? 0;
+  const plan          = profile?.plan ?? "sem_plano";
+  const planRenewal   = profile?.plan_renewal ?? null;
+  const tokenBalance  = profile?.token_balance ?? 0;
+  const services      = profile?.services ?? [];
+  const contractStart = profile?.contract_start ?? null;
   const planInfo     = plan !== "sem_plano" ? PLAN_INFO[plan] : null;
   const hasSubscription = !!profile?.stripe_subscription_id;
 
@@ -164,6 +167,44 @@ export default async function FinanceiroPage({ searchParams }: Props) {
           </div>
         </div>
       </div>
+
+      {/* Contrato — serviços contratados e data de início */}
+      {(services.length > 0 || contractStart) && (
+        <div style={{ background: "var(--card-bg)", border: "1px solid var(--card-border)", borderRadius: 16, padding: "24px", marginBottom: 32 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap", marginBottom: services.length > 0 ? 18 : 0 }}>
+            <h2 style={{ fontSize: "1rem", fontWeight: 700, margin: 0, color: "var(--text)", display: "flex", alignItems: "center", gap: 8 }}>
+              <i className="ti ti-file-text" style={{ color: "var(--primary)" }} />
+              Meu contrato
+            </h2>
+            {contractStart && (
+              <span style={{ fontSize: "12px", color: "var(--text-faint)" }}>
+                <i className="ti ti-calendar-event" style={{ marginRight: 6 }} />
+                Início em {new Date(contractStart).toLocaleDateString("pt-BR")}
+                {planRenewal && ` · próxima renovação ${new Date(planRenewal).toLocaleDateString("pt-BR")}`}
+              </span>
+            )}
+          </div>
+          {services.length > 0 && (
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+              {services.map((id) => {
+                const svc = getService(id);
+                const label = svc?.label ?? id;
+                const icon  = svc?.icon ?? "ti-package";
+                const color = svc?.color ?? "var(--primary)";
+                return (
+                  <span
+                    key={id}
+                    style={{ display: "inline-flex", alignItems: "center", gap: 7, background: `${color}14`, border: `1px solid ${color}33`, borderRadius: 999, padding: "6px 12px", fontSize: "12px", fontWeight: 700, color }}
+                  >
+                    <i className={`ti ${icon}`} style={{ fontSize: 14 }} />
+                    {label}
+                  </span>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Planos de assinatura (só mostra se não tem plano) */}
       {!hasSubscription && (

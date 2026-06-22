@@ -38,6 +38,8 @@ export type Database = {
           plan: "sem_plano" | "basico" | "pro";
           plan_renewal: string | null;
           token_balance: number;
+          services: string[];
+          contract_start: string | null;
           is_active: boolean;
           stripe_customer_id: string | null;
           stripe_subscription_id: string | null;
@@ -54,6 +56,8 @@ export type Database = {
           plan?: "sem_plano" | "basico" | "pro";
           plan_renewal?: string | null;
           token_balance?: number;
+          services?: string[];
+          contract_start?: string | null;
           is_active?: boolean;
           stripe_customer_id?: string | null;
           stripe_subscription_id?: string | null;
@@ -67,6 +71,8 @@ export type Database = {
           plan?: "sem_plano" | "basico" | "pro";
           plan_renewal?: string | null;
           token_balance?: number;
+          services?: string[];
+          contract_start?: string | null;
           is_active?: boolean;
           stripe_customer_id?: string | null;
           stripe_subscription_id?: string | null;

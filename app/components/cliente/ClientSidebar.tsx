@@ -25,7 +25,6 @@ interface Props {
 
 const DEFAULT_NAV: NavItem[] = [
   { id: "dashboard", href: "/portal/dashboard", icon: "ti-layout-dashboard", label: "Painel" },
-  { id: "projetos",  href: "/portal/projetos",  icon: "ti-folder",           label: "Projetos" },
   { id: "suporte",   href: "/portal/suporte",   icon: "ti-message-circle",   label: "Suporte" },
   { id: "financeiro",href: "/portal/financeiro",icon: "ti-credit-card",      label: "Financeiro" },
   { id: "perfil",    href: "/portal/perfil",    icon: "ti-user-circle",      label: "Meu Perfil" },
@@ -116,10 +115,11 @@ export function ClientSidebar({ user, navItems, initialTheme = "dark" }: Props) 
       {/* Logo */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 28 }}>
         <Link href="/" style={{ display: "flex", alignItems: "center", gap: 8, textDecoration: "none", minWidth: 0 }}>
-          <Image src="/logo-icon.png" alt="Fropty" width={26} height={26} className="rounded-md" style={{ flexShrink: 0 }} />
+          <Image src="/logo-icon.png" alt="Fropty" width={26} height={26} className="rounded-md portal-logo--dark" style={{ flexShrink: 0 }} />
+          <Image src="/logo-icon-dark.png" alt="Fropty" width={26} height={26} className="rounded-md portal-logo--light" style={{ flexShrink: 0 }} />
           {!collapsed && (
             <span style={{ fontWeight: 700, fontSize: "0.95rem", color: "var(--text)", whiteSpace: "nowrap" }}>
-              Fropty<span style={{ color: "var(--primary)" }}>Apps</span>
+              Fropty
             </span>
           )}
         </Link>
@@ -256,9 +256,10 @@ export function ClientSidebar({ user, navItems, initialTheme = "dark" }: Props) 
           <i className="ti ti-menu-2" style={{ fontSize: 18 }} />
         </button>
         <Link href="/" style={{ display: "flex", alignItems: "center", gap: 7, textDecoration: "none", flex: 1 }}>
-          <Image src="/logo-icon.png" alt="Fropty" width={22} height={22} className="rounded-md" />
+          <Image src="/logo-icon.png" alt="Fropty" width={22} height={22} className="rounded-md portal-logo--dark" />
+          <Image src="/logo-icon-dark.png" alt="Fropty" width={22} height={22} className="rounded-md portal-logo--light" />
           <span style={{ fontWeight: 700, fontSize: "0.9rem", color: "var(--text)" }}>
-            Fropty<span style={{ color: "var(--primary)" }}>Apps</span>
+            Fropty
           </span>
         </Link>
         <PortalThemeToggle initialTheme={initialTheme} />
