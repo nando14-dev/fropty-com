@@ -1,8 +1,14 @@
 ﻿import { Resend } from "resend";
 
-// Lazy — evita erro de build quando RESEND_API_KEY não está definida
+// Lazy — evita erro de build quando RESEND_API_KEY não está definida.
+// Retorna null se a chave não estiver configurada, para os envios serem
+// ignorados com segurança (sem derrubar a request com unhandled rejection).
 let _resend: Resend | null = null;
-function getResend() {
+function getResend(): Resend | null {
+  if (!process.env.RESEND_API_KEY) {
+    console.warn("[email] RESEND_API_KEY não configurada — e-mail não enviado.");
+    return null;
+  }
   if (!_resend) _resend = new Resend(process.env.RESEND_API_KEY);
   return _resend;
 }
@@ -76,7 +82,7 @@ export async function sendWelcomeEmail(opts: {
   const plan = planLabel[opts.plan] ?? "Sem plano";
   const hasPlan = opts.plan !== "sem_plano";
 
-  await getResend().emails.send({
+  await getResend()?.emails.send({
     from: FROM,
     to:   opts.toEmail,
     subject: `Sua conta está pronta, ${opts.toName.split(" ")[0]}!`,
@@ -130,7 +136,7 @@ export async function sendNewTicketAlert(opts: {
   const adminEmail = process.env.CONTACT_EMAIL;
   if (!adminEmail) return;
 
-  await getResend().emails.send({
+  await getResend()?.emails.send({
     from: FROM,
     to:   adminEmail,
     subject: `[Novo chamado] ${opts.subject}`,
@@ -164,7 +170,7 @@ export async function sendTicketOpenedToClient(opts: {
   const priorityColor: Record<string, string> = { baixa: "#94a3b8", media: "#EF9F27", alta: "#ef4444" };
   const ref = opts.ticketNumber ? `UFT${String(opts.ticketNumber).padStart(4, "0")}` : null;
 
-  await getResend().emails.send({
+  await getResend()?.emails.send({
     from: FROM,
     to:   opts.toEmail,
     subject: `Chamado recebido${ref ? ` (${ref})` : ""}: ${opts.subject}`,
@@ -227,7 +233,7 @@ export async function sendTicketStatusChange(opts: {
   const oldLabel = statusInfo[opts.oldStatus]?.label ?? opts.oldStatus;
   const ref = opts.ticketNumber ? `UFT${String(opts.ticketNumber).padStart(4, "0")}` : null;
 
-  await getResend().emails.send({
+  await getResend()?.emails.send({
     from: FROM,
     to:   opts.toEmail,
     subject: `Chamado ${info.label.toLowerCase()}${ref ? ` (${ref})` : ""}: ${opts.subject}`,
@@ -265,7 +271,7 @@ export async function sendNewMessageAlert(opts: {
     ? `${APP_URL}/portal/suporte/${opts.ticketId}`
     : `${APP_URL}/admin/suporte/${opts.ticketId}`;
 
-  await getResend().emails.send({
+  await getResend()?.emails.send({
     from: FROM,
     to:   opts.toEmail,
     subject: `Nova resposta: ${opts.ticketSubject}`,
@@ -286,7 +292,7 @@ export async function sendLowTokenAlert(opts: {
   toName: string;
   balance: number;
 }) {
-  await getResend().emails.send({
+  await getResend()?.emails.send({
     from: FROM,
     to:   opts.toEmail,
     subject: "Seus tokens estão acabando — Fropty Apps",
@@ -313,7 +319,7 @@ export async function sendPlanConfirmation(opts: {
   tokens: number;
 }) {
   const planLabel = opts.plan === "pro" ? "Pro" : "Básico";
-  await getResend().emails.send({
+  await getResend()?.emails.send({
     from: FROM,
     to:   opts.toEmail,
     subject: `Plano ${planLabel} ativado — Fropty Apps`,
