@@ -87,9 +87,9 @@ export default function AreaClientePage() {
       </button>
 
       <Link href="/" style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 36, textDecoration: "none" }}>
-        <Image src="/logo-icon.png" alt="Fropty Apps" width={32} height={32} style={{ borderRadius: 8 }} />
+        <Image src="/logo-icon.png" alt="Fropty" width={32} height={32} style={{ borderRadius: 8 }} />
         <span style={{ fontSize: 18, fontWeight: 800, color: "var(--text)", fontFamily: "var(--font-plus-jakarta), sans-serif" }}>
-          Fropty<span style={{ color: "var(--primary)" }}>Apps</span>
+          Fropty
         </span>
       </Link>
 

@@ -18,12 +18,16 @@ interface Props {
 export function AdminTicketActions({ ticketId, currentStatus, currentPriority }: Props) {
   const [status,   setStatus]   = useState<TicketStatus>(currentStatus);
   const [priority, setPriority] = useState<TicketPriority>(currentPriority);
+  const [comment,  setComment]  = useState("");
   const [error,    setError]    = useState("");
   const [saved,    setSaved]    = useState(false);
   const [pending,  startTransition] = useTransition();
   const router = useRouter();
 
+  // Marcar como "Aguardando validação" exige comentário (vai junto na notificação)
+  const requiresComment = status === "resolvido" && currentStatus !== "resolvido";
   const isDirty = status !== currentStatus || priority !== currentPriority;
+  const canSave = isDirty && !(requiresComment && !comment.trim());
 
   function handleSave() {
     setError("");
@@ -32,12 +36,14 @@ export function AdminTicketActions({ ticketId, currentStatus, currentPriority }:
     fd.append("ticket_id", ticketId);
     fd.append("status", status);
     fd.append("priority", priority);
+    if (requiresComment) fd.append("comment", comment.trim());
     startTransition(async () => {
       const res = await updateTicket(fd);
       if (res?.error) {
         setError(res.error);
       } else {
         setSaved(true);
+        setComment("");
         router.refresh();
         setTimeout(() => setSaved(false), 2500);
       }
@@ -125,6 +131,26 @@ export function AdminTicketActions({ ticketId, currentStatus, currentPriority }:
         </div>
       </div>
 
+      {/* Comentário obrigatório ao marcar como Aguardando validação */}
+      {requiresComment && (
+        <div>
+          <p style={{ margin: "0 0 5px", fontSize: "11px", color: "var(--text-faint)", fontWeight: 600 }}>
+            Comentário da resolução <span style={{ color: "#ef4444" }}>*</span>
+          </p>
+          <textarea
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            rows={3}
+            placeholder="Explique ao cliente o que foi feito para resolver. Esse texto vai junto com a notificação."
+            style={{
+              width: "100%", background: "var(--input-bg)", color: "var(--text)",
+              border: "1px solid var(--border)", borderRadius: 10, padding: "10px 12px",
+              fontSize: "13px", fontFamily: "inherit", outline: "none", resize: "vertical", minHeight: 72, boxSizing: "border-box",
+            }}
+          />
+        </div>
+      )}
+
       {error && (
         <p style={{ margin: 0, fontSize: "12px", color: "#ef4444", display: "flex", alignItems: "center", gap: 5 }}>
           <i className="ti ti-alert-circle" /> {error}
@@ -135,17 +161,17 @@ export function AdminTicketActions({ ticketId, currentStatus, currentPriority }:
         <button
           type="button"
           onClick={handleSave}
-          disabled={!isDirty || pending}
+          disabled={!canSave || pending}
           style={{
             display: "inline-flex", alignItems: "center", gap: 7,
-            background: saved ? "#22c55e" : isDirty && !pending ? "var(--primary)" : "var(--surface-2)",
-            color: saved || (isDirty && !pending) ? "#fff" : "var(--text-faint)",
+            background: saved ? "#22c55e" : canSave && !pending ? "var(--primary)" : "var(--surface-2)",
+            color: saved || (canSave && !pending) ? "#fff" : "var(--text-faint)",
             border: "none",
             borderRadius: 10,
             padding: "9px 18px",
             fontSize: "12px",
             fontWeight: 700,
-            cursor: isDirty && !pending ? "pointer" : "not-allowed",
+            cursor: canSave && !pending ? "pointer" : "not-allowed",
             fontFamily: "inherit",
             transition: "background 0.2s",
           }}

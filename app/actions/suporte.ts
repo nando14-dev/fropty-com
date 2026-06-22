@@ -226,11 +226,12 @@ export async function sendMessage(formData: FormData) {
 }
 
 export async function updateTicket(formData: FormData) {
-  await requireRole("admin");
+  const me = await requireRole("admin");
 
   const ticketId   = (formData.get("ticket_id")  as string)?.trim();
   const statusRaw  = (formData.get("status")      as string)?.trim();
   const priorityRaw = (formData.get("priority")   as string)?.trim();
+  const comment    = (formData.get("comment")     as string)?.trim().slice(0, 5000) || "";
 
   if (!ticketId) return { error: "ID do chamado inválido." };
 
@@ -240,7 +241,7 @@ export async function updateTicket(formData: FormData) {
   type TicketStatus   = typeof validStatus[number];
   type TicketPriority = typeof validPriority[number];
 
-  const update: { status?: TicketStatus; priority?: TicketPriority } = {};
+  const update: { status?: TicketStatus; priority?: TicketPriority; first_response_at?: string; resolved_at?: string | null } = {};
   if (statusRaw   && (validStatus   as readonly string[]).includes(statusRaw))   update.status   = statusRaw   as TicketStatus;
   if (priorityRaw && (validPriority as readonly string[]).includes(priorityRaw)) update.priority = priorityRaw as TicketPriority;
 
@@ -251,9 +252,30 @@ export async function updateTicket(formData: FormData) {
   // Estado anterior para detectar mudança de status e notificar o cliente
   const { data: before } = await supabase
     .from("tickets")
-    .select("status, subject, client_id, ticket_number")
+    .select("status, subject, client_id, ticket_number, first_response_at")
     .eq("id", ticketId)
     .single();
+
+  const statusChangedToResolvido =
+    update.status === "resolvido" && before?.status !== "resolvido";
+
+  // Marcos de SLA
+  const nowIso = new Date().toISOString();
+  if (update.status === "em_andamento" && !before?.first_response_at) {
+    update.first_response_at = nowIso;               // 1º atendimento → encerra SLA de resposta
+  }
+  if (statusChangedToResolvido) {
+    update.resolved_at = nowIso;                      // resolução → encerra SLA de resolução
+  }
+  if (update.status === "reaberto") {
+    update.resolved_at = null;                        // reaberto → relógio de resolução volta a correr
+  }
+
+  // Ao marcar como "Aguardando validação", o comentário é obrigatório e vai
+  // junto com a mudança de status (uma única notificação para o cliente).
+  if (statusChangedToResolvido && !comment) {
+    return { error: "Escreva um comentário explicando a resolução antes de marcar como Aguardando validação." };
+  }
 
   const { error } = await supabase
     .from("tickets")
@@ -262,7 +284,17 @@ export async function updateTicket(formData: FormData) {
 
   if (error) return { error: "Erro ao atualizar chamado." };
 
-  // Notifica o cliente por e-mail quando o status muda
+  // Registra o comentário do analista na conversa (quando informado)
+  if (statusChangedToResolvido && comment) {
+    await supabase.from("ticket_messages").insert({
+      ticket_id:   ticketId,
+      sender_id:   me,
+      sender_role: "admin" as const,
+      body:        comment,
+    });
+  }
+
+  // Notifica o cliente por e-mail quando o status muda (com o comentário, se houver)
   if (before && update.status && update.status !== before.status) {
     const { data: clientAuth } = await supabase.auth.admin.getUserById(before.client_id);
     const { data: clientProfile } = await supabase
@@ -281,6 +313,7 @@ export async function updateTicket(formData: FormData) {
         newStatus:    update.status,
         ticketNumber: before.ticket_number ?? undefined,
         ticketId,
+        note:         statusChangedToResolvido ? comment : undefined,
       });
     }
   }
@@ -332,7 +365,9 @@ export async function respondResolution(formData: FormData) {
 
   // Atualiza o status via service role (cliente não tem UPDATE em tickets por RLS)
   const service = createServiceClient();
-  const { error: updErr } = await service.from("tickets").update({ status: newStatus }).eq("id", ticketId);
+  const ticketUpdate: { status: "fechado" | "reaberto"; resolved_at?: string | null } = { status: newStatus };
+  if (newStatus === "reaberto") ticketUpdate.resolved_at = null; // resolução volta a correr
+  const { error: updErr } = await service.from("tickets").update(ticketUpdate).eq("id", ticketId);
   if (updErr) return { error: "Não foi possível registrar sua avaliação. Tente novamente." };
 
   // Notifica o cliente (confirmação) e o time interno

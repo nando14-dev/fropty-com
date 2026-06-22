@@ -112,6 +112,8 @@ export type Database = {
           status: "aberto" | "em_andamento" | "resolvido" | "fechado" | "reaberto";
           priority: "baixa" | "media" | "alta";
           ticket_number: number;
+          first_response_at: string | null;
+          resolved_at: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -125,6 +127,8 @@ export type Database = {
         Update: {
           status?: "aberto" | "em_andamento" | "resolvido" | "fechado" | "reaberto";
           priority?: "baixa" | "media" | "alta";
+          first_response_at?: string | null;
+          resolved_at?: string | null;
         };
         Relationships: [];
       };

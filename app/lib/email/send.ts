@@ -219,12 +219,13 @@ export async function sendTicketStatusChange(opts: {
   newStatus: string;
   ticketNumber?: number;
   ticketId: string;
+  note?: string;
 }) {
   if (!opts.toEmail) return;
 
   const statusInfo: Record<string, { label: string; color: string; msg: string }> = {
     aberto:       { label: "Aberto",       color: "#3b82f6", msg: "Seu chamado foi reaberto e está na nossa fila." },
-    em_andamento: { label: "Em andamento", color: "#EF9F27", msg: "Boa notícia: já estamos trabalhando no seu chamado." },
+    em_andamento: { label: "Em andamento", color: "#EF9F27", msg: "Já estamos trabalhando no seu chamado." },
     resolvido:    { label: "Aguardando validação", color: "#22c55e", msg: "Marcamos seu chamado como resolvido. Confirme se a solução atendeu para encerrarmos." },
     fechado:      { label: "Fechado",      color: "#94a3b8", msg: "Seu chamado foi encerrado. Obrigado pelo contato!" },
     reaberto:     { label: "Reaberto",     color: "#a855f7", msg: "Recebemos seu retorno: o chamado foi reaberto e voltará para a fila do time." },
@@ -251,6 +252,8 @@ export async function sendTicketStatusChange(opts: {
         <span style="display:inline-block;margin:0 10px;color:#475569;font-size:16px;">&rarr;</span>
         <span style="display:inline-block;padding:4px 14px;border-radius:999px;background:${info.color}22;color:${info.color};font-size:12px;font-weight:700;border:1px solid ${info.color}40;">${info.label}</span>
       </div>
+
+      ${opts.note ? `<div style="background:rgba(255,255,255,0.05);border-left:3px solid #5B57E8;border-radius:4px;padding:12px 16px;margin:0 0 20px;"><p style="margin:0 0 6px;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;">Comentário da equipe</p><p style="margin:0;font-size:13px;color:#cbd5e1;line-height:1.6;white-space:pre-wrap;">${escapeHtml(opts.note.slice(0, 800))}</p></div>` : ""}
 
       ${btn("Ver meu chamado", `${APP_URL}/portal/suporte/${opts.ticketId}`)}
     `),

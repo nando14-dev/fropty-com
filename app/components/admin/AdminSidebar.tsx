@@ -137,8 +137,8 @@ export function AdminSidebar({ name, initials, userId, initialTheme = "dark" }: 
           <i className="ti ti-x" />
         </button>
 
-        {/* Logo */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 28 }}>
+        {/* Logo + ações (sino e tema) */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: collapsed ? "center" : "space-between", gap: 8, marginBottom: 24 }}>
           <Link href="/" style={{ display: "flex", alignItems: "center", gap: 8, textDecoration: "none", minWidth: 0 }}>
             <Image src="/logo-icon.png" alt="Fropty" width={26} height={26} className="rounded-md portal-logo--dark" style={{ flexShrink: 0 }} />
             <Image src="/logo-icon-dark.png" alt="Fropty" width={26} height={26} className="rounded-md portal-logo--light" style={{ flexShrink: 0 }} />
@@ -148,6 +148,12 @@ export function AdminSidebar({ name, initials, userId, initialTheme = "dark" }: 
               </span>
             )}
           </Link>
+          {!collapsed && (
+            <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
+              <NotificationBell userId={userId} />
+              <PortalThemeToggle initialTheme={initialTheme} />
+            </div>
+          )}
         </div>
 
         {/* User section */}
@@ -176,10 +182,6 @@ export function AdminSidebar({ name, initials, userId, initialTheme = "dark" }: 
                 </p>
                 <p style={{ margin: 0, fontSize: "11px", color: "#EF9F27" }}>Administrador</p>
               </div>
-            </div>
-            <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: 8, marginTop: 8 }}>
-              <NotificationBell userId={userId} />
-              <PortalThemeToggle initialTheme={initialTheme} />
             </div>
           </div>
         )}
