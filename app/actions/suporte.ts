@@ -94,6 +94,18 @@ export async function createTicket(formData: FormData) {
 
   if (result.error) return { error: "Erro ao abrir chamado. Tente novamente." };
 
+  // Abrir um chamado consome 1 token do cliente. Inserir a transação de débito
+  // dispara o trigger trg_token_balance, que atualiza profiles.token_balance.
+  // Usa service client porque o ledger (token_transactions) é protegido por RLS.
+  const ledger = createServiceClient();
+  const { error: debitError } = await ledger.from("token_transactions").insert({
+    client_id:   clientId,
+    amount:      1,
+    type:        "debit" as const,
+    description: `Abertura de chamado${result.ticketNumber ? ` #${result.ticketNumber}` : ""}: ${subject}`.slice(0, 255),
+  });
+  if (debitError) console.error("[createTicket] falha ao debitar token:", debitError.message);
+
   // Alerta para o time interno
   sendNewTicketAlert({
     subject,
