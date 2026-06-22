@@ -10,6 +10,7 @@ import {
   sendNewMessageAlert,
   sendTicketOpenedToClient,
   sendTicketStatusChange,
+  sendResolutionFeedbackToTeam,
 } from "@/app/lib/email/send";
 
 function isValidAttachmentUrl(url: string): boolean {
@@ -228,7 +229,7 @@ export async function updateTicket(formData: FormData) {
 
   if (!ticketId) return { error: "ID do chamado inválido." };
 
-  const validStatus   = ["aberto", "em_andamento", "resolvido", "fechado"] as const;
+  const validStatus   = ["aberto", "em_andamento", "resolvido", "fechado", "reaberto"] as const;
   const validPriority = ["baixa", "media", "alta"] as const;
 
   type TicketStatus   = typeof validStatus[number];
@@ -281,5 +282,82 @@ export async function updateTicket(formData: FormData) {
 
   revalidatePath(`/portal/suporte/${ticketId}`);
   revalidatePath(`/portal/suporte`);
+  return { success: true };
+}
+
+// Cliente avalia a resolução de um chamado que está "resolvido":
+// aprovar → fechado; reprovar → reaberto (volta para a fila do time).
+export async function respondResolution(formData: FormData) {
+  const userId   = await requireAuth();
+  const ticketId = (formData.get("ticket_id") as string)?.trim();
+  const decision = (formData.get("decision") as string)?.trim(); // "aprovar" | "reprovar"
+  const reason   = (formData.get("reason") as string)?.trim().slice(0, 2000) || "";
+
+  if (!ticketId || (decision !== "aprovar" && decision !== "reprovar")) {
+    return { error: "Requisição inválida." };
+  }
+
+  const supabase = await createClient();
+
+  // Garante que o chamado é do próprio cliente e está aguardando validação
+  const { data: ticket } = await supabase
+    .from("tickets")
+    .select("id, subject, status, client_id, ticket_number")
+    .eq("id", ticketId)
+    .eq("client_id", userId)
+    .single();
+
+  if (!ticket) return { error: "Chamado não encontrado." };
+  if (ticket.status !== "resolvido") {
+    return { error: "Este chamado não está aguardando validação." };
+  }
+
+  const newStatus = decision === "aprovar" ? "fechado" : "reaberto";
+
+  // Registra o retorno do cliente na conversa (mensagem do próprio cliente)
+  const note = decision === "aprovar"
+    ? `✅ Resolução confirmada pelo cliente.${reason ? `\n\n${reason}` : ""}`
+    : `❌ Cliente não aprovou a resolução.${reason ? `\n\nMotivo: ${reason}` : ""}`;
+  await supabase.from("ticket_messages").insert({
+    ticket_id:   ticketId,
+    sender_id:   userId,
+    sender_role: "cliente" as const,
+    body:        note,
+  });
+
+  // Atualiza o status via service role (cliente não tem UPDATE em tickets por RLS)
+  const service = createServiceClient();
+  const { error: updErr } = await service.from("tickets").update({ status: newStatus }).eq("id", ticketId);
+  if (updErr) return { error: "Não foi possível registrar sua avaliação. Tente novamente." };
+
+  // Notifica o cliente (confirmação) e o time interno
+  const { data: clientProfile } = await supabase.from("profiles").select("name").eq("id", userId).single();
+  const { data: authUser } = await supabase.auth.getUser();
+  const clientEmail = authUser.user?.email ?? "";
+  const clientName  = clientProfile?.name ?? "Cliente";
+
+  if (clientEmail) {
+    sendTicketStatusChange({
+      toEmail:      clientEmail,
+      toName:       clientName,
+      subject:      ticket.subject,
+      oldStatus:    "resolvido",
+      newStatus,
+      ticketNumber: ticket.ticket_number ?? undefined,
+      ticketId,
+    });
+  }
+  sendResolutionFeedbackToTeam({
+    approved:     decision === "aprovar",
+    clientName,
+    subject:      ticket.subject,
+    ticketNumber: ticket.ticket_number ?? undefined,
+    ticketId,
+    reason,
+  });
+
+  revalidatePath(`/portal/suporte/${ticketId}`);
+  revalidatePath(`/portal/suporte`);
+  revalidatePath(`/portal/suporte/${ticketId}/avaliar`);
   return { success: true };
 }

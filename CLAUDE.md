@@ -38,7 +38,9 @@ Next.js 15 (App Router) + React 19 + Tailwind CSS 4. Supabase para auth e banco 
 ### Portal do cliente (`/area-cliente/*` → route group `(cliente)`)
 
 - `dashboard` — visão geral: serviços contratados, tokens, chamados abertos
-- `suporte` — abrir e acompanhar chamados (consomem tokens)
+- `suporte` — abrir e acompanhar chamados (consomem 1 token na abertura). Chamados são **UFT** (User Fropty Ticket), exibidos como `UFT0000`.
+  - Conversa com histórico identificando **Cliente** vs **Equipe Fropty** (`TicketConversation.tsx`, realtime).
+  - Fluxo de resolução: analista marca **Resolvido** (= "Aguardando validação") → cliente avalia em `/portal/suporte/[ticketId]/avaliar`: aprova → **Fechado** (notificado); reprova → **Reaberto** (volta para a fila, status intermediário — não vai direto para "em andamento"). Depois o analista move `reaberto → em_andamento`. Status em `app/lib/constants/status.ts` (migration 0018 adiciona `reaberto`).
 - `financeiro` — saldo de tokens, plano, contrato (serviços + início + renovação) e extrato
 - `nova-senha` — definir senha após invite/reset
 - Sidebar: `ClientSidebar.tsx` (marca "Fropty", logo `/logo-icon.png`) com toggle de tema (dark/light). **Sem** item "Projetos".

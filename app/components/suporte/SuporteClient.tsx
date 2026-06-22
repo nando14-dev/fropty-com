@@ -86,7 +86,7 @@ export function SuporteClient({ tickets, isAdmin, tokenBalance = 0 }: Props) {
     const q = search.toLowerCase();
     return tickets.filter((t) => {
       const matchSearch = !q || t.subject.toLowerCase().includes(q) || t.category.toLowerCase().includes(q);
-      const isOpen      = t.status === "aberto" || t.status === "em_andamento";
+      const isOpen      = t.status !== "fechado";
       const matchFilter =
         filter === "todos"   ? true :
         filter === "abertos" ? isOpen :
@@ -95,12 +95,12 @@ export function SuporteClient({ tickets, isAdmin, tokenBalance = 0 }: Props) {
     });
   }, [tickets, search, filter]);
 
-  const openTickets   = filtered.filter((t) => t.status === "aberto" || t.status === "em_andamento");
-  const closedTickets = filtered.filter((t) => t.status === "resolvido" || t.status === "fechado");
+  const openTickets   = filtered.filter((t) => t.status !== "fechado");
+  const closedTickets = filtered.filter((t) => t.status === "fechado");
 
-  const totalOpen     = tickets.filter((t) => t.status === "aberto" || t.status === "em_andamento").length;
-  const totalResolved = tickets.filter((t) => t.status === "resolvido" || t.status === "fechado").length;
-  const totalHigh     = tickets.filter((t) => t.priority === "alta" && (t.status === "aberto" || t.status === "em_andamento")).length;
+  const totalOpen     = tickets.filter((t) => t.status !== "fechado").length;
+  const totalResolved = tickets.filter((t) => t.status === "fechado").length;
+  const totalHigh     = tickets.filter((t) => t.priority === "alta" && t.status !== "fechado").length;
 
   return (
     <div className="suporte-root" style={{ padding: "36px 32px", maxWidth: 940, margin: "0 auto" }}>

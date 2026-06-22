@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/app/lib/supabase/server";
 import { createServiceClient } from "@/app/lib/supabase/service";
 import { getProfile } from "@/app/lib/auth/session";
@@ -63,6 +64,14 @@ export default async function TicketDetailPage({ params }: Props) {
   };
 
   const messages = (messagesResult.data ?? []) as MessageRow[];
+
+  // Nome do cliente para identificar as mensagens na conversa
+  let clientName = profile?.name ?? undefined;
+  if (isAdmin) {
+    const { data: cp } = await readClient.from("profiles").select("name").eq("id", row.client_id).single();
+    clientName = cp?.name ?? undefined;
+  }
+
   const statusInfo   = TICKET_STATUS_MAP[ticket.status]   ?? TICKET_STATUS_MAP["aberto"];
   const priorityInfo = TICKET_PRIORITY_MAP[ticket.priority] ?? TICKET_PRIORITY_MAP["media"];
   const ticketLabel  = ticket.ticketNumber
@@ -126,6 +135,25 @@ export default async function TicketDetailPage({ params }: Props) {
         />
       )}
 
+      {/* CTA de validação — cliente precisa avaliar a solução */}
+      {!isAdmin && ticket.status === "resolvido" && (
+        <div style={{ background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.3)", borderRadius: 16, padding: "20px 22px", marginBottom: 20, display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
+          <div style={{ width: 44, height: 44, borderRadius: 12, background: "rgba(34,197,94,0.15)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+            <i className="ti ti-clipboard-check" style={{ fontSize: 22, color: "#22c55e" }} />
+          </div>
+          <div style={{ flex: 1, minWidth: 200 }}>
+            <p style={{ margin: "0 0 2px", fontSize: "14px", fontWeight: 800, color: "var(--text)" }}>Marcamos como resolvido</p>
+            <p style={{ margin: 0, fontSize: "13px", color: "var(--text-muted)", lineHeight: 1.5 }}>Confirme se a solução atendeu para encerrarmos o chamado.</p>
+          </div>
+          <Link
+            href={`/portal/suporte/${ticket.id}/avaliar`}
+            style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "11px 20px", borderRadius: 10, background: "#22c55e", color: "#fff", fontSize: "13px", fontWeight: 700, textDecoration: "none", whiteSpace: "nowrap" }}
+          >
+            <i className="ti ti-clipboard-check" style={{ fontSize: 15 }} /> Avaliar solução
+          </Link>
+        </div>
+      )}
+
       {/* Conversa com realtime */}
       <TicketConversation
         ticketId={ticket.id}
@@ -134,6 +162,7 @@ export default async function TicketDetailPage({ params }: Props) {
         currentUserName={profile?.name ?? user!.email ?? "Você"}
         ticketStatus={ticket.status}
         senderRole={isAdmin ? "admin" : "cliente"}
+        clientName={clientName}
       />
     </div>
   );

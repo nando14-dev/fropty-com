@@ -15,11 +15,13 @@ interface Props {
   currentUserName: string;
   ticketStatus:    TicketStatus;
   senderRole?:     "cliente" | "admin";
+  clientName?:     string;
 }
 
-const ROLE_LABEL: Record<string, string> = {
-  dev:   "Equipe Fropty",
-  admin: "Equipe Fropty",
+// Identidade visual de cada papel na conversa
+const ROLE_META = {
+  cliente: { fallback: "Cliente",       color: "#3b82f6", icon: "ti-user" },
+  equipe:  { fallback: "Equipe Fropty", color: "var(--primary)", icon: "ti-headset" },
 };
 
 export function TicketConversation({
@@ -29,6 +31,7 @@ export function TicketConversation({
   currentUserName,
   ticketStatus,
   senderRole = "cliente",
+  clientName,
 }: Props) {
   const [messages,    setMessages]    = useState<MessageRow[]>(initialMessages);
   const [body,        setBody]        = useState("");
@@ -39,7 +42,9 @@ export function TicketConversation({
   const bottomRef    = useRef<HTMLDivElement>(null);
   const textareaRef  = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const isClosed     = ticketStatus === "resolvido" || ticketStatus === "fechado";
+  // Fechado trava para todos. "Aguardando validação" (resolvido) trava só para
+  // o cliente — ele deve avaliar a solução, não conversar; o analista ainda pode comentar.
+  const isClosed     = ticketStatus === "fechado" || (senderRole === "cliente" && ticketStatus === "resolvido");
 
   // Gera signed URLs para attachments exibidos
   const resolveSignedUrls = useCallback(async (paths: string[]) => {
@@ -207,12 +212,25 @@ export function TicketConversation({
         {messages.map((msg) => {
           const isMe = msg.sender_id === currentUserId;
           const isOpt = msg.id.startsWith("opt-");
-          const senderLabel = isMe
-            ? currentUserName.split(" ")[0]
-            : (ROLE_LABEL[msg.sender_role] ?? "Suporte");
+          // Papel identifica claramente cliente vs equipe, independente de quem visualiza
+          const isClienteMsg = msg.sender_role === "cliente";
+          const meta = isClienteMsg ? ROLE_META.cliente : ROLE_META.equipe;
+          const senderLabel = isClienteMsg
+            ? (clientName?.split(" ")[0] ?? ROLE_META.cliente.fallback)
+            : ROLE_META.equipe.fallback;
           const time = new Date(msg.created_at).toLocaleTimeString("pt-BR", {
             hour: "2-digit", minute: "2-digit",
           });
+
+          const avatar = (
+            <div style={{
+              width: 26, height: 26, borderRadius: "50%", flexShrink: 0,
+              background: `${meta.color}1f`, border: `1px solid ${meta.color}40`,
+              display: "flex", alignItems: "center", justifyContent: "center",
+            }}>
+              <i className={`ti ${meta.icon}`} style={{ fontSize: 13, color: meta.color }} />
+            </div>
+          );
 
           return (
             <div
@@ -225,7 +243,7 @@ export function TicketConversation({
                 transition: "opacity 0.2s",
               }}
             >
-              {/* Nome + hora */}
+              {/* Avatar + nome + hora */}
               <div
                 style={{
                   fontSize: "11px",
@@ -237,7 +255,8 @@ export function TicketConversation({
                   flexDirection: isMe ? "row-reverse" : "row",
                 }}
               >
-                <span style={{ fontWeight: 600 }}>{senderLabel}</span>
+                {avatar}
+                <span style={{ fontWeight: 700, color: meta.color }}>{senderLabel}</span>
                 <span>{time}</span>
                 {isOpt && <i className="ti ti-loader-2" style={{ fontSize: 11, animation: "spin 1s linear infinite" }} />}
               </div>

@@ -225,8 +225,9 @@ export async function sendTicketStatusChange(opts: {
   const statusInfo: Record<string, { label: string; color: string; msg: string }> = {
     aberto:       { label: "Aberto",       color: "#3b82f6", msg: "Seu chamado foi reaberto e está na nossa fila." },
     em_andamento: { label: "Em andamento", color: "#EF9F27", msg: "Boa notícia: já estamos trabalhando no seu chamado." },
-    resolvido:    { label: "Resolvido",    color: "#22c55e", msg: "Seu chamado foi resolvido! Se precisar, é só responder para reabrir." },
+    resolvido:    { label: "Aguardando validação", color: "#22c55e", msg: "Marcamos seu chamado como resolvido. Confirme se a solução atendeu para encerrarmos." },
     fechado:      { label: "Fechado",      color: "#94a3b8", msg: "Seu chamado foi encerrado. Obrigado pelo contato!" },
+    reaberto:     { label: "Reaberto",     color: "#a855f7", msg: "Recebemos seu retorno: o chamado foi reaberto e voltará para a fila do time." },
   };
 
   const info = statusInfo[opts.newStatus] ?? { label: opts.newStatus, color: "#5B57E8", msg: "O status do seu chamado foi atualizado." };
@@ -254,6 +255,41 @@ export async function sendTicketStatusChange(opts: {
       ${btn("Ver meu chamado", `${APP_URL}/portal/suporte/${opts.ticketId}`)}
     `),
   }).catch((e) => console.error("[email] sendTicketStatusChange:", e));
+}
+
+// ── Feedback do cliente sobre a resolução (para o time interno) ───
+export async function sendResolutionFeedbackToTeam(opts: {
+  approved: boolean;
+  clientName: string;
+  subject: string;
+  ticketNumber?: number;
+  ticketId: string;
+  reason?: string;
+}) {
+  const adminEmail = process.env.CONTACT_EMAIL;
+  if (!adminEmail) return;
+
+  const ref = opts.ticketNumber ? `UFT${String(opts.ticketNumber).padStart(4, "0")}` : null;
+  const titulo = opts.approved ? "Cliente aprovou a resolução" : "Cliente NÃO aprovou a resolução";
+  const cor = opts.approved ? "#22c55e" : "#ef4444";
+
+  await getResend()?.emails.send({
+    from: FROM,
+    to:   adminEmail,
+    subject: `[${opts.approved ? "Aprovado" : "Reaberto"}] ${ref ? `${ref} · ` : ""}${opts.subject}`,
+    html: baseTemplate(`
+      <p style="margin:0 0 6px;font-size:13px;color:${cor};">${titulo}</p>
+      <h2 style="margin:0 0 8px;font-size:18px;font-weight:800;color:#F7F8FC;">${esc(opts.subject)}</h2>
+      ${ref ? `<p style="margin:0 0 16px;font-size:12px;font-weight:700;color:#5B57E8;letter-spacing:0.05em;">${ref}</p>` : ""}
+      <p style="font-size:13px;color:#94a3b8;line-height:1.6;margin:0 0 8px;"><strong style="color:#F7F8FC;">Cliente:</strong> ${esc(opts.clientName)}</p>
+      ${opts.approved
+        ? `<p style="font-size:14px;color:#94a3b8;line-height:1.6;margin:0;">O chamado foi <strong style="color:#22c55e;">fechado</strong> com a confirmação do cliente.</p>`
+        : `<p style="font-size:14px;color:#94a3b8;line-height:1.6;margin:0 0 8px;">O chamado voltou para o status <strong style="color:#a855f7;">Reaberto</strong>. Mova para "Em andamento" ao retomar.</p>
+           ${opts.reason ? `<div style="background:rgba(255,255,255,0.05);border-left:3px solid #ef4444;border-radius:4px;padding:12px 16px;margin:12px 0 0;"><p style="margin:0;font-size:13px;color:#cbd5e1;font-style:italic;line-height:1.6;">${esc(opts.reason.slice(0, 400))}</p></div>` : ""}`
+      }
+      ${btn("Abrir chamado", `${APP_URL}/admin/suporte/${opts.ticketId}`)}
+    `),
+  }).catch((e) => console.error("[email] sendResolutionFeedbackToTeam:", e));
 }
 
 // ── Nova mensagem no ticket (para o destinatário) ────────────────

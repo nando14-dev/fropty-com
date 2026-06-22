@@ -150,7 +150,7 @@ export type Database = {
           project_id: string | null;
           subject: string;
           category: string;
-          status: "aberto" | "em_andamento" | "resolvido" | "fechado";
+          status: "aberto" | "em_andamento" | "resolvido" | "fechado" | "reaberto";
           priority: "baixa" | "media" | "alta";
           ticket_number: number;
           created_at: string;
@@ -161,11 +161,11 @@ export type Database = {
           project_id?: string | null;
           subject: string;
           category?: string;
-          status?: "aberto" | "em_andamento" | "resolvido" | "fechado";
+          status?: "aberto" | "em_andamento" | "resolvido" | "fechado" | "reaberto";
           priority?: "baixa" | "media" | "alta";
         };
         Update: {
-          status?: "aberto" | "em_andamento" | "resolvido" | "fechado";
+          status?: "aberto" | "em_andamento" | "resolvido" | "fechado" | "reaberto";
           priority?: "baixa" | "media" | "alta";
         };
         Relationships: [];

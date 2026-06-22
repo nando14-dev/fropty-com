@@ -6,7 +6,7 @@ import { updateTicket } from "@/app/actions/suporte";
 import { TICKET_STATUS_MAP, TICKET_PRIORITY_MAP } from "@/app/lib/constants/status";
 import type { TicketStatus, TicketPriority } from "@/app/lib/constants/status";
 
-const STATUSES: TicketStatus[]  = ["aberto", "em_andamento", "resolvido", "fechado"];
+const STATUSES: TicketStatus[]  = ["aberto", "em_andamento", "resolvido", "reaberto", "fechado"];
 const PRIORITIES: TicketPriority[] = ["baixa", "media", "alta"];
 
 interface Props {

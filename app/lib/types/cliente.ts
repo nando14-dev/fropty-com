@@ -5,7 +5,7 @@ export type ProjectStatus =
   | "entregue"
   | "manutencao";
 
-export type TicketStatus = "aberto" | "em_andamento" | "resolvido" | "fechado";
+export type TicketStatus = "aberto" | "em_andamento" | "resolvido" | "fechado" | "reaberto";
 export type TicketPriority = "baixa" | "media" | "alta";
 
 export interface ClientProject {
