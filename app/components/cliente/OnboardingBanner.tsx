@@ -1,4 +1,5 @@
-﻿import Link from "next/link";
+import Link from "next/link";
+import { WHATSAPP_URL } from "@/app/lib/config";
 
 interface Props {
   name: string;
@@ -9,30 +10,30 @@ export function OnboardingBanner({ name, tokenBalance }: Props) {
   const steps = [
     {
       num: "1",
-      title: "Configure seu app",
-      desc: "Use o configurador para montar seu projeto com os recursos que precisa.",
-      href: "/configurador",
-      cta: "Abrir configurador",
-      done: false,
+      title: "Conheça o catálogo Fropty",
+      desc: "Explore os módulos do ecossistema — Cash, Invest, Boost, Sentinel e mais — e veja o que se aplica ao seu negócio.",
+      href: "/",
+      cta: "Ver catálogo",
       color: "var(--primary)",
+      external: false,
     },
     {
       num: "2",
-      title: "Aguarde a prévia gratuita",
-      desc: "Em até 48h nossa equipe entra em contato com uma demonstração do seu app.",
-      href: null,
-      cta: null,
-      done: false,
-      color: "#EF9F27",
+      title: "Fale com a nossa equipe",
+      desc: "Escolha o serviço e a gente customiza com a sua marca, cores e identidade.",
+      href: WHATSAPP_URL,
+      cta: "Falar no WhatsApp",
+      color: "#22c55e",
+      external: true,
     },
     {
       num: "3",
-      title: "Acompanhe seu projeto",
-      desc: "Aqui você verá o progresso, atualizações e poderá abrir chamados de suporte.",
+      title: "Acompanhe e abra chamados",
+      desc: "Após a contratação, use a área de cliente para suporte, tokens e o seu contrato financeiro.",
       href: "/portal/suporte",
       cta: "Ver suporte",
-      done: false,
-      color: "#22c55e",
+      color: "#EF9F27",
+      external: false,
     },
   ];
 
@@ -79,12 +80,17 @@ export function OnboardingBanner({ name, tokenBalance }: Props) {
               <p style={{ margin: 0, fontSize: 12, color: "var(--text-muted)", lineHeight: 1.5 }}>{step.desc}</p>
             </div>
             {step.href && step.cta && (
-              <Link href={step.href} style={{
-                padding: "7px 14px", borderRadius: 8,
-                background: step.color, color: "#fff",
-                fontSize: 12, fontWeight: 700, textDecoration: "none",
-                whiteSpace: "nowrap", flexShrink: 0,
-              }}>
+              <Link
+                href={step.href}
+                target={step.external ? "_blank" : undefined}
+                rel={step.external ? "noopener noreferrer" : undefined}
+                style={{
+                  padding: "7px 14px", borderRadius: 8,
+                  background: step.color, color: "#fff",
+                  fontSize: 12, fontWeight: 700, textDecoration: "none",
+                  whiteSpace: "nowrap", flexShrink: 0,
+                }}
+              >
                 {step.cta}
               </Link>
             )}
@@ -105,8 +111,8 @@ export function OnboardingBanner({ name, tokenBalance }: Props) {
         }}>
           <i className="ti ti-coins" style={{ fontSize: 15, flexShrink: 0 }} />
           <span>
-            Você ainda não tem tokens. Tokens são usados para abrir chamados de suporte após a entrega.{" "}
-            <Link href="/portal/financeiro" style={{ color: "#EF9F27", fontWeight: 700 }}>Ver planos →</Link>
+            Você ainda não tem tokens. Tokens são usados para abrir chamados de suporte.{" "}
+            <Link href="/portal/financeiro" style={{ color: "#EF9F27", fontWeight: 700 }}>Ver financeiro →</Link>
           </span>
         </div>
       )}

@@ -3,15 +3,10 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getProfile } from "@/app/lib/auth/session";
 import { createClient } from "@/app/lib/supabase/server";
-import { ProjectCard } from "@/app/components/cliente/ProjectCard";
 import { OnboardingBanner } from "@/app/components/cliente/OnboardingBanner";
 import { WHATSAPP_URL } from "@/app/lib/config";
-import type { ClientProject, ProjectStatus } from "@/app/lib/types/cliente";
-import type { Database } from "@/app/lib/supabase/types";
-import { STATUS_MAP } from "@/app/lib/constants/status";
+import { getService } from "@/app/lib/constants/services";
 import { PlanRenewalBanner } from "@/app/components/cliente/PlanRenewalBanner";
-
-type ProjectRow = Database["public"]["Tables"]["projects"]["Row"];
 
 export const metadata: Metadata = {
   title: "Meu Painel",
@@ -27,34 +22,19 @@ export default async function PortalDashboardPage() {
 
   if (!user) console.error("[portal/dashboard] user is null after requireRole");
 
-  const { data: projectRows, error: projError } = user
+  const { count: openTickets } = user
     ? await supabase
-        .from("projects")
-        .select("*")
+        .from("tickets")
+        .select("id", { count: "exact", head: true })
         .eq("client_id", user.id)
-        .order("created_at", { ascending: false })
-    : { data: [], error: null };
-
-  if (projError) {
-    console.error("[portal/dashboard] projects fetch error:", projError.message);
-  }
-
-  const projects: ClientProject[] = ((projectRows ?? []) as ProjectRow[]).map((p) => ({
-    id:              p.id,
-    name:            p.name,
-    description:     p.description,
-    status:          p.status as ProjectStatus,
-    progress:        p.progress,
-    addons:          p.addons,
-    maintenancePlan: p.maintenance_plan ?? undefined,
-    startedAt:       p.started_at,
-    deliveredAt:     p.delivered_at ?? undefined,
-  }));
+        .in("status", ["aberto", "em_andamento"])
+    : { count: 0 };
 
   const displayName    = profile?.name || user?.email?.split("@")[0] || "Cliente";
   const tokenBalance   = profile?.token_balance ?? 0;
-  const activeCount    = projects.filter((p) => p.status !== "entregue").length;
-  const deliveredCount = projects.filter((p) => p.status === "entregue").length;
+  const services       = profile?.services ?? [];
+  const contractStart  = profile?.contract_start ?? null;
+  const hasServices    = services.length > 0;
 
   return (
     <div style={{ padding: "40px 32px", maxWidth: 900, margin: "0 auto" }}>
@@ -67,7 +47,6 @@ export default async function PortalDashboardPage() {
         <h1 style={{ fontSize: "1.75rem", fontWeight: 800, margin: 0, color: "var(--text)" }}>
           {displayName.split(" ")[0]}
         </h1>
-
       </div>
 
       {/* KPIs */}
@@ -80,9 +59,9 @@ export default async function PortalDashboardPage() {
         }}
       >
         {[
-          { icon: "ti-layout-cards", label: "Projetos ativos",    value: activeCount,    color: "var(--primary)" },
-          { icon: "ti-coins",        label: "Tokens disponíveis", value: tokenBalance,   color: "#EF9F27" },
-          { icon: "ti-circle-check", label: "Projetos entregues", value: deliveredCount, color: "#22c55e" },
+          { icon: "ti-apps",          label: "Serviços ativos",    value: services.length,  color: "var(--primary)" },
+          { icon: "ti-coins",         label: "Tokens disponíveis", value: tokenBalance,     color: "#EF9F27" },
+          { icon: "ti-message-circle",label: "Chamados abertos",   value: openTickets ?? 0, color: "#22c55e" },
         ].map(({ icon, label, value, color }) => (
           <div
             key={label}
@@ -126,35 +105,74 @@ export default async function PortalDashboardPage() {
         />
       )}
 
-      {/* Onboarding — só aparece quando não há projetos */}
-      {projects.length === 0 && (
+      {/* Onboarding — quando o cliente ainda não tem serviços contratados */}
+      {!hasServices && (
         <OnboardingBanner name={displayName} tokenBalance={tokenBalance} />
       )}
 
-      {/* Projetos */}
-      {projects.length > 0 && (
-        <h2 style={{ fontSize: "1.1rem", fontWeight: 700, marginBottom: 16, color: "var(--text)" }}>
-          Meus projetos
-        </h2>
-      )}
+      {/* Serviços contratados */}
+      {hasServices && (
+        <>
+          <h2 style={{ fontSize: "1.1rem", fontWeight: 700, marginBottom: 16, color: "var(--text)" }}>
+            Meus serviços
+          </h2>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
+              gap: 14,
+              marginBottom: 36,
+            }}
+          >
+            {services.map((id) => {
+              const svc = getService(id);
+              const label = svc?.label ?? id;
+              const icon  = svc?.icon ?? "ti-package";
+              const color = svc?.color ?? "var(--primary)";
+              return (
+                <div
+                  key={id}
+                  style={{
+                    background: "var(--card-bg)",
+                    border: "1px solid var(--card-border)",
+                    borderRadius: 14,
+                    padding: "16px 18px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 12,
+                  }}
+                >
+                  <div style={{ width: 38, height: 38, borderRadius: 10, background: `${color}1f`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                    <i className={`ti ${icon}`} style={{ fontSize: 19, color }} />
+                  </div>
+                  <div style={{ minWidth: 0 }}>
+                    <p style={{ margin: 0, fontSize: "14px", fontWeight: 700, color: "var(--text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{label}</p>
+                    <p style={{ margin: 0, fontSize: "11px", color: "#22c55e", fontWeight: 600 }}>Ativo</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
 
-      {projects.length > 0 && (
-        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          {projects.map((project) => (
-            <ProjectCard key={project.id} project={project} statusMap={STATUS_MAP} />
-          ))}
-        </div>
+          {contractStart && (
+            <p style={{ margin: "-20px 0 36px", fontSize: "12px", color: "var(--text-faint)" }}>
+              <i className="ti ti-calendar-event" style={{ marginRight: 6 }} />
+              Contrato iniciado em {new Date(contractStart).toLocaleDateString("pt-BR")}
+            </p>
+          )}
+        </>
       )}
 
       {/* Ações rápidas */}
-      <div style={{ marginTop: 36 }}>
+      <div style={{ marginTop: 8 }}>
         <h2 style={{ fontSize: "1.1rem", fontWeight: 700, marginBottom: 16, color: "var(--text)" }}>
           Ações rápidas
         </h2>
         <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
           {[
-            { href: "/configurador",         icon: "ti-plus",            color: "var(--primary)", label: "Novo projeto" },
-            { href: WHATSAPP_URL,            icon: "ti-brand-whatsapp",  color: "#22c55e",        label: "Suporte", external: true },
+            { href: "/portal/suporte/novo", icon: "ti-message-plus",     color: "var(--primary)", label: "Abrir chamado" },
+            { href: "/portal/financeiro",   icon: "ti-credit-card",      color: "#EF9F27",        label: "Financeiro" },
+            { href: WHATSAPP_URL,           icon: "ti-brand-whatsapp",   color: "#22c55e",        label: "Falar no WhatsApp", external: true },
           ].map(({ href, icon, color, label, external }) => (
             <Link
               key={href}

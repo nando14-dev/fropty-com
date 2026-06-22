@@ -25,7 +25,6 @@ interface Props {
 
 const DEFAULT_NAV: NavItem[] = [
   { id: "dashboard", href: "/portal/dashboard", icon: "ti-layout-dashboard", label: "Painel" },
-  { id: "projetos",  href: "/portal/projetos",  icon: "ti-folder",           label: "Projetos" },
   { id: "suporte",   href: "/portal/suporte",   icon: "ti-message-circle",   label: "Suporte" },
   { id: "financeiro",href: "/portal/financeiro",icon: "ti-credit-card",      label: "Financeiro" },
   { id: "perfil",    href: "/portal/perfil",    icon: "ti-user-circle",      label: "Meu Perfil" },
@@ -119,7 +118,7 @@ export function ClientSidebar({ user, navItems, initialTheme = "dark" }: Props) 
           <Image src="/logo-icon.png" alt="Fropty" width={26} height={26} className="rounded-md" style={{ flexShrink: 0 }} />
           {!collapsed && (
             <span style={{ fontWeight: 700, fontSize: "0.95rem", color: "var(--text)", whiteSpace: "nowrap" }}>
-              Fropty<span style={{ color: "var(--primary)" }}>Apps</span>
+              Fropty
             </span>
           )}
         </Link>
@@ -258,7 +257,7 @@ export function ClientSidebar({ user, navItems, initialTheme = "dark" }: Props) 
         <Link href="/" style={{ display: "flex", alignItems: "center", gap: 7, textDecoration: "none", flex: 1 }}>
           <Image src="/logo-icon.png" alt="Fropty" width={22} height={22} className="rounded-md" />
           <span style={{ fontWeight: 700, fontSize: "0.9rem", color: "var(--text)" }}>
-            Fropty<span style={{ color: "var(--primary)" }}>Apps</span>
+            Fropty
           </span>
         </Link>
         <PortalThemeToggle initialTheme={initialTheme} />
