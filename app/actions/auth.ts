@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/app/lib/supabase/server";
 import { ROLE_HOME, DEFAULT_ROLE, type UserRole } from "@/app/lib/auth/roles";
 import { isWeakPasswordError, SENTINEL_PASSWORD_MESSAGE } from "@/app/lib/auth/password-error";
+import { isPwnedPassword } from "@/app/lib/auth/pwned";
 
 /**
  * Login por email/senha.
@@ -73,6 +74,8 @@ export async function updatePassword(formData: FormData) {
 
   if (!password || password.length < 8) return { error: "Senha deve ter pelo menos 8 caracteres." };
   if (password !== confirm) return { error: "As senhas não conferem." };
+
+  if (await isPwnedPassword(password)) return { error: SENTINEL_PASSWORD_MESSAGE };
 
   const supabase = await createClient();
   const { error } = await supabase.auth.updateUser({ password });

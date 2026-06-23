@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/app/lib/supabase/server";
 import { requireAuth } from "@/app/lib/auth/require-role";
 import { isWeakPasswordError, SENTINEL_PASSWORD_MESSAGE } from "@/app/lib/auth/password-error";
+import { isPwnedPassword } from "@/app/lib/auth/pwned";
 
 const PASSWORD_MIN_LENGTH = 10;
 const PASSWORD_REGEX = {
@@ -63,6 +64,8 @@ export async function changePassword(formData: FormData): Promise<{ error?: stri
 
   const strengthError = validatePasswordStrength(newPassword);
   if (strengthError) return { error: strengthError };
+
+  if (await isPwnedPassword(newPassword)) return { error: SENTINEL_PASSWORD_MESSAGE };
 
   const supabase = await createClient();
 
