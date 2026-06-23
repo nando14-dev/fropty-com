@@ -60,7 +60,7 @@ export async function requestPasswordReset(formData: FormData) {
   if (!email) return { error: "Informe seu e-mail." };
 
   const supabase = await createClient();
-  const siteUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://fropty.com";
+  const siteUrl = process.env.NEXT_PUBLIC_HUB_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? "https://fropty.com";
 
   await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: `${siteUrl}/auth/callback?next=/area-cliente/nova-senha`,

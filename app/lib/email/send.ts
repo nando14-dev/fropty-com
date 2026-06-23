@@ -15,6 +15,8 @@ function getResend(): Resend | null {
 
 const FROM = process.env.RESEND_FROM_EMAIL ?? "FroptyHub <noreply@fropty.com>";
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://fropty.com";
+// Área autenticada (portal/admin) — quando configurada, vive no hub
+const HUB_URL = process.env.NEXT_PUBLIC_HUB_URL ?? APP_URL;
 
 function esc(str: string): string {
   return str
@@ -120,7 +122,7 @@ export async function sendWelcomeEmail(opts: {
       <p style="font-size:13px;color:#94a3b8;line-height:1.7;margin:0 0 4px;">
         Acesse o portal para acompanhar seus serviços, abrir chamados de suporte e muito mais. Qualquer dúvida, estamos aqui.
       </p>
-      ${btn("Acessar meu portal", `${APP_URL}/portal/dashboard`)}
+      ${btn("Acessar meu portal", `${HUB_URL}/portal/dashboard`)}
     `),
   }).catch((e) => console.error("[email] sendWelcomeEmail:", e));
 }
@@ -148,7 +150,7 @@ export async function sendNewTicketAlert(opts: {
         <p style="margin:4px 0;"><strong style="color:#F7F8FC;">Cliente:</strong> ${esc(opts.clientName)}</p>
         <p style="margin:4px 0;"><strong style="color:#F7F8FC;">E-mail:</strong> ${esc(opts.clientEmail)}</p>
       </div>
-      ${btn("Abrir chamado", `${APP_URL}/admin/suporte/${opts.ticketId}`)}
+      ${btn("Abrir chamado", `${HUB_URL}/admin/suporte/${opts.ticketId}`)}
     `),
   }).catch((e) => console.error("[email] sendNewTicketAlert:", e));
 }
@@ -205,7 +207,7 @@ export async function sendTicketOpenedToClient(opts: {
       <p style="font-size:13px;color:#94a3b8;line-height:1.7;margin:0;">
         Acompanhe e responda diretamente pelo portal.
       </p>
-      ${btn("Ver meu chamado", `${APP_URL}/portal/suporte/${opts.ticketId}`)}
+      ${btn("Ver meu chamado", `${HUB_URL}/portal/suporte/${opts.ticketId}`)}
     `),
   }).catch((e) => console.error("[email] sendTicketOpenedToClient:", e));
 }
@@ -255,7 +257,7 @@ export async function sendTicketStatusChange(opts: {
 
       ${opts.note ? `<div style="background:rgba(255,255,255,0.05);border-left:3px solid #5B57E8;border-radius:4px;padding:12px 16px;margin:0 0 20px;"><p style="margin:0 0 6px;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;">Comentário da equipe</p><p style="margin:0;font-size:13px;color:#cbd5e1;line-height:1.6;white-space:pre-wrap;">${escapeHtml(opts.note.slice(0, 800))}</p></div>` : ""}
 
-      ${btn("Ver meu chamado", `${APP_URL}/portal/suporte/${opts.ticketId}`)}
+      ${btn("Ver meu chamado", `${HUB_URL}/portal/suporte/${opts.ticketId}`)}
     `),
   }).catch((e) => console.error("[email] sendTicketStatusChange:", e));
 }
@@ -290,7 +292,7 @@ export async function sendResolutionFeedbackToTeam(opts: {
         : `<p style="font-size:14px;color:#94a3b8;line-height:1.6;margin:0 0 8px;">O chamado voltou para o status <strong style="color:#a855f7;">Reaberto</strong>. Mova para "Em andamento" ao retomar.</p>
            ${opts.reason ? `<div style="background:rgba(255,255,255,0.05);border-left:3px solid #ef4444;border-radius:4px;padding:12px 16px;margin:12px 0 0;"><p style="margin:0;font-size:13px;color:#cbd5e1;font-style:italic;line-height:1.6;">${esc(opts.reason.slice(0, 400))}</p></div>` : ""}`
       }
-      ${btn("Abrir chamado", `${APP_URL}/admin/suporte/${opts.ticketId}`)}
+      ${btn("Abrir chamado", `${HUB_URL}/admin/suporte/${opts.ticketId}`)}
     `),
   }).catch((e) => console.error("[email] sendResolutionFeedbackToTeam:", e));
 }
@@ -307,8 +309,8 @@ export async function sendNewMessageAlert(opts: {
 }) {
   const isClient = opts.senderRole !== "cliente";
   const destUrl = isClient
-    ? `${APP_URL}/portal/suporte/${opts.ticketId}`
-    : `${APP_URL}/admin/suporte/${opts.ticketId}`;
+    ? `${HUB_URL}/portal/suporte/${opts.ticketId}`
+    : `${HUB_URL}/admin/suporte/${opts.ticketId}`;
 
   await getResend()?.emails.send({
     from: FROM,
@@ -345,7 +347,7 @@ export async function sendLowTokenAlert(opts: {
       <p style="font-size:14px;color:#94a3b8;line-height:1.6;margin:0;">
         Recarregue para continuar usando o suporte sem interrupções.
       </p>
-      ${btn("Recarregar tokens", `${APP_URL}/portal/financeiro`)}
+      ${btn("Recarregar tokens", `${HUB_URL}/portal/financeiro`)}
     `),
   }).catch((e) => console.error("[email] sendLowTokenAlert:", e));
 }
@@ -369,7 +371,7 @@ export async function sendPlanConfirmation(opts: {
         Olá, <strong style="color:#F7F8FC;">${esc(opts.toName.split(" ")[0])}</strong>!
         Seu plano foi ativado com sucesso e <strong style="color:#5B57E8;">${opts.tokens} tokens</strong> foram creditados na sua conta.
       </p>
-      ${btn("Acessar minha conta", `${APP_URL}/portal/dashboard`)}
+      ${btn("Acessar minha conta", `${HUB_URL}/portal/dashboard`)}
     `),
   }).catch((e) => console.error("[email] sendPlanConfirmation:", e));
 }

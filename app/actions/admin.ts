@@ -41,7 +41,7 @@ export async function adminInviteClient(formData: FormData): Promise<{ error?: s
 
   const service = createServiceClient();
   const { data, error } = await service.auth.admin.inviteUserByEmail(email, {
-    redirectTo: `${process.env.NEXT_PUBLIC_APP_URL ?? "https://www.fropty.com"}/auth/callback?next=/area-cliente/nova-senha`,
+    redirectTo: `${process.env.NEXT_PUBLIC_HUB_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? "https://www.fropty.com"}/auth/callback?next=/area-cliente/nova-senha`,
     data: { name, role: "cliente", token_balance: tokenBalance, plan, services, contract_start: contractStart },
   });
 
