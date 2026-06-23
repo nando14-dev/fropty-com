@@ -114,7 +114,7 @@ export function ClientSidebar({ user, navItems, initialTheme = "dark" }: Props) 
       {/* Logo */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: collapsed ? "center" : "flex-start", marginBottom: 24 }}>
         <Link href="/" style={{ display: "flex", alignItems: "center", gap: 8, textDecoration: "none", minWidth: 0 }}>
-          <Image src="/logo-hub.png" alt="FroptyHub" width={26} height={26} className="rounded-md" style={{ flexShrink: 0 }} />
+          <Image src="/hub-logo.png" alt="FroptyHub" width={26} height={26} className="rounded-md" style={{ flexShrink: 0 }} />
           {!collapsed && (
             <span style={{ fontWeight: 700, fontSize: "0.95rem", color: "var(--text)", whiteSpace: "nowrap" }}>
               Fropty<span style={{ color: "var(--primary)" }}>Hub</span>
@@ -252,7 +252,7 @@ export function ClientSidebar({ user, navItems, initialTheme = "dark" }: Props) 
           <i className="ti ti-menu-2" style={{ fontSize: 18 }} />
         </button>
         <Link href="/" style={{ display: "flex", alignItems: "center", gap: 7, textDecoration: "none", flex: 1 }}>
-          <Image src="/logo-hub.png" alt="FroptyHub" width={22} height={22} className="rounded-md" />
+          <Image src="/hub-logo.png" alt="FroptyHub" width={22} height={22} className="rounded-md" />
           <span style={{ fontWeight: 700, fontSize: "0.9rem", color: "var(--text)" }}>
             Fropty<span style={{ color: "var(--primary)" }}>Hub</span>
           </span>

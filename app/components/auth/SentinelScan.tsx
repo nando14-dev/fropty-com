@@ -33,7 +33,7 @@ export function SentinelScan({ active }: { active: boolean }) {
           display: "flex", alignItems: "center", justifyContent: "center",
           animation: "sentinelPulse 1.2s ease-in-out infinite",
         }}>
-          <Image src="/logo-sentinel.png" alt="FroptySentinel" width={64} height={64} style={{ objectFit: "contain" }} />
+          <Image src="/sentinel-logo.png" alt="FroptySentinel" width={64} height={64} style={{ objectFit: "contain" }} />
         </div>
         <p style={{ margin: "0 0 4px", fontSize: "15px", fontWeight: 800, color: "var(--text)" }}>
           FroptySentinel
