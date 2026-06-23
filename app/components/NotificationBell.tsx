@@ -31,7 +31,7 @@ function timeAgo(dateStr: string): string {
 export function NotificationBell({ userId }: { userId: string }) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [open, setOpen]                   = useState(false);
-  const [dropPos, setDropPos]             = useState({ top: 0, left: 0 });
+  const [dropPos, setDropPos]             = useState<{ left: number; top?: number; bottom?: number }>({ left: 0, top: 0 });
   const btnRef                            = useRef<HTMLButtonElement>(null);
   const dropRef                           = useRef<HTMLDivElement>(null);
   const supabase                          = useMemo(() => createClient(), []);
@@ -78,12 +78,16 @@ export function NotificationBell({ userId }: { userId: string }) {
     if (!open && btnRef.current) {
       const rect = btnRef.current.getBoundingClientRect();
       const dropW = 320;
-      const dropH = 420; // altura aproximada (header + lista)
+      const dropH = 420; // estimativa só para decidir a direção
       const left = Math.max(8, Math.min(rect.right - dropW, window.innerWidth - dropW - 8));
-      // Abre para cima quando não há espaço abaixo (ex.: botão flutuante no rodapé)
+      // Abre para cima quando não há espaço abaixo (ex.: botão flutuante no rodapé).
+      // Ancorado pela base (bottom) para ficar colado ao botão, independente da altura.
       const openUp = rect.bottom + dropH > window.innerHeight;
-      const top = openUp ? Math.max(8, rect.top - dropH - 8) : rect.bottom + 8;
-      setDropPos({ top, left });
+      if (openUp) {
+        setDropPos({ left, bottom: window.innerHeight - rect.top + 8 });
+      } else {
+        setDropPos({ left, top: rect.bottom + 8 });
+      }
     }
     setOpen((o) => !o);
   }
@@ -139,7 +143,8 @@ export function NotificationBell({ userId }: { userId: string }) {
           ref={dropRef}
           style={{
             position: "fixed",
-            top: dropPos.top,
+            ...(dropPos.top !== undefined ? { top: dropPos.top } : {}),
+            ...(dropPos.bottom !== undefined ? { bottom: dropPos.bottom } : {}),
             left: dropPos.left,
             width: 320,
             background: "var(--card-bg)",
