@@ -41,9 +41,9 @@ export default function NovaSenhaPage() {
       padding: "24px 16px",
     }}>
       <Link href="/" style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 36, textDecoration: "none" }}>
-        <Image src="/logo-icon.png" alt="Fropty" width={32} height={32} style={{ borderRadius: 8 }} />
+        <Image src="/logo-hub.png" alt="FroptyHub" width={32} height={32} style={{ borderRadius: 8 }} />
         <span style={{ fontSize: 18, fontWeight: 800, color: "var(--text)", fontFamily: "var(--font-plus-jakarta), sans-serif" }}>
-          Fropty
+          Fropty<span style={{ color: "var(--primary)" }}>Hub</span>
         </span>
       </Link>
 

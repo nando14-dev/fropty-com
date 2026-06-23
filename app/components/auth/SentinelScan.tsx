@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import Image from "next/image";
 
 /**
  * Overlay "scanner" do FroptySentinel exibido enquanto a senha é validada
@@ -28,21 +29,20 @@ export function SentinelScan({ active }: { active: boolean }) {
         borderRadius: 20, padding: "34px 28px", boxShadow: "0 24px 60px rgba(0,0,0,0.45)",
       }}>
         <div style={{
-          width: 60, height: 60, borderRadius: 16, margin: "0 auto 18px",
-          background: "rgba(14,165,233,0.12)", border: "1px solid rgba(14,165,233,0.3)",
+          width: 64, height: 64, margin: "0 auto 18px",
           display: "flex", alignItems: "center", justifyContent: "center",
           animation: "sentinelPulse 1.2s ease-in-out infinite",
         }}>
-          <i className="ti ti-shield-lock" style={{ fontSize: 30, color: "#0ea5e9" }} />
+          <Image src="/logo-sentinel.png" alt="FroptySentinel" width={64} height={64} style={{ objectFit: "contain" }} />
         </div>
         <p style={{ margin: "0 0 4px", fontSize: "15px", fontWeight: 800, color: "var(--text)" }}>
-          Serviço FroptySentinel
+          FroptySentinel
         </p>
         <p style={{ margin: "0 0 20px", fontSize: "13px", color: "var(--text-muted)", lineHeight: 1.5 }}>
           Verificando a segurança da sua senha…
         </p>
         <div style={{ height: 8, background: "var(--surface-2)", borderRadius: 99, overflow: "hidden" }}>
-          <div style={{ height: "100%", background: "linear-gradient(90deg, #0ea5e9, #5B57E8)", borderRadius: 99, animation: "sentinelScan 2.4s ease-in-out forwards" }} />
+          <div style={{ height: "100%", background: "linear-gradient(90deg, #ef4444, #b91c1c)", borderRadius: 99, animation: "sentinelScan 2.4s ease-in-out forwards" }} />
         </div>
         <p style={{ margin: "12px 0 0", fontSize: "11px", color: "var(--text-faint)" }}>
           <i className="ti ti-lock" style={{ marginRight: 5 }} />

@@ -13,7 +13,7 @@ function getResend(): Resend | null {
   return _resend;
 }
 
-const FROM = process.env.RESEND_FROM_EMAIL ?? "Fropty Apps <noreply@fropty.com>";
+const FROM = process.env.RESEND_FROM_EMAIL ?? "FroptyHub <noreply@fropty.com>";
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://fropty.com";
 
 function esc(str: string): string {
@@ -28,13 +28,13 @@ function esc(str: string): string {
 function baseTemplate(content: string) {
   return `<!DOCTYPE html>
 <html lang="pt-BR">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Fropty Apps</title></head>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>FroptyHub</title></head>
 <body style="margin:0;padding:0;background:#040316;font-family:'Inter',sans-serif;">
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;margin:32px auto;">
     <tr><td style="padding:0 24px 32px;">
       <!-- Logo -->
       <div style="margin-bottom:28px;">
-        <span style="font-size:20px;font-weight:800;color:#F7F8FC;">Fropty<span style="color:#5B57E8;">Apps</span></span>
+        <span style="font-size:20px;font-weight:800;color:#F7F8FC;">Fropty<span style="color:#5B57E8;">Hub</span></span>
       </div>
       <!-- Card -->
       <div style="background:#110E67;border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:28px 24px;">
@@ -42,7 +42,7 @@ function baseTemplate(content: string) {
       </div>
       <!-- Footer -->
       <p style="font-size:11px;color:#334155;text-align:center;margin-top:20px;">
-        Fropty Apps · <a href="${APP_URL}" style="color:#5B57E8;text-decoration:none;">fropty.com</a>
+        FroptyHub · <a href="${APP_URL}" style="color:#5B57E8;text-decoration:none;">fropty.com</a>
       </p>
     </td></tr>
   </table>
@@ -87,12 +87,12 @@ export async function sendWelcomeEmail(opts: {
     to:   opts.toEmail,
     subject: `Sua conta está pronta, ${opts.toName.split(" ")[0]}!`,
     html: baseTemplate(`
-      <p style="margin:0 0 8px;font-size:13px;color:#94a3b8;">Bem-vindo à Fropty</p>
+      <p style="margin:0 0 8px;font-size:13px;color:#94a3b8;">Bem-vindo à FroptyHub</p>
       <h2 style="margin:0 0 16px;font-size:20px;font-weight:800;color:#F7F8FC;line-height:1.3;">
         Que bom ter você com a gente, ${opts.toName.split(" ")[0]}!
       </h2>
       <p style="font-size:14px;color:#94a3b8;line-height:1.7;margin:0 0 20px;">
-        Sua senha foi criada e sua conta está pronta para usar. Ficamos muito felizes que você tenha escolhido a Fropty.
+        Sua senha foi criada e sua conta está pronta para usar. Ficamos muito felizes que você tenha escolhido a FroptyHub.
       </p>
 
       <!-- Resumo da conta -->
@@ -334,7 +334,7 @@ export async function sendLowTokenAlert(opts: {
   await getResend()?.emails.send({
     from: FROM,
     to:   opts.toEmail,
-    subject: "Seus tokens estão acabando — Fropty Apps",
+    subject: "Seus tokens estão acabando — FroptyHub",
     html: baseTemplate(`
       <p style="margin:0 0 6px;font-size:13px;color:#EF9F27;">⚠ Atenção</p>
       <h2 style="margin:0 0 12px;font-size:18px;font-weight:800;color:#F7F8FC;">Seus tokens estão acabando</h2>
@@ -361,7 +361,7 @@ export async function sendPlanConfirmation(opts: {
   await getResend()?.emails.send({
     from: FROM,
     to:   opts.toEmail,
-    subject: `Plano ${planLabel} ativado — Fropty Apps`,
+    subject: `Plano ${planLabel} ativado — FroptyHub`,
     html: baseTemplate(`
       <p style="margin:0 0 6px;font-size:13px;color:#22c55e;">✓ Confirmação</p>
       <h2 style="margin:0 0 12px;font-size:18px;font-weight:800;color:#F7F8FC;">Plano ${planLabel} ativado!</h2>
