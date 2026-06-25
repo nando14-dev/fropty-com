@@ -12,9 +12,12 @@ export function LoginForm() {
     setError("");
     setLoading(true);
 
-    // signIn redireciona no servidor em caso de sucesso; aqui só tratamos erro.
     const result = await signIn(new FormData(e.currentTarget));
 
+    if (result && "ok" in result && result.ok) {
+      window.location.assign(result.target);
+      return;
+    }
     if (result?.error) {
       setError(result.error);
       setLoading(false);

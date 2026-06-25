@@ -52,8 +52,13 @@ export default function AreaClientePage() {
         setSuccess("Se esse e-mail estiver cadastrado, você receberá o link em breve.");
         return;
       }
-      // signIn redireciona no servidor em caso de sucesso; aqui só tratamos erro.
+      // signIn grava a sessão (cookie) na resposta e devolve o destino.
+      // Navegação dura garante que o middleware leia o cookie já presente.
       const result = await signIn(formData);
+      if (result && "ok" in result && result.ok) {
+        window.location.assign(result.target);
+        return;
+      }
       if (result?.error) setError(result.error);
     });
   }
