@@ -103,7 +103,7 @@ export default function AreaClientePage() {
               Área do cliente
             </h2>
             <p style={{ fontSize: 13, color: "var(--text-muted)", margin: 0 }}>
-              Acesse seus projetos, chamados e tokens.
+              Acesse seus serviços, chamados e tokens.
             </p>
           </div>
         )}
