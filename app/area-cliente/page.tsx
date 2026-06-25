@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, useEffect } from "react";
+import { useState, useTransition, useEffect, useActionState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -12,6 +12,9 @@ type Mode = "login" | "reset";
 export default function AreaClientePage() {
   const searchParams = useSearchParams();
   const [mode, setMode]       = useState<Mode>("login");
+  // Login: envio NATIVO do form via useActionState. signIn faz redirect() no
+  // servidor em caso de sucesso (confiável) e devolve { error } em caso de falha.
+  const [loginState, loginAction, loginPending] = useActionState(signIn, null);
   const [error, setError]     = useState<string | null>(() =>
     searchParams.get("error") === "acesso-revogado"
       ? "Seu acesso foi revogado. Entre em contato com o suporte."
@@ -35,33 +38,26 @@ export default function AreaClientePage() {
 
   function changeMode(m: Mode) { setMode(m); setError(null); setSuccess(null); }
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  function handleResetSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
     setSuccess(null);
     const formData = new FormData(e.currentTarget);
 
     startTransition(async () => {
-      if (mode === "reset") {
-        const email = (formData.get("email") as string)?.trim().toLowerCase();
-        if (!email) { setError("Informe seu e-mail."); return; }
-        const supabase = createClient();
-        await supabase.auth.resetPasswordForEmail(email, {
-          redirectTo: `${window.location.origin}/auth/callback?next=/area-cliente/nova-senha`,
-        });
-        setSuccess("Se esse e-mail estiver cadastrado, você receberá o link em breve.");
-        return;
-      }
-      // signIn grava a sessão (cookie) na resposta e devolve o destino.
-      // Navegação dura garante que o middleware leia o cookie já presente.
-      const result = await signIn(formData);
-      if (result && "ok" in result && result.ok) {
-        window.location.assign(result.target);
-        return;
-      }
-      if (result?.error) setError(result.error);
+      const email = (formData.get("email") as string)?.trim().toLowerCase();
+      if (!email) { setError("Informe seu e-mail."); return; }
+      const supabase = createClient();
+      await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth/callback?next=/area-cliente/nova-senha`,
+      });
+      setSuccess("Se esse e-mail estiver cadastrado, você receberá o link em breve.");
     });
   }
+
+  // Erro exibido na tela: prioriza o erro do login (server action) e cai no
+  // erro local (reset / acesso revogado).
+  const shownError = (mode === "login" ? loginState?.error : null) ?? error;
 
   return (
     <div style={{
@@ -127,7 +123,12 @@ export default function AreaClientePage() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+        <form
+          {...(mode === "login"
+            ? { action: loginAction }
+            : { onSubmit: handleResetSubmit })}
+          style={{ display: "flex", flexDirection: "column", gap: 14 }}
+        >
           <div>
             <label style={labelStyle}>E-mail</label>
             <input name="email" type="email" required autoComplete="email" placeholder="seu@email.com" style={inputStyle} />
@@ -150,9 +151,9 @@ export default function AreaClientePage() {
             </div>
           )}
 
-          {error && (
+          {shownError && (
             <div style={{ padding: "10px 14px", borderRadius: 10, background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.25)", color: "#ef4444", fontSize: 13, display: "flex", alignItems: "center", gap: 8 }}>
-              <i className="ti ti-alert-circle" style={{ fontSize: 15, flexShrink: 0 }} />{error}
+              <i className="ti ti-alert-circle" style={{ fontSize: 15, flexShrink: 0 }} />{shownError}
             </div>
           )}
 
@@ -162,15 +163,15 @@ export default function AreaClientePage() {
             </div>
           )}
 
-          <button type="submit" disabled={isPending} style={{
+          <button type="submit" disabled={mode === "login" ? loginPending : isPending} style={{
             marginTop: 4, padding: "12px 0", borderRadius: 12, border: "none",
-            background: isPending ? "var(--border)" : "var(--primary)",
-            color: isPending ? "var(--text-muted)" : "#fff",
-            fontWeight: 700, fontSize: 15, cursor: isPending ? "not-allowed" : "pointer",
+            background: (mode === "login" ? loginPending : isPending) ? "var(--border)" : "var(--primary)",
+            color: (mode === "login" ? loginPending : isPending) ? "var(--text-muted)" : "#fff",
+            fontWeight: 700, fontSize: 15, cursor: (mode === "login" ? loginPending : isPending) ? "not-allowed" : "pointer",
             fontFamily: "inherit", transition: "all 0.2s",
             display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
           }}>
-            {isPending ? (
+            {(mode === "login" ? loginPending : isPending) ? (
               <><i className="ti ti-loader-2" style={{ fontSize: 16, animation: "spin 1s linear infinite" }} />Aguarde…</>
             ) : mode === "login" ? "Entrar na conta" : "Enviar link de recuperação"}
           </button>

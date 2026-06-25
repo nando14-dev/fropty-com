@@ -1,28 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useActionState } from "react";
 import { signIn } from "@/app/actions/auth";
 
 export function LoginForm() {
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
-
-    const result = await signIn(new FormData(e.currentTarget));
-
-    if (result && "ok" in result && result.ok) {
-      window.location.assign(result.target);
-      return;
-    }
-    if (result?.error) {
-      setError(result.error);
-      setLoading(false);
-    }
-  }
+  // Envio nativo do form: signIn redireciona no servidor em caso de sucesso.
+  const [state, formAction, loading] = useActionState(signIn, null);
+  const error = state?.error ?? "";
 
   const inputStyle: React.CSSProperties = {
     width: "100%",
@@ -38,7 +22,7 @@ export function LoginForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+    <form action={formAction} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
       <div>
         <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "var(--text-muted)", marginBottom: 6 }}>
           E-mail

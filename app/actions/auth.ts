@@ -8,13 +8,19 @@ import { isWeakPasswordError, SENTINEL_PASSWORD_MESSAGE } from "@/app/lib/auth/p
 import { isPwnedPassword } from "@/app/lib/auth/pwned";
 import { sendWelcomeEmail } from "@/app/lib/email/send";
 
+export type LoginState = { error?: string } | null;
+
 /**
- * Login por email/senha.
- * Redireciona para ROLE_HOME["cliente"] (/portal/dashboard) como destino padrão.
- * O middleware intercepta a navegação e redireciona dev/admin para suas homes corretas,
- * evitando a query extra ao banco dentro do Server Action.
+ * Login por email/senha — assinatura de useActionState (prevState, formData).
+ *
+ * Usado via `<form action={...}>` (envio NATIVO do formulário). Nesse modo o
+ * redirect() do servidor é confiável: vira a resposta da navegação e o browser
+ * a segue carregando o cookie de sessão já gravado. (Chamar a action de forma
+ * imperativa — await signIn(fd) dentro de startTransition — NÃO dispara o
+ * NEXT_REDIRECT no cliente, e era por isso que o login "não saía da tela".)
  */
-export async function signIn(formData: FormData) {
+export async function signIn(_prevState: LoginState, formData: FormData): Promise<LoginState> {
+  let target: string | null = null;
   try {
     const email    = (formData.get("email")    as string)?.trim();
     const password = (formData.get("password") as string)?.trim();
@@ -28,7 +34,6 @@ export async function signIn(formData: FormData) {
 
     if (error) return { error: "Email ou senha incorretos." };
 
-    // Busca role e is_active para bloquear usuários revogados antes de redirecionar
     const { data: profile } = await supabase
       .from("profiles")
       .select("role, is_active")
@@ -41,17 +46,14 @@ export async function signIn(formData: FormData) {
     }
 
     const role = (profile?.role as UserRole) ?? DEFAULT_ROLE;
-    // IMPORTANTE: não chamamos redirect() aqui. Quando o Server Action é chamado
-    // imperativamente (await signIn(...) dentro de startTransition), o NEXT_REDIRECT
-    // não dispara a navegação no cliente de forma confiável — o usuário fica preso
-    // na tela de login. A sessão (cookie sb-*-auth-token) já foi gravada na resposta
-    // desta action; devolvemos o destino e o cliente faz a navegação dura.
-    return { ok: true as const, target: ROLE_HOME[role] };
+    target = ROLE_HOME[role];
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     console.error("[signIn] unhandled exception:", msg);
     return { error: "Erro interno. Tente novamente mais tarde." };
   }
+  // FORA do try/catch: redirect() lança NEXT_REDIRECT (não é erro real).
+  redirect(target);
 }
 
 export async function signOut() {
