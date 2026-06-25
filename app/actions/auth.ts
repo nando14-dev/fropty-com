@@ -15,6 +15,7 @@ import { sendWelcomeEmail } from "@/app/lib/email/send";
  * evitando a query extra ao banco dentro do Server Action.
  */
 export async function signIn(formData: FormData) {
+  let target: string | null = null;
   try {
     const email    = (formData.get("email")    as string)?.trim();
     const password = (formData.get("password") as string)?.trim();
@@ -41,12 +42,16 @@ export async function signIn(formData: FormData) {
     }
 
     const role = (profile?.role as UserRole) ?? DEFAULT_ROLE;
-    return { redirectTo: ROLE_HOME[role] };
+    target = ROLE_HOME[role];
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     console.error("[signIn] unhandled exception:", msg);
     return { error: "Erro interno. Tente novamente mais tarde." };
   }
+  // redirect() lança NEXT_REDIRECT — precisa ficar FORA do try/catch para não
+  // ser engolido. Redireciona no servidor (robusto contra JS de cliente em cache).
+  if (target) redirect(target);
+  return { error: "Erro interno. Tente novamente mais tarde." };
 }
 
 export async function signOut() {
