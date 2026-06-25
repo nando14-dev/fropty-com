@@ -44,11 +44,15 @@ export function middleware(request: NextRequest) {
 
   if (HUB_HOST) {
     if (onHub) {
-      // Raiz do hub = login (ou portal, se já logado)
+      // Raiz do hub = login (ou portal, se já logado).
+      // Usa redirect (não rewrite): a página de login precisa morar numa URL real
+      // (/area-cliente). Com rewrite a URL do browser fica "/", e o POST do Server
+      // Action de login bate em "/" sendo reescrito — o que descarta o Set-Cookie
+      // da sessão e faz o login "não funcionar". Redirect elimina esse POST na raiz.
       if (path === "/") {
         const url = request.nextUrl.clone();
         url.pathname = hasSession ? "/portal/dashboard" : LOGIN_PAGE;
-        return hasSession ? NextResponse.redirect(url) : NextResponse.rewrite(url);
+        return NextResponse.redirect(url);
       }
     } else {
       // Domínio público: a área autenticada foi movida para o hub
