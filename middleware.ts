@@ -36,8 +36,10 @@ export function middleware(request: NextRequest) {
   const reqHost = host.toLowerCase().split(":")[0];
   const onHub = !!HUB_HOST && reqHost === HUB_HOST;
 
+  // O cookie de sessão do Supabase pode vir fragmentado: sb-<ref>-auth-token
+  // ou sb-<ref>-auth-token.0 / .1 (sessões maiores). Cobre os dois formatos.
   const hasSession = request.cookies.getAll().some(
-    (c) => c.name.startsWith("sb-") && c.name.endsWith("-auth-token")
+    (c) => c.name.startsWith("sb-") && c.name.includes("-auth-token")
   );
 
   if (HUB_HOST) {
