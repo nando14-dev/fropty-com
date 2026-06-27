@@ -8,7 +8,7 @@ import { signOut } from "@/app/actions/auth";
 import { PortalThemeToggle } from "@/app/components/cliente/PortalThemeToggle";
 import {
   LayoutDashboard, Users, CreditCard, MessageCircle, BarChart2, ShieldCheck, UserCircle, BookOpen, Map, MessageSquarePlus,
-  FolderKanban, FileSignature,
+  FolderKanban, FileSignature, HeartPulse,
   ChevronRight, ChevronLeft, X, Menu, LogOut, Loader2,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -16,6 +16,7 @@ import type { LucideIcon } from "lucide-react";
 const NAV: { id: string; href: string; Icon: LucideIcon; label: string }[] = [
   { id: "overview",          href: "/admin/overview",          Icon: LayoutDashboard,   label: "Visão Geral" },
   { id: "usuarios",          href: "/admin/usuarios",          Icon: Users,             label: "Usuários" },
+  { id: "customer-success",  href: "/admin/customer-success",  Icon: HeartPulse,        label: "Customer Success" },
   { id: "projetos",          href: "/admin/projetos",          Icon: FolderKanban,      label: "Projetos" },
   { id: "contratos",         href: "/admin/contratos",         Icon: FileSignature,     label: "Contratos" },
   { id: "financeiro",        href: "/admin/financeiro",        Icon: CreditCard,        label: "Financeiro" },

@@ -3,6 +3,51 @@ export type Json = string | number | boolean | null | { [key: string]: Json } | 
 export type Database = {
   public: {
     Tables: {
+      health_scores: {
+        Row: {
+          id: string;
+          client_id: string;
+          score_uso: number;
+          score_tickets: number;
+          score_receita: number;
+          score_engajamento: number;
+          score_satisfacao: number;
+          score_total: number;
+          risk_level: "saudavel" | "atencao" | "risco" | "critico";
+          cs_notes: string | null;
+          last_interaction_at: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          client_id: string;
+          score_uso?: number;
+          score_tickets?: number;
+          score_receita?: number;
+          score_engajamento?: number;
+          score_satisfacao?: number;
+          score_total?: number;
+          risk_level?: "saudavel" | "atencao" | "risco" | "critico";
+          cs_notes?: string | null;
+          last_interaction_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          score_uso?: number;
+          score_tickets?: number;
+          score_receita?: number;
+          score_engajamento?: number;
+          score_satisfacao?: number;
+          score_total?: number;
+          risk_level?: "saudavel" | "atencao" | "risco" | "critico";
+          cs_notes?: string | null;
+          last_interaction_at?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       notifications: {
         Row: {
           id: string;
