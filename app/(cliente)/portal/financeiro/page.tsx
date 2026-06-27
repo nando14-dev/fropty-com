@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { getProfile } from "@/app/lib/auth/session";
 import { createClient } from "@/app/lib/supabase/server";
 import { buyTokens, subscribePlan } from "@/app/actions/financeiro";
-import { CheckCircle, Coins, CalendarDays, Badge, BarChart2, FileText, Sparkles, CreditCard, ReceiptX, Package } from "lucide-react";
+import { CheckCircle, Coins, CalendarDays, Badge, BarChart2, FileText, Sparkles, CreditCard, Receipt, Package } from "lucide-react";
 import { TokenChart } from "@/app/components/cliente/TokenChart";
 import { getService } from "@/app/lib/constants/services";
 import type { TokenTransaction } from "@/app/lib/types/cliente";
@@ -385,7 +385,7 @@ export default async function FinanceiroPage({ searchParams }: Props) {
 
       {transactions.length === 0 ? (
         <div style={{ background: "var(--card-bg)", border: "1px solid var(--card-border)", borderRadius: 14, padding: "40px 24px", textAlign: "center" }}>
-          <ReceiptX size={36} style={{ color: "var(--text-faint)", display: "block", marginBottom: 10 }} />
+          <Receipt size={36} style={{ color: "var(--text-faint)", display: "block", marginBottom: 10 }} />
           <p style={{ color: "var(--text-muted)", margin: 0, fontSize: "14px" }}>Nenhuma movimentação ainda.</p>
         </div>
       ) : (

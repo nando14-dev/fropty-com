@@ -15,7 +15,7 @@ import {
   Rocket, Smartphone, Zap, Wrench, MessageCircle, CheckCircle, Target, LockOpen,
   Globe, LayoutDashboard, GraduationCap, Lock, Plug, MessageSquare, Palette,
   Code2, Crown, Stethoscope, Scale, Calculator, Dumbbell, Dog, UtensilsCrossed,
-  Music, Home, Building2, Scissors, Briefcase, Ruler, PartyPopper,
+  Music, Home as HomeIcon, Building2, Scissors, Briefcase, Ruler, PartyPopper,
   ShoppingBag, Pill, Camera, Calendar, Truck, DollarSign, School, Ticket,
   Hourglass, Clock, Star, type LucideIcon,
 } from "lucide-react";
@@ -112,7 +112,7 @@ const SEGMENTS_ROW_1: { Icon: LucideIcon; label: string }[] = [
   { Icon: Dog,            label: "Clínicas Veterinárias" },
   { Icon: UtensilsCrossed,label: "Restaurantes" },
   { Icon: Music,          label: "Músicos e DJs" },
-  { Icon: Home,           label: "Imobiliárias" },
+  { Icon: HomeIcon,       label: "Imobiliárias" },
   { Icon: Building2,      label: "Construtoras" },
   { Icon: Scissors,       label: "Salões de Beleza" },
   { Icon: Sparkles,       label: "Spas e Estética" },

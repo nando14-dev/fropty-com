@@ -3,7 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getProfile } from "@/app/lib/auth/session";
 import { createClient } from "@/app/lib/supabase/server";
-import { CalendarDays, LayoutGrid, Coins, MessageCircle, MessagePlus, CreditCard } from "lucide-react";
+import { CalendarDays, LayoutGrid, Coins, MessageCircle, MessageSquarePlus, CreditCard } from "lucide-react";
 import { OnboardingBanner } from "@/app/components/cliente/OnboardingBanner";
 import { OnboardingChecklist } from "@/app/components/cliente/OnboardingChecklist";
 import { WHATSAPP_URL } from "@/app/lib/config";
@@ -183,7 +183,7 @@ export default async function PortalDashboardPage() {
         </h2>
         <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
           {[
-            { href: "/portal/suporte/novo", Icon: MessagePlus,    color: "var(--primary)", label: "Abrir chamado" },
+            { href: "/portal/suporte/novo", Icon: MessageSquarePlus, color: "var(--primary)", label: "Abrir chamado" },
             { href: "/portal/financeiro",   Icon: CreditCard,     color: "#EF9F27",        label: "Financeiro" },
             { href: WHATSAPP_URL,           Icon: MessageCircle,  color: "#22c55e",        label: "Falar no WhatsApp", external: true },
           ].map(({ href, Icon, color, label, external }) => (

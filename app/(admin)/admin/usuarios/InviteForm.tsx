@@ -3,7 +3,7 @@
 import { useRef, useState, useTransition } from "react";
 import { adminInviteClient } from "@/app/actions/admin";
 import { SERVICES } from "@/app/lib/constants/services";
-import { MailForward, Send, CheckCircle, XCircle } from "lucide-react";
+import { Forward, Send, CheckCircle, XCircle } from "lucide-react";
 
 export default function InviteForm() {
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
@@ -27,7 +27,7 @@ export default function InviteForm() {
   return (
     <div style={{ background: "var(--card-bg)", border: "1px solid var(--card-border)", borderRadius: 14, padding: "24px 24px 20px", marginBottom: 28 }}>
       <h2 style={{ fontSize: "1rem", fontWeight: 700, margin: "0 0 16px", color: "var(--text)" }}>
-        <MailForward size={15} style={{ marginRight: 7 }} />
+        <Forward size={15} style={{ marginRight: 7 }} />
         Convidar novo cliente
       </h2>
       <form ref={formRef} onSubmit={handleSubmit} style={{ display: "flex", flexWrap: "wrap", gap: 10, alignItems: "flex-end" }}>
