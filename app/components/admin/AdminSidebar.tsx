@@ -1,62 +1,306 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useTransition, useState, useEffect } from "react";
 import { signOut } from "@/app/actions/auth";
 import { PortalThemeToggle } from "@/app/components/cliente/PortalThemeToggle";
 import {
-  LayoutDashboard, Users, CreditCard, MessageCircle, BarChart2, ShieldCheck, UserCircle, BookOpen, Map, MessageSquarePlus,
-  FolderKanban, FileSignature, HeartPulse,
-  ChevronRight, ChevronLeft, X, Menu, LogOut, Loader2,
+  LayoutDashboard, Users, CreditCard, MessageCircle, BarChart2, ShieldCheck,
+  UserCircle, BookOpen, Map, MessageSquarePlus, FolderKanban, FileSignature,
+  HeartPulse, ChevronRight, ChevronLeft, X, Menu, LogOut, Loader2,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
-const NAV: { id: string; href: string; Icon: LucideIcon; label: string }[] = [
-  { id: "overview",          href: "/admin/overview",          Icon: LayoutDashboard,   label: "Visão Geral" },
-  { id: "usuarios",          href: "/admin/usuarios",          Icon: Users,             label: "Usuários" },
-  { id: "customer-success",  href: "/admin/customer-success",  Icon: HeartPulse,        label: "Customer Success" },
-  { id: "projetos",          href: "/admin/projetos",          Icon: FolderKanban,      label: "Projetos" },
-  { id: "contratos",         href: "/admin/contratos",         Icon: FileSignature,     label: "Contratos" },
-  { id: "financeiro",        href: "/admin/financeiro",        Icon: CreditCard,        label: "Financeiro" },
-  { id: "suporte",           href: "/portal/suporte",          Icon: MessageCircle,     label: "Suporte" },
-  { id: "roadmap",           href: "/admin/roadmap",           Icon: Map,               label: "Roadmap" },
-  { id: "feedback",          href: "/admin/feedback",          Icon: MessageSquarePlus, label: "Feedback" },
-  { id: "base-conhecimento", href: "/admin/base-conhecimento", Icon: BookOpen,          label: "Base de Conhecimento" },
-  { id: "analytics",         href: "/admin/analytics",         Icon: BarChart2,         label: "Analytics" },
-  { id: "audit",             href: "/admin/audit",             Icon: ShieldCheck,       label: "Auditoria" },
-  { id: "perfil",            href: "/admin/perfil",            Icon: UserCircle,        label: "Meu Perfil" },
+type NavItem = { id: string; href: string; Icon: LucideIcon; label: string; group?: string };
+
+const NAV: NavItem[] = [
+  { id: "overview",         href: "/admin/overview",         Icon: LayoutDashboard,   label: "Visão Geral",        group: "main" },
+  { id: "usuarios",         href: "/admin/usuarios",         Icon: Users,             label: "Usuários",           group: "main" },
+  { id: "customer-success", href: "/admin/customer-success", Icon: HeartPulse,        label: "Customer Success",   group: "main" },
+  { id: "projetos",         href: "/admin/projetos",         Icon: FolderKanban,      label: "Projetos",           group: "ops" },
+  { id: "contratos",        href: "/admin/contratos",        Icon: FileSignature,     label: "Contratos",          group: "ops" },
+  { id: "financeiro",       href: "/admin/financeiro",       Icon: CreditCard,        label: "Financeiro",         group: "ops" },
+  { id: "suporte",          href: "/portal/suporte",         Icon: MessageCircle,     label: "Suporte",            group: "ops" },
+  { id: "roadmap",          href: "/admin/roadmap",          Icon: Map,               label: "Roadmap",            group: "produto" },
+  { id: "feedback",         href: "/admin/feedback",         Icon: MessageSquarePlus, label: "Feedback",           group: "produto" },
+  { id: "base-conhecimento",href: "/admin/base-conhecimento",Icon: BookOpen,          label: "Base de Conhecimento",group: "produto" },
+  { id: "analytics",        href: "/admin/analytics",        Icon: BarChart2,         label: "Analytics",          group: "sistema" },
+  { id: "audit",            href: "/admin/audit",            Icon: ShieldCheck,       label: "Auditoria",          group: "sistema" },
+  { id: "perfil",           href: "/admin/perfil",           Icon: UserCircle,        label: "Meu Perfil",         group: "sistema" },
 ];
 
-const COLLAPSED_W = 56;
-const EXPANDED_W  = 220;
+const GROUP_LABELS: Record<string, string> = {
+  main:    "Principal",
+  ops:     "Operações",
+  produto: "Produto",
+  sistema: "Sistema",
+};
 
 interface Props {
-  name: string;
-  initials: string;
-  userId: string;
+  name:          string;
+  initials:      string;
+  userId:        string;
   initialTheme?: "dark" | "light";
 }
 
-export function AdminSidebar({ name, initials, userId, initialTheme = "dark" }: Props) {
-  const pathname = usePathname();
-  const [pending,    startTransition] = useTransition();
-  const [mobileOpen, setMobileOpen]   = useState(false);
-  const [collapsed,  setCollapsed]    = useState(false);
+export function AdminSidebar({ name, initials, initialTheme = "dark" }: Props) {
+  const pathname              = usePathname();
+  const [pending, startTrans] = useTransition();
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [collapsed,  setCollapsed]  = useState(false);
 
   useEffect(() => {
-    const saved = localStorage.getItem("admin-sidebar-collapsed");
+    const saved = localStorage.getItem("hub-admin-sidebar-collapsed");
     if (saved === "1") setCollapsed(true);
   }, []);
 
   function toggleCollapse() {
     const next = !collapsed;
     setCollapsed(next);
-    localStorage.setItem("admin-sidebar-collapsed", next ? "1" : "0");
+    localStorage.setItem("hub-admin-sidebar-collapsed", next ? "1" : "0");
   }
 
-  const w = collapsed ? COLLAPSED_W : EXPANDED_W;
+  function handleSignOut() {
+    startTrans(async () => {
+      const result = await signOut();
+      if (result?.redirectTo) window.location.href = result.redirectTo;
+    });
+  }
+
+  const W = collapsed ? 60 : 224;
+
+  /* Group nav items */
+  const groups = NAV.reduce<Record<string, NavItem[]>>((acc, item) => {
+    const g = item.group ?? "main";
+    (acc[g] ??= []).push(item);
+    return acc;
+  }, {});
+
+  const sidebar = (
+    <aside
+      className={`portal-sidebar${mobileOpen ? " open" : ""}`}
+      style={{ width: W, transition: "width 0.22s cubic-bezier(0.4,0,0.2,1)" }}
+    >
+      {/* Collapse tab */}
+      <button
+        onClick={toggleCollapse}
+        title={collapsed ? "Expandir" : "Recolher"}
+        className="portal-sidebar-toggle"
+        style={{
+          position: "absolute", top: "50%", right: -13,
+          transform: "translateY(-50%)",
+          width: 13, height: 44,
+          borderRadius: "0 var(--r-md) var(--r-md) 0",
+          border: "1px solid var(--sidebar-border)", borderLeft: "none",
+          background: "var(--sidebar-bg)", cursor: "pointer", color: "var(--text-faint)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          zIndex: 10, padding: 0,
+          transition: "background 0.15s, color 0.15s", flexShrink: 0,
+        }}
+      >
+        {collapsed ? <ChevronRight size={9} /> : <ChevronLeft size={9} />}
+      </button>
+
+      {/* Mobile close */}
+      <button
+        className="portal-sidebar-close"
+        onClick={() => setMobileOpen(false)}
+        aria-label="Fechar menu"
+        style={{
+          position: "absolute", top: 14, right: 14,
+          width: 28, height: 28, borderRadius: "var(--r-sm)",
+          border: "1px solid var(--border)", background: "var(--surface-2)",
+          cursor: "pointer", color: "var(--text-faint)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+        }}
+      >
+        <X size={13} />
+      </button>
+
+      <div style={{
+        display: "flex", flexDirection: "column", flex: 1,
+        padding: collapsed ? "20px 0" : "22px 14px",
+        transition: "padding 0.22s cubic-bezier(0.4,0,0.2,1)",
+        overflow: "hidden", gap: 0,
+      }}>
+
+        {/* Logo */}
+        <div style={{
+          display: "flex", alignItems: "center",
+          justifyContent: collapsed ? "center" : "flex-start",
+          marginBottom: 22, paddingLeft: collapsed ? 0 : 2,
+        }}>
+          <Link href="/admin/overview" style={{ display: "flex", alignItems: "center", gap: 9, textDecoration: "none" }}>
+            <div style={{
+              width: 28, height: 28, borderRadius: 8, flexShrink: 0,
+              background: "linear-gradient(135deg, var(--brand-accent), #c97a10)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 13, fontWeight: 800, color: "#fff",
+            }}>A</div>
+            {!collapsed && (
+              <span style={{ fontSize: "14px", fontWeight: 700, color: "var(--text)", whiteSpace: "nowrap", letterSpacing: "-0.01em" }}>
+                Fropty<span style={{ color: "var(--brand-accent)" }}>Admin</span>
+              </span>
+            )}
+          </Link>
+        </div>
+
+        {/* User card */}
+        {!collapsed ? (
+          <div style={{
+            background: "var(--surface-2)", border: "1px solid var(--border)",
+            borderRadius: "var(--r-md)", padding: "10px 12px",
+            marginBottom: 20, display: "flex", alignItems: "center", gap: 10,
+          }}>
+            <div style={{
+              width: 30, height: 30, borderRadius: "50%", flexShrink: 0,
+              background: "linear-gradient(135deg, var(--brand-accent), #c97a10)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: "12px", fontWeight: 800, color: "#fff",
+            }}>
+              {initials}
+            </div>
+            <div style={{ overflow: "hidden", flex: 1, minWidth: 0 }}>
+              <p style={{ margin: 0, fontSize: "12.5px", fontWeight: 700, color: "var(--text)",
+                whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                {name}
+              </p>
+              <p style={{ margin: 0, fontSize: "10px", fontWeight: 700, color: "var(--brand-accent)", letterSpacing: "0.04em" }}>
+                ADMINISTRADOR
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: 20 }}>
+            <div title={name} style={{
+              width: 28, height: 28, borderRadius: "50%",
+              background: "linear-gradient(135deg, var(--brand-accent), #c97a10)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: "11px", fontWeight: 800, color: "#fff",
+            }}>
+              {initials}
+            </div>
+          </div>
+        )}
+
+        {/* Nav groups */}
+        <nav style={{ display: "flex", flexDirection: "column", gap: 0, flex: 1, overflow: "hidden" }}>
+          {Object.entries(groups).map(([groupKey, items]) => (
+            <div key={groupKey} style={{ marginBottom: collapsed ? 4 : 14 }}>
+              {!collapsed && (
+                <p style={{
+                  fontSize: "9.5px", fontWeight: 800, letterSpacing: "0.10em",
+                  textTransform: "uppercase", color: "var(--text-faint)",
+                  padding: "0 11px", margin: "0 0 4px 0",
+                }}>
+                  {GROUP_LABELS[groupKey] ?? groupKey}
+                </p>
+              )}
+              {items.map(({ id, href, Icon, label }) => {
+                const active = pathname === href || pathname.startsWith(href + "/");
+                const accentActive = active ? "rgba(239,159,39,0.18)" : "transparent";
+                const accentText   = active ? "var(--brand-accent)" : "var(--text-muted)";
+                return (
+                  <Link
+                    key={id}
+                    href={href}
+                    onClick={() => setMobileOpen(false)}
+                    title={collapsed ? label : undefined}
+                    style={{
+                      display: "flex", alignItems: "center",
+                      justifyContent: collapsed ? "center" : "flex-start",
+                      gap: collapsed ? 0 : 9,
+                      padding: collapsed ? "9px 0" : "8px 11px",
+                      borderRadius: "var(--r-md)",
+                      fontSize: "13px", fontWeight: active ? 700 : 500,
+                      textDecoration: "none",
+                      color: accentText,
+                      background: accentActive,
+                      borderLeft: active && !collapsed ? "2px solid var(--brand-accent)" : "2px solid transparent",
+                      paddingLeft: active && !collapsed ? 10 : 11,
+                      transition: "background 0.12s, color 0.12s",
+                      whiteSpace: "nowrap", overflow: "hidden", position: "relative",
+                    }}
+                    onMouseEnter={e => {
+                      if (!active) {
+                        (e.currentTarget as HTMLAnchorElement).style.background = "var(--sidebar-item-hover)";
+                        (e.currentTarget as HTMLAnchorElement).style.color = "var(--text)";
+                      }
+                    }}
+                    onMouseLeave={e => {
+                      if (!active) {
+                        (e.currentTarget as HTMLAnchorElement).style.background = "transparent";
+                        (e.currentTarget as HTMLAnchorElement).style.color = "var(--text-muted)";
+                      }
+                    }}
+                  >
+                    <span style={{ flexShrink: 0, display: "flex", opacity: active ? 1 : 0.7 }}>
+                      <Icon size={16} />
+                    </span>
+                    {!collapsed && (
+                      <span style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis" }}>
+                        {label}
+                      </span>
+                    )}
+                  </Link>
+                );
+              })}
+            </div>
+          ))}
+        </nav>
+
+        {/* Divider */}
+        <div style={{ height: 1, background: "var(--border)", margin: "10px 0" }} />
+
+        {/* Theme + Logout */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          {!collapsed && (
+            <div style={{
+              display: "flex", alignItems: "center", justifyContent: "space-between",
+              padding: "6px 11px",
+            }}>
+              <span style={{ fontSize: "12px", color: "var(--text-faint)", fontWeight: 500 }}>Tema</span>
+              <PortalThemeToggle initialTheme={initialTheme} />
+            </div>
+          )}
+
+          <button
+            onClick={handleSignOut}
+            disabled={pending}
+            title={collapsed ? "Sair" : undefined}
+            style={{
+              display: "flex", alignItems: "center",
+              justifyContent: collapsed ? "center" : "flex-start",
+              gap: collapsed ? 0 : 9,
+              padding: collapsed ? "9px 0" : "8px 11px",
+              borderRadius: "var(--r-md)",
+              fontSize: "13px", fontWeight: 500,
+              color: "var(--text-faint)", background: "none", border: "none",
+              cursor: pending ? "not-allowed" : "pointer",
+              opacity: pending ? 0.5 : 1,
+              fontFamily: "inherit", width: "100%",
+              transition: "background 0.12s, color 0.12s",
+            }}
+            onMouseEnter={e => {
+              (e.currentTarget as HTMLButtonElement).style.background = "var(--sidebar-item-hover)";
+              (e.currentTarget as HTMLButtonElement).style.color = "var(--c-danger)";
+            }}
+            onMouseLeave={e => {
+              (e.currentTarget as HTMLButtonElement).style.background = "transparent";
+              (e.currentTarget as HTMLButtonElement).style.color = "var(--text-faint)";
+            }}
+          >
+            {pending
+              ? <Loader2 size={16} style={{ animation: "spin 0.8s linear infinite" }} />
+              : <LogOut size={16} />
+            }
+            {!collapsed && <span>{pending ? "Saindo…" : "Sair"}</span>}
+          </button>
+        </div>
+      </div>
+    </aside>
+  );
 
   return (
     <>
@@ -66,20 +310,23 @@ export function AdminSidebar({ name, initials, userId, initialTheme = "dark" }: 
           onClick={() => setMobileOpen(true)}
           aria-label="Abrir menu"
           style={{
-            width: 36, height: 36, borderRadius: 9,
+            width: 36, height: 36, borderRadius: "var(--r-md)",
             background: "var(--surface)", border: "1px solid var(--border)",
-            cursor: "pointer", color: "var(--text-muted)",
+            cursor: "pointer", color: "var(--text-muted)", flexShrink: 0,
             display: "flex", alignItems: "center", justifyContent: "center",
-            flexShrink: 0,
           }}
         >
-          <Menu size={18} />
+          <Menu size={17} />
         </button>
-        <Link href="/" style={{ display: "flex", alignItems: "center", gap: 7, textDecoration: "none", flex: 1 }}>
-          <Image src="/logo-icon.png" alt="Fropty" width={22} height={22} className="rounded-md portal-logo--dark" />
-          <Image src="/logo-icon-dark.png" alt="Fropty" width={22} height={22} className="rounded-md portal-logo--light" />
-          <span style={{ fontWeight: 700, fontSize: "0.9rem", color: "var(--text)" }}>
-            Fropty<span style={{ color: "#EF9F27" }}>Admin</span>
+        <Link href="/admin/overview" style={{ display: "flex", alignItems: "center", gap: 8, textDecoration: "none", flex: 1 }}>
+          <div style={{
+            width: 24, height: 24, borderRadius: 7, flexShrink: 0,
+            background: "linear-gradient(135deg, var(--brand-accent), #c97a10)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            fontSize: 11, fontWeight: 800, color: "#fff",
+          }}>A</div>
+          <span style={{ fontSize: "14px", fontWeight: 700, color: "var(--text)" }}>
+            Fropty<span style={{ color: "var(--brand-accent)" }}>Admin</span>
           </span>
         </Link>
         <PortalThemeToggle initialTheme={initialTheme} />
@@ -92,153 +339,7 @@ export function AdminSidebar({ name, initials, userId, initialTheme = "dark" }: 
         aria-hidden
       />
 
-      <aside
-        className={`portal-sidebar${mobileOpen ? " open" : ""}`}
-        style={{
-          width: w,
-          minHeight: "100vh",
-          background: "var(--surface)",
-          borderRight: "1px solid var(--border)",
-          display: "flex",
-          flexDirection: "column",
-          padding: collapsed ? "20px 0" : "24px 16px",
-          flexShrink: 0,
-          position: "relative",
-          transition: "width 0.2s ease, padding 0.2s ease",
-          overflow: "visible",
-        }}
-      >
-        {/* Aba de collapse na borda direita — apenas desktop */}
-        <button
-          onClick={toggleCollapse}
-          title={collapsed ? "Expandir menu" : "Recolher menu"}
-          className="portal-sidebar-toggle"
-          style={{
-            position: "absolute",
-            top: "50%",
-            right: -12,
-            transform: "translateY(-50%)",
-            width: 12,
-            height: 48,
-            borderRadius: "0 6px 6px 0",
-            border: "1px solid var(--border)",
-            borderLeft: "none",
-            background: "var(--surface-2)",
-            cursor: "pointer",
-            color: "var(--text-faint)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 10,
-            padding: 0,
-            transition: "background 0.15s, color 0.15s",
-          }}
-        >
-          {collapsed ? <ChevronRight size={10} /> : <ChevronLeft size={10} />}
-        </button>
-
-        <button
-          className="portal-sidebar-close"
-          onClick={() => setMobileOpen(false)}
-          aria-label="Fechar menu"
-        >
-          <X size={14} />
-        </button>
-
-        {/* Logo */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: collapsed ? "center" : "flex-start", marginBottom: 24 }}>
-          <Link href="/" style={{ display: "flex", alignItems: "center", gap: 8, textDecoration: "none", minWidth: 0 }}>
-            <Image src="/logo-icon.png" alt="Fropty" width={26} height={26} className="rounded-md portal-logo--dark" style={{ flexShrink: 0 }} />
-            <Image src="/logo-icon-dark.png" alt="Fropty" width={26} height={26} className="rounded-md portal-logo--light" style={{ flexShrink: 0 }} />
-            {!collapsed && (
-              <span style={{ fontWeight: 700, fontSize: "0.95rem", color: "var(--text)", whiteSpace: "nowrap" }}>
-                Fropty<span style={{ color: "#EF9F27" }}>Admin</span>
-              </span>
-            )}
-          </Link>
-        </div>
-
-        {/* User section */}
-        {collapsed ? (
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, marginBottom: 20 }}>
-            <div style={{
-              width: 32, height: 32, borderRadius: "50%",
-              background: "#EF9F27", display: "flex",
-              alignItems: "center", justifyContent: "center",
-              fontSize: "12px", fontWeight: 700, color: "#fff", flexShrink: 0,
-            }}>
-              {initials}
-            </div>
-          </div>
-        ) : (
-          <div style={{ marginBottom: 28 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px", background: "var(--surface-2)", borderRadius: 12 }}>
-              <div style={{ width: 36, height: 36, borderRadius: "50%", background: "#EF9F27", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "13px", fontWeight: 700, color: "#fff", flexShrink: 0 }}>
-                {initials}
-              </div>
-              <div style={{ overflow: "hidden", flex: 1, minWidth: 0 }}>
-                <p title={name} style={{ margin: 0, fontSize: "13px", fontWeight: 700, color: "var(--text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                  {name}
-                </p>
-                <p style={{ margin: 0, fontSize: "11px", color: "#EF9F27" }}>Administrador</p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        <nav style={{ display: "flex", flexDirection: "column", gap: 4, flex: 1 }}>
-          {NAV.map(({ id, href, Icon, label }) => {
-            const isActive = pathname.startsWith(href);
-            return (
-              <Link
-                key={id}
-                href={href}
-                onClick={() => setMobileOpen(false)}
-                title={collapsed ? label : undefined}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: collapsed ? 0 : 10,
-                  justifyContent: collapsed ? "center" : "flex-start",
-                  padding: collapsed ? "10px 0" : "9px 12px",
-                  borderRadius: 9,
-                  fontSize: "13px", fontWeight: 600, textDecoration: "none",
-                  background: isActive ? "rgba(239,159,39,0.12)" : "transparent",
-                  color: isActive ? "#EF9F27" : "var(--text-muted)",
-                  transition: "background 0.15s, color 0.15s",
-                }}
-              >
-                <Icon size={collapsed ? 18 : 16} style={{ flexShrink: 0 }} />
-                {!collapsed && label}
-              </Link>
-            );
-          })}
-        </nav>
-
-        <button
-          onClick={() => startTransition(async () => {
-            const result = await signOut();
-            if (result?.redirectTo) window.location.href = result.redirectTo;
-          })}
-          disabled={pending}
-          title={collapsed ? "Sair" : undefined}
-          style={{
-            display: "flex", alignItems: "center",
-            gap: collapsed ? 0 : 8,
-            justifyContent: collapsed ? "center" : "flex-start",
-            padding: collapsed ? "10px 0" : "9px 12px",
-            borderRadius: 9,
-            fontSize: "13px", fontWeight: 600,
-            color: "var(--text-faint)", background: "none", border: "none",
-            cursor: pending ? "not-allowed" : "pointer",
-            opacity: pending ? 0.6 : 1, marginTop: 8,
-            fontFamily: "inherit", width: "100%", textAlign: "left",
-          }}
-        >
-          {pending ? <Loader2 size={collapsed ? 18 : 16} style={{ animation: "spin 1s linear infinite" }} /> : <LogOut size={collapsed ? 18 : 16} />}
-          {!collapsed && (pending ? "Saindo..." : "Sair")}
-        </button>
-      </aside>
+      {sidebar}
     </>
   );
 }

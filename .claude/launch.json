@@ -2,11 +2,11 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "fropty-com",
+      "name": "fropty-hub",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev"],
       "port": 3000,
-      "cwd": "C:\\Claude\\Code\\Projetos\\Fropty Apps\\fropty-com"
+      "cwd": "C:\\Claude\\Projetos\\Fropty\\operations\\fropty-hub-code"
     }
   ]
 }

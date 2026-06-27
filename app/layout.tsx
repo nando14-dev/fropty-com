@@ -106,18 +106,29 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="Fropty Hub" />
-        <meta name="theme-color" content="#040316" />
         <meta name="mobile-web-app-capable" content="yes" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaOrg) }}
         />
-        {/* Theme init — runs before paint to avoid flash (padrão ecossistema Fropty) */}
+        {/* Theme init — executa antes do paint para evitar flash de cor errada */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){var t=localStorage.getItem('fropty-theme')||localStorage.getItem('theme')||'dark';if(t==='dark')document.documentElement.classList.add('dark');})();`,
+            __html: `(function(){
+  try {
+    var t = localStorage.getItem('fropty-theme') || localStorage.getItem('theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (t === 'dark' || (!t && prefersDark)) {
+      document.documentElement.classList.add('dark');
+      document.querySelector('meta[name="theme-color"]')?.setAttribute('content','#0d0d12');
+    } else {
+      document.querySelector('meta[name="theme-color"]')?.setAttribute('content','#F2F2F4');
+    }
+  } catch(e){}
+})();`,
           }}
         />
+        <meta name="theme-color" content="#0d0d12" />
       </head>
       <body className={`${dmSans.variable} antialiased`}>
         {children}

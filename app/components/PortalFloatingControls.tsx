@@ -27,12 +27,12 @@ export function PortalFloatingControls({ userId, initialTheme }: { userId: strin
 }
 
 const fabStyle: React.CSSProperties = {
-  width: 44,
-  height: 44,
-  borderRadius: "50%",
-  background: "var(--card-bg)",
-  border: "1px solid var(--card-border)",
-  boxShadow: "0 8px 24px rgba(0,0,0,0.18)",
+  width: 40,
+  height: 40,
+  borderRadius: "var(--r-full)",
+  background: "var(--surface)",
+  border: "1px solid var(--border)",
+  boxShadow: "var(--shadow-lg)",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
