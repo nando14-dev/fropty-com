@@ -324,8 +324,7 @@ export default async function PortalDashboardPage() {
                       padding: "8px 18px", textDecoration: "none", color: "inherit",
                       transition: "background 0.12s",
                     }}
-                    onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.background = "var(--surface-2)"; }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.background = "transparent"; }}
+                    className="hub-row-link"
                   >
                     <div style={{
                       width: 8, height: 8, borderRadius: "50%", flexShrink: 0,
@@ -375,14 +374,7 @@ export default async function PortalDashboardPage() {
                     borderRadius: "var(--r-md)", textDecoration: "none",
                     transition: "border-color 0.15s, background 0.15s",
                   }}
-                  onMouseEnter={e => {
-                    (e.currentTarget as HTMLAnchorElement).style.borderColor = "var(--border-hover)";
-                    (e.currentTarget as HTMLAnchorElement).style.background = "var(--surface-2)";
-                  }}
-                  onMouseLeave={e => {
-                    (e.currentTarget as HTMLAnchorElement).style.borderColor = "var(--border)";
-                    (e.currentTarget as HTMLAnchorElement).style.background = "var(--surface)";
-                  }}
+                  className="hub-action-link"
                 >
                   <span style={{ color: accent, flexShrink: 0 }}>{icon}</span>
                   <span style={{ fontSize: "13px", fontWeight: 600, color: "var(--text)", flex: 1 }}>{label}</span>

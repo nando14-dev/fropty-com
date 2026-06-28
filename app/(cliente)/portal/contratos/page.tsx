@@ -101,8 +101,7 @@ export default async function ContratosPage() {
                   textDecoration: "none", color: "inherit",
                   transition: "background 0.1s",
                 }}
-                onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.background = "var(--surface-2)"}
-                onMouseLeave={e => (e.currentTarget as HTMLAnchorElement).style.background = "transparent"}
+                className="hub-row-link"
               >
                 {/* Title */}
                 <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>

@@ -174,8 +174,7 @@ export default async function AdminOverviewPage() {
                   borderBottom:   i < arr.length - 1 ? "1px solid var(--border)" : "none",
                   transition:     "background 0.12s",
                 }}
-                onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.background = "var(--surface-2)"; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.background = "transparent"; }}
+                className="hub-row-link"
               >
                 <div style={{ minWidth: 0, flex: 1 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 2 }}>
