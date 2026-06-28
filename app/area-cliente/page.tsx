@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, useEffect, Suspense } from "react";
+import { useState, useTransition, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -16,14 +16,6 @@ const LOGIN_ERRORS: Record<string, string> = {
 };
 
 export default function AreaClientePage() {
-  return (
-    <Suspense>
-      <LoginContent />
-    </Suspense>
-  );
-}
-
-function LoginContent() {
   const searchParams = useSearchParams();
   const [mode, setMode]         = useState<Mode>("login");
   const [error, setError]       = useState<string | null>(() => {
