@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/app/lib/supabase/browser";
+import { ShineBorder } from "@/app/components/ShineBorder";
 import { Sun, Moon, ArrowLeft, AlertCircle, CheckCircle, Loader2, Eye, EyeOff } from "lucide-react";
 
 type Mode = "login" | "reset";
@@ -123,10 +124,22 @@ export default function AreaClientePage() {
 
         {/* Logo */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, marginBottom: 28 }}>
-          <div style={{ width: 36, height: 36, borderRadius: 9, background: "#5B57E8", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <Image src="/hub-logo.png" alt="FroptyHub" width={22} height={22} style={{ borderRadius: 3 }} />
-          </div>
-          <span style={{ fontSize: 19, fontWeight: 800, color: txtMain, letterSpacing: "-0.03em" }}>FroptyHub</span>
+          <Image
+            src={dark ? "/logo-icon-dark.png" : "/logo-icon.png"}
+            alt="Fropty Hub"
+            width={44}
+            height={44}
+            style={{ objectFit: "contain" }}
+          />
+          <span style={{ fontSize: 20, fontWeight: 800, letterSpacing: "-0.03em" }}>
+            <span style={{ color: txtMain }}>Fropty </span>
+            <span style={{
+              background: "linear-gradient(90deg, #9333ea, #3b82f6, #22c55e, #f97316)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+            }}>Hub</span>
+          </span>
         </div>
 
         {/* Título */}
@@ -154,7 +167,13 @@ export default function AreaClientePage() {
         )}
 
         {/* Card */}
-        <div style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: 16, padding: "28px 24px", boxShadow: dark ? "0 8px 40px rgba(0,0,0,0.5)" : "0 4px 24px rgba(0,0,0,0.07)" }}>
+        <ShineBorder
+          borderRadius={16}
+          borderWidth={1.5}
+          duration={8}
+          shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
+        >
+        <div style={{ background: cardBg, borderRadius: 16, padding: "28px 24px", boxShadow: dark ? "0 8px 40px rgba(0,0,0,0.5)" : "0 4px 24px rgba(0,0,0,0.07)" }}>
           <form
             {...(mode === "login"
               ? { method: "post" as const, action: "/api/login", onSubmit: () => setLoginSubmitting(true) }
@@ -238,6 +257,7 @@ export default function AreaClientePage() {
             </>
           )}
         </div>
+        </ShineBorder>
 
         {/* Footer */}
         <p style={{ marginTop: 18, fontSize: 12, color: txtFaint, textAlign: "center" }}>

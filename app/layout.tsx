@@ -9,22 +9,22 @@ const dmSans = DM_Sans({
   display: "swap",
 });
 
-const siteUrl = "https://fropty.com";
+const siteUrl = "https://hub.fropty.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Fropty — Seu app sob medida",
-    template: "%s | Fropty",
+    default: "Fropty Hub — Portal do Cliente",
+    template: "%s | Fropty Hub",
   },
   description:
-    "Transforme sua ideia em um app de verdade. Prévia gratuita, app completo a partir de R$499 e manutenção mensal com tokens de suporte.",
+    "Tudo conectado. Tudo para você. Acesse chamados, projetos, contratos, financeiro e muito mais no portal oficial da Fropty.",
   keywords: [
-    "desenvolvimento de app",
-    "app sob medida",
-    "app personalizado",
-    "criação de aplicativo",
-    "app mobile",
+    "fropty hub",
+    "portal do cliente",
+    "suporte fropty",
+    "chamados",
+    "projetos",
     "fropty",
   ],
   authors: [{ name: "Fropty", url: siteUrl }],
@@ -33,17 +33,17 @@ export const metadata: Metadata = {
     type: "website",
     locale: "pt_BR",
     url: siteUrl,
-    siteName: "Fropty",
-    title: "Fropty — Seu app sob medida",
+    siteName: "Fropty Hub",
+    title: "Fropty Hub — Portal do Cliente",
     description:
-      "Transforme sua ideia em um app de verdade. Prévia gratuita, app completo a partir de R$499 e manutenção mensal com tokens de suporte.",
-    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Fropty" }],
+      "Tudo conectado. Tudo para você. Gerencie chamados, projetos, contratos e financeiro em um só lugar.",
+    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Fropty Hub" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Fropty — Seu app sob medida",
+    title: "Fropty Hub — Portal do Cliente",
     description:
-      "Transforme sua ideia em um app de verdade. Prévia gratuita, app completo a partir de R$499.",
+      "Tudo conectado. Tudo para você. O portal oficial da Fropty.",
     creator: "@froptyapps",
   },
   robots: {
@@ -101,7 +101,8 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <head>
-        <link rel="icon" type="image/png" href="/logo-icon.png" />
+        <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+        <link rel="icon" type="image/png" href="/logo-icon.png" sizes="32x32" />
         <link rel="apple-touch-icon" href="/logo-icon.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />

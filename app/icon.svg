@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="fh-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#e040fb"/>
+      <stop offset="18%"  stop-color="#9c27b0"/>
+      <stop offset="36%"  stop-color="#5B57E8"/>
+      <stop offset="54%"  stop-color="#06b6d4"/>
+      <stop offset="72%"  stop-color="#22c55e"/>
+      <stop offset="88%"  stop-color="#84cc16"/>
+      <stop offset="100%" stop-color="#f97316"/>
+    </linearGradient>
+  </defs>
+  <!-- Hexagonal ring: outer minus inner (even-odd) — matches Fropty Hub mark -->
+  <path
+    fill="url(#fh-grad)"
+    fill-rule="evenodd"
+    d="M50,3 L93,26.5 L93,73.5 L50,97 L7,73.5 L7,26.5 Z
+       M50,26 L75,39.5 L75,63.5 L50,76 L25,63.5 L25,39.5 Z"
+  />
+</svg>
