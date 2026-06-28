@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { updateProfile } from "@/app/actions/profile";
 import { completeOnboarding } from "@/app/actions/onboarding";
-import { Loader2, Sparkles, ArrowRight } from "lucide-react";
+import { Loader2, ArrowRight } from "lucide-react";
 
 export default function OnboardingPage() {
   const [name, setName]       = useState("");
@@ -29,13 +29,30 @@ export default function OnboardingPage() {
     }}>
       <div style={{ width: "100%", maxWidth: 440 }}>
 
-        {/* Ícone */}
-        <div style={{
-          width: 56, height: 56, borderRadius: 16, background: "var(--primary)",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          marginBottom: 24, boxShadow: "var(--shadow-brand)",
-        }}>
-          <Sparkles size={26} color="#fff" />
+        {/* Logo */}
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 24 }}>
+          <svg width="48" height="48" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="fh-ob" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%"   stopColor="#e040fb" />
+                <stop offset="20%"  stopColor="#9333ea" />
+                <stop offset="40%"  stopColor="#5B57E8" />
+                <stop offset="60%"  stopColor="#06b6d4" />
+                <stop offset="80%"  stopColor="#22c55e" />
+                <stop offset="100%" stopColor="#f97316" />
+              </linearGradient>
+            </defs>
+            <path fill="url(#fh-ob)" fillRule="evenodd"
+              d="M50,3 L93,26.5 L93,73.5 L50,97 L7,73.5 L7,26.5 Z
+                 M50,22 L78,37.5 L78,63.5 L50,78 L22,63.5 L22,37.5 Z" />
+            <text x="50" y="56" textAnchor="middle" fontSize="26" fontWeight="800"
+              fontFamily="system-ui,-apple-system,sans-serif" fill="url(#fh-ob)" letterSpacing="-1">
+              FH
+            </text>
+          </svg>
+          <span style={{ fontSize: 20, fontWeight: 800, letterSpacing: "-0.02em", color: "var(--text)" }}>
+            Fropty <span style={{ background: "linear-gradient(90deg,#9333ea,#3b82f6,#22c55e,#f97316)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>Hub</span>
+          </span>
         </div>
 
         {/* Header */}
@@ -92,8 +109,8 @@ export default function OnboardingPage() {
               disabled={isPending || !name.trim()}
               style={{
                 marginTop: 4, padding: "13px 0", borderRadius: 10, border: "none",
-                background: isPending || !name.trim() ? "var(--border)" : "var(--primary)",
-                color: isPending || !name.trim() ? "var(--text-faint)" : "#fff",
+                background: isPending || !name.trim() ? "var(--border)" : "#ffffff",
+                color: isPending || !name.trim() ? "var(--text-faint)" : "#111111",
                 fontWeight: 700, fontSize: 15, cursor: isPending || !name.trim() ? "not-allowed" : "pointer",
                 fontFamily: "inherit", display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
                 transition: "background 0.15s",
