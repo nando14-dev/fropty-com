@@ -81,7 +81,7 @@ export default function PasswordChangeForm() {
   }
 
   return (
-    <div style={{ background: "var(--card-bg)", border: "1px solid var(--card-border)", borderRadius: 14, padding: "28px 28px 24px" }}>
+    <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 14, padding: "28px 28px 24px" }}>
       <SentinelScan active={scanning} />
       <h2 style={{ margin: "0 0 20px", fontSize: "1rem", fontWeight: 700, color: "var(--text)" }}>
         <Lock size={14} style={{ marginRight: 8 }} />
@@ -176,7 +176,7 @@ export default function PasswordChangeForm() {
             disabled={isPending || (!!newPwd && !!strength && strength.issues.length > 0)}
             style={{
               padding: "10px 22px", borderRadius: 9, border: "none",
-              background: "#185FA5", color: "#fff",
+              background: "var(--primary)", color: "#fff",
               fontSize: "13px", fontWeight: 700,
               cursor: (isPending || (!!newPwd && !!strength && strength.issues.length > 0)) ? "not-allowed" : "pointer",
               fontFamily: "inherit",

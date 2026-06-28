@@ -15,10 +15,16 @@ export default async function PerfilPage() {
   const email = user?.email ?? "";
 
   return (
-    <div style={{ padding: "40px 32px", maxWidth: 700, margin: "0 auto" }}>
+    <div style={{ padding: "36px 32px", maxWidth: 860, margin: "0 auto" }}>
+
+      {/* ── Page header ── */}
       <div style={{ marginBottom: 32 }}>
-        <h1 style={{ fontSize: "1.75rem", fontWeight: 800, margin: "0 0 4px", color: "var(--text)" }}>Meu Perfil</h1>
-        <p style={{ margin: 0, fontSize: "13px", color: "var(--text-faint)" }}>Gerencie seu nome e segurança da conta.</p>
+        <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 800, color: "var(--text)", letterSpacing: "-0.03em" }}>
+          Meu Perfil
+        </h1>
+        <p style={{ margin: "5px 0 0", fontSize: "13px", color: "var(--text-faint)" }}>
+          Gerencie seus dados pessoais e a segurança da conta.
+        </p>
       </div>
 
       <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
