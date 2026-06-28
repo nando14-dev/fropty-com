@@ -22,7 +22,7 @@ export function ShineBorder({
   const colors = Array.isArray(shineColor) ? shineColor.join(",") : shineColor;
 
   return (
-    <div style={{ position: "relative", borderRadius, ...style }}>
+    <div style={{ position: "relative", borderRadius, overflow: "hidden", ...style }}>
       <div
         aria-hidden
         style={{
