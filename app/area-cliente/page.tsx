@@ -64,7 +64,7 @@ export default function AreaClientePage() {
     const { error: err } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: `${window.location.origin}/auth/callback?next=/portal/dashboard`,
+        redirectTo: `${window.location.origin}/auth/oauth-callback?next=/portal/dashboard`,
       },
     });
     if (err) { setError("Erro ao conectar com " + (provider === "google" ? "Google" : "Apple") + ". Tente novamente."); setOauthLoading(null); }
