@@ -1,12 +1,11 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { createClient } from "@/app/lib/supabase/browser";
 import { Suspense } from "react";
 
 function OAuthCallbackInner() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const ran = useRef(false);
 
@@ -18,7 +17,7 @@ function OAuthCallbackInner() {
     const next = searchParams.get("next") ?? "/portal/dashboard";
 
     if (!code) {
-      router.replace("/area-cliente?error=interno");
+      window.location.href = "/area-cliente?error=interno";
       return;
     }
 
@@ -26,9 +25,9 @@ function OAuthCallbackInner() {
     supabase.auth.exchangeCodeForSession(code).then(({ error }) => {
       if (error) {
         console.error("[oauth-callback] exchangeCodeForSession error:", error.message);
-        router.replace("/area-cliente?error=interno");
+        window.location.href = "/area-cliente?error=interno";
       } else {
-        router.replace(next);
+        window.location.href = next;
       }
     });
   }, []);
