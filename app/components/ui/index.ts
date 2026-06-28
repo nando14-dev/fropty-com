@@ -4,3 +4,4 @@ export { Badge } from "./Badge";
 export { Card } from "./Card";
 export { Skeleton } from "./Skeleton";
 export { Toast, useToast } from "./Toast";
+export { HubEmptyState } from "./HubEmptyState";

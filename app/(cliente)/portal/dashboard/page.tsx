@@ -4,8 +4,9 @@ import { redirect } from "next/navigation";
 import { getProfile } from "@/app/lib/auth/session";
 import { createClient } from "@/app/lib/supabase/server";
 import {
-  CalendarDays, LayoutGrid, Coins, MessageCircle,
-  MessageSquarePlus, CreditCard, ArrowRight, Zap,
+  CalendarDays, Coins, MessageCircle, MessageSquarePlus,
+  CreditCard, ArrowRight, Zap, FolderKanban, ChevronRight,
+  Clock, CheckCircle2, AlertCircle, CircleDot,
 } from "lucide-react";
 import { OnboardingBanner } from "@/app/components/cliente/OnboardingBanner";
 import { OnboardingChecklist } from "@/app/components/cliente/OnboardingChecklist";
@@ -16,6 +17,38 @@ import { getOnboardingSteps } from "@/app/lib/onboarding";
 
 export const metadata: Metadata = { title: "Meu Painel" };
 
+const STATUS_CONFIG: Record<string, { label: string; color: string; dot: string }> = {
+  aberto:              { label: "Aberto",       color: "var(--c-info)",    dot: "info" },
+  em_andamento:        { label: "Em andamento",  color: "var(--primary)",   dot: "info" },
+  aguardando_cliente:  { label: "Aguardando",    color: "var(--c-warning)", dot: "warning" },
+  resolvido:           { label: "Resolvido",     color: "var(--c-success)", dot: "success" },
+  fechado:             { label: "Fechado",       color: "var(--text-faint)", dot: "" },
+  planejamento:        { label: "Planejamento",  color: "var(--c-warning)", dot: "warning" },
+  em_desenvolvimento:  { label: "Em dev",        color: "var(--primary)",   dot: "info" },
+  concluido:           { label: "Concluído",     color: "var(--c-success)", dot: "success" },
+};
+
+function StatusBadge({ status }: { status: string }) {
+  const cfg = STATUS_CONFIG[status] ?? { label: status, color: "var(--text-faint)", dot: "" };
+  return (
+    <span style={{
+      fontSize: "10.5px", fontWeight: 700, color: cfg.color,
+      background: `${cfg.color}18`, border: `1px solid ${cfg.color}30`,
+      borderRadius: "var(--r-full)", padding: "2px 8px", whiteSpace: "nowrap",
+    }}>
+      {cfg.label}
+    </span>
+  );
+}
+
+function TicketPriorityIcon({ priority }: { priority: string }) {
+  if (priority === "critica" || priority === "alta")
+    return <AlertCircle size={13} style={{ color: "var(--c-danger)", flexShrink: 0 }} />;
+  if (priority === "media")
+    return <Clock size={13} style={{ color: "var(--c-warning)", flexShrink: 0 }} />;
+  return <CircleDot size={13} style={{ color: "var(--text-faint)", flexShrink: 0 }} />;
+}
+
 export default async function PortalDashboardPage() {
   const profile = await getProfile();
   if (profile?.role === "admin") redirect("/admin/overview");
@@ -23,29 +56,59 @@ export default async function PortalDashboardPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  const { count: openTickets } = user
-    ? await supabase
-        .from("tickets")
-        .select("id", { count: "exact", head: true })
-        .eq("client_id", user.id)
-        .in("status", ["aberto", "em_andamento"])
-    : { count: 0 };
+  const [
+    ticketsRes,
+    projectsRes,
+    recentTicketsRes,
+    recentProjectsRes,
+  ] = await Promise.all([
+    user
+      ? supabase.from("tickets").select("id", { count: "exact", head: true })
+          .eq("client_id", user.id).in("status", ["aberto", "em_andamento"])
+      : Promise.resolve({ count: 0 }),
+    user
+      ? supabase.from("projects").select("id", { count: "exact", head: true })
+          .eq("client_id", user.id).in("status", ["em_andamento", "planejamento"])
+      : Promise.resolve({ count: 0 }),
+    user
+      ? supabase.from("tickets")
+          .select("id, title, status, priority, created_at, updated_at")
+          .eq("client_id", user.id)
+          .order("updated_at", { ascending: false })
+          .limit(4)
+      : Promise.resolve({ data: [] }),
+    user
+      ? supabase.from("projects")
+          .select("id, title, status, progress, updated_at")
+          .eq("client_id", user.id)
+          .order("updated_at", { ascending: false })
+          .limit(3)
+      : Promise.resolve({ data: [] }),
+  ]);
 
-  const firstName    = (profile?.name || user?.email?.split("@")[0] || "Cliente").split(" ")[0];
-  const tokenBalance = profile?.token_balance ?? 0;
-  const services     = profile?.services ?? [];
+  const openTickets    = ticketsRes.count    ?? 0;
+  const activeProjects = projectsRes.count   ?? 0;
+  const recentTickets  = (recentTicketsRes as { data: Record<string, unknown>[] | null }).data ?? [];
+  const recentProjects = (recentProjectsRes as { data: Record<string, unknown>[] | null }).data ?? [];
+
+  const firstName     = (profile?.name || user?.email?.split("@")[0] || "Cliente").split(" ")[0];
+  const tokenBalance  = profile?.token_balance ?? 0;
+  const services      = profile?.services ?? [];
   const contractStart = profile?.contract_start ?? null;
-  const hasServices  = services.length > 0;
+  const hasServices   = services.length > 0;
 
   const showOnboarding     = profile && !profile.onboarding_completed;
   const onboardingSteps    = showOnboarding ? await getOnboardingSteps(profile, supabase) : null;
   const hasIncompleteSteps = onboardingSteps ? onboardingSteps.some((s) => !s.completed) : false;
 
-  const hour = new Date().getHours();
+  const hour     = new Date().getHours();
   const greeting = hour < 12 ? "Bom dia" : hour < 18 ? "Boa tarde" : "Boa noite";
 
+  const hasRecentTickets  = recentTickets.length > 0;
+  const hasRecentProjects = recentProjects.length > 0;
+
   return (
-    <div style={{ padding: "36px 32px", maxWidth: 960, margin: "0 auto" }}>
+    <div style={{ padding: "36px 32px", maxWidth: 1060, margin: "0 auto" }}>
 
       {/* ── Page header ── */}
       <div style={{ marginBottom: 32, display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
@@ -82,32 +145,75 @@ export default async function PortalDashboardPage() {
       {/* ── KPI cards ── */}
       <div style={{
         display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))",
+        gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
         gap: 14, marginBottom: 32,
       }}>
         {[
-          { icon: <LayoutGrid size={18} />, label: "Serviços ativos",    value: services.length,  accent: "var(--primary)",      bg: "rgba(91,87,232,0.10)" },
-          { icon: <Coins size={18} />,      label: "Tokens disponíveis", value: tokenBalance,     accent: "var(--brand-accent)", bg: "rgba(239,159,39,0.10)" },
-          { icon: <MessageCircle size={18} />, label: "Chamados abertos", value: openTickets ?? 0, accent: "var(--c-success)",   bg: "var(--c-success-bg)" },
-        ].map(({ icon, label, value, accent, bg }) => (
-          <div key={label} className="hub-stat-card">
-            <div style={{
-              width: 38, height: 38, borderRadius: "var(--r-md)", background: bg,
-              display: "flex", alignItems: "center", justifyContent: "center", color: accent,
-            }}>
-              {icon}
-            </div>
-            <p style={{ margin: "8px 0 0", fontSize: "26px", fontWeight: 800, color: "var(--text)", letterSpacing: "-0.03em", lineHeight: 1 }}>
-              {value}
-            </p>
-            <p style={{ margin: 0, fontSize: "11.5px", color: "var(--text-faint)", fontWeight: 500 }}>
-              {label}
-            </p>
-          </div>
-        ))}
+          {
+            icon: <FolderKanban size={18} />,
+            label: "Projetos ativos",
+            value: activeProjects,
+            accent: "var(--primary)",
+            bg: "rgba(91,87,232,0.10)",
+            href: "/portal/projetos",
+          },
+          {
+            icon: <Coins size={18} />,
+            label: "Tokens disponíveis",
+            value: tokenBalance,
+            accent: "var(--brand-accent)",
+            bg: "rgba(239,159,39,0.10)",
+            href: null,
+          },
+          {
+            icon: <MessageCircle size={18} />,
+            label: "Chamados abertos",
+            value: openTickets,
+            accent: openTickets > 0 ? "var(--c-warning)" : "var(--c-success)",
+            bg: openTickets > 0 ? "rgba(245,158,11,0.10)" : "var(--c-success-bg)",
+            href: "/portal/suporte",
+          },
+          {
+            icon: <CheckCircle2 size={18} />,
+            label: "Serviços ativos",
+            value: services.length,
+            accent: "var(--c-success)",
+            bg: "var(--c-success-bg)",
+            href: null,
+          },
+        ].map(({ icon, label, value, accent, bg, href }) => {
+          const inner = (
+            <>
+              <div style={{
+                width: 38, height: 38, borderRadius: "var(--r-md)", background: bg,
+                display: "flex", alignItems: "center", justifyContent: "center", color: accent,
+              }}>
+                {icon}
+              </div>
+              <p style={{ margin: "10px 0 0", fontSize: "26px", fontWeight: 800, color: "var(--text)", letterSpacing: "-0.03em", lineHeight: 1 }}>
+                {value}
+              </p>
+              <p style={{ margin: "4px 0 0", fontSize: "11.5px", color: "var(--text-faint)", fontWeight: 500 }}>
+                {label}
+              </p>
+            </>
+          );
+          return href ? (
+            <Link
+              key={label}
+              href={href}
+              className="hub-stat-card hub-card-hover"
+              style={{ textDecoration: "none", display: "flex", flexDirection: "column" }}
+            >
+              {inner}
+            </Link>
+          ) : (
+            <div key={label} className="hub-stat-card">{inner}</div>
+          );
+        })}
       </div>
 
-      {/* ── Onboarding checklist ── */}
+      {/* ── Onboarding ── */}
       {showOnboarding && onboardingSteps && hasIncompleteSteps && (
         <div style={{ marginBottom: 28 }}>
           <OnboardingChecklist steps={onboardingSteps} />
@@ -117,33 +223,190 @@ export default async function PortalDashboardPage() {
       {/* ── Renovação de plano ── */}
       {profile?.plan && profile.plan !== "sem_plano" && profile.plan_renewal && (
         <div style={{ marginBottom: 28 }}>
-          <PlanRenewalBanner
-            plan={profile.plan as "basico" | "pro"}
-            renewalDate={profile.plan_renewal}
-          />
+          <PlanRenewalBanner plan={profile.plan as "basico" | "pro"} renewalDate={profile.plan_renewal} />
         </div>
       )}
 
-      {/* ── Sem serviços: onboarding banner ── */}
+      {/* ── Sem serviços ── */}
       {!hasServices && (
         <div style={{ marginBottom: 28 }}>
           <OnboardingBanner name={firstName} tokenBalance={tokenBalance} />
         </div>
       )}
 
-      {/* ── Serviços contratados ── */}
-      {hasServices && (
-        <div style={{ marginBottom: 32 }}>
-          <div className="hub-section-header">
+      {/* ── Grid principal: tickets recentes + projetos + ações ── */}
+      <div style={{
+        display: "grid",
+        gridTemplateColumns: hasRecentTickets ? "1fr 340px" : "1fr",
+        gap: 20,
+        marginBottom: 28,
+        alignItems: "start",
+      }}>
+
+        {/* Tickets recentes */}
+        {hasRecentTickets && (
+          <div className="hub-card" style={{ padding: 0, overflow: "hidden" }}>
+            <div style={{
+              display: "flex", alignItems: "center", justifyContent: "space-between",
+              padding: "16px 20px", borderBottom: "1px solid var(--border)",
+            }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <MessageCircle size={15} style={{ color: "var(--primary)" }} />
+                <span style={{ fontSize: "13.5px", fontWeight: 700, color: "var(--text)" }}>Chamados recentes</span>
+              </div>
+              <Link href="/portal/suporte" style={{
+                fontSize: "12px", fontWeight: 600, color: "var(--primary)",
+                textDecoration: "none", display: "flex", alignItems: "center", gap: 3,
+              }}>
+                Ver todos <ChevronRight size={13} />
+              </Link>
+            </div>
             <div>
-              <p className="hub-section-title">Meus serviços</p>
-              <p className="hub-section-sub">{services.length} ativo{services.length !== 1 ? "s" : ""}</p>
+              {recentTickets.map((ticket) => (
+                <Link
+                  key={ticket.id as string}
+                  href={`/portal/suporte/${ticket.id}`}
+                  className="hub-recent-item"
+                  style={{ display: "flex", padding: "12px 20px", borderBottom: "1px solid var(--border)", textDecoration: "none", color: "inherit" }}
+                >
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
+                      <TicketPriorityIcon priority={ticket.priority as string} />
+                      <span style={{
+                        fontSize: "13px", fontWeight: 600, color: "var(--text)",
+                        overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                      }}>
+                        {ticket.title as string}
+                      </span>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <StatusBadge status={ticket.status as string} />
+                      <span style={{ fontSize: "11px", color: "var(--text-faint)" }}>
+                        {new Date(ticket.updated_at as string).toLocaleDateString("pt-BR", { day: "numeric", month: "short" })}
+                      </span>
+                    </div>
+                  </div>
+                  <ChevronRight size={14} style={{ color: "var(--text-faint)", flexShrink: 0, alignSelf: "center" }} />
+                </Link>
+              ))}
             </div>
           </div>
+        )}
+
+        {/* Coluna direita: projetos + ações rápidas */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+
+          {/* Projetos recentes */}
+          {hasRecentProjects && (
+            <div className="hub-card" style={{ padding: 0, overflow: "hidden" }}>
+              <div style={{
+                display: "flex", alignItems: "center", justifyContent: "space-between",
+                padding: "14px 18px", borderBottom: "1px solid var(--border)",
+              }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
+                  <FolderKanban size={14} style={{ color: "var(--primary)" }} />
+                  <span style={{ fontSize: "13px", fontWeight: 700, color: "var(--text)" }}>Projetos</span>
+                </div>
+                <Link href="/portal/projetos" style={{
+                  fontSize: "11.5px", fontWeight: 600, color: "var(--primary)",
+                  textDecoration: "none", display: "flex", alignItems: "center", gap: 2,
+                }}>
+                  Ver todos <ChevronRight size={12} />
+                </Link>
+              </div>
+              <div style={{ padding: "8px 0" }}>
+                {recentProjects.map((proj) => (
+                  <Link
+                    key={proj.id as string}
+                    href={`/portal/projetos/${proj.id}`}
+                    style={{
+                      display: "flex", alignItems: "center", gap: 10,
+                      padding: "8px 18px", textDecoration: "none", color: "inherit",
+                      transition: "background 0.12s",
+                    }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.background = "var(--surface-2)"; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.background = "transparent"; }}
+                  >
+                    <div style={{
+                      width: 8, height: 8, borderRadius: "50%", flexShrink: 0,
+                      background: (STATUS_CONFIG[proj.status as string] ?? {}).color ?? "var(--border-2)",
+                    }} />
+                    <span style={{
+                      flex: 1, fontSize: "13px", fontWeight: 500, color: "var(--text)",
+                      overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                    }}>
+                      {proj.title as string}
+                    </span>
+                    {proj.progress != null && (
+                      <span style={{ fontSize: "11px", fontWeight: 700, color: "var(--text-faint)" }}>
+                        {String(proj.progress)}%
+                      </span>
+                    )}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Ações rápidas */}
+          <div>
+            <p style={{
+              fontSize: "11px", fontWeight: 700, textTransform: "uppercase",
+              letterSpacing: "0.08em", color: "var(--text-faint)", margin: "0 0 10px",
+              display: "flex", alignItems: "center", gap: 6,
+            }}>
+              <Zap size={12} style={{ color: "var(--brand-accent)" }} /> Ações rápidas
+            </p>
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              {[
+                { href: "/portal/suporte/novo", icon: <MessageSquarePlus size={15} />, label: "Abrir chamado", accent: "var(--primary)" },
+                { href: "/portal/financeiro",   icon: <CreditCard size={15} />,        label: "Ver financeiro", accent: "var(--brand-accent)" },
+                { href: WHATSAPP_URL,           icon: <MessageCircle size={15} />,     label: "Falar no WhatsApp", accent: "var(--c-success)", external: true },
+              ].map(({ href, icon, label, accent, external }) => (
+                <Link
+                  key={label}
+                  href={href}
+                  target={external ? "_blank" : undefined}
+                  rel={external ? "noopener noreferrer" : undefined}
+                  style={{
+                    display: "flex", alignItems: "center", gap: 10,
+                    padding: "10px 14px",
+                    background: "var(--surface)", border: "1px solid var(--border)",
+                    borderRadius: "var(--r-md)", textDecoration: "none",
+                    transition: "border-color 0.15s, background 0.15s",
+                  }}
+                  onMouseEnter={e => {
+                    (e.currentTarget as HTMLAnchorElement).style.borderColor = "var(--border-hover)";
+                    (e.currentTarget as HTMLAnchorElement).style.background = "var(--surface-2)";
+                  }}
+                  onMouseLeave={e => {
+                    (e.currentTarget as HTMLAnchorElement).style.borderColor = "var(--border)";
+                    (e.currentTarget as HTMLAnchorElement).style.background = "var(--surface)";
+                  }}
+                >
+                  <span style={{ color: accent, flexShrink: 0 }}>{icon}</span>
+                  <span style={{ fontSize: "13px", fontWeight: 600, color: "var(--text)", flex: 1 }}>{label}</span>
+                  <ArrowRight size={13} style={{ color: "var(--text-faint)" }} />
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Serviços contratados ── */}
+      {hasServices && (
+        <div>
+          <p style={{
+            fontSize: "11px", fontWeight: 700, textTransform: "uppercase",
+            letterSpacing: "0.08em", color: "var(--text-faint)", margin: "0 0 12px",
+          }}>
+            Meus serviços ({services.length})
+          </p>
           <div style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(210px, 1fr))",
-            gap: 12,
+            gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+            gap: 10,
           }}>
             {services.map((id) => {
               const svc     = getService(id);
@@ -160,7 +423,7 @@ export default async function PortalDashboardPage() {
                     {SvcIcon && <SvcIcon size={17} style={{ color }} />}
                   </div>
                   <div style={{ minWidth: 0 }}>
-                    <p style={{ margin: 0, fontSize: "13.5px", fontWeight: 700, color: "var(--text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    <p style={{ margin: 0, fontSize: "13px", fontWeight: 700, color: "var(--text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                       {label}
                     </p>
                     <span className="hub-badge hub-badge-success" style={{ fontSize: "10px", padding: "1px 8px", marginTop: 3, display: "inline-flex" }}>
@@ -173,68 +436,6 @@ export default async function PortalDashboardPage() {
           </div>
         </div>
       )}
-
-      {/* ── Ações rápidas ── */}
-      <div>
-        <div className="hub-section-header">
-          <p className="hub-section-title" style={{ display: "flex", alignItems: "center", gap: 7 }}>
-            <Zap size={15} style={{ color: "var(--brand-accent)" }} /> Ações rápidas
-          </p>
-        </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 10 }}>
-          {[
-            {
-              href:     "/portal/suporte/novo",
-              icon:     <MessageSquarePlus size={18} />,
-              accent:   "var(--primary)",
-              bg:       "rgba(91,87,232,0.08)",
-              label:    "Abrir chamado",
-              desc:     "Solicitar suporte ou nova demanda",
-            },
-            {
-              href:     "/portal/financeiro",
-              icon:     <CreditCard size={18} />,
-              accent:   "var(--brand-accent)",
-              bg:       "rgba(239,159,39,0.08)",
-              label:    "Financeiro",
-              desc:     "Ver faturas e pagamentos",
-            },
-            {
-              href:     WHATSAPP_URL,
-              icon:     <MessageCircle size={18} />,
-              accent:   "var(--c-success)",
-              bg:       "var(--c-success-bg)",
-              label:    "WhatsApp",
-              desc:     "Falar com um consultor",
-              external: true,
-            },
-          ].map(({ href, icon, accent, bg, label, desc, external }) => (
-            <Link
-              key={href}
-              href={href}
-              target={external ? "_blank" : undefined}
-              rel={external ? "noopener noreferrer" : undefined}
-              className="hub-card-sm hub-card-hover"
-              style={{
-                display: "flex", alignItems: "flex-start", gap: 12,
-                textDecoration: "none",
-              }}
-            >
-              <div style={{
-                width: 36, height: 36, borderRadius: "var(--r-md)", background: bg, flexShrink: 0,
-                display: "flex", alignItems: "center", justifyContent: "center", color: accent,
-              }}>
-                {icon}
-              </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={{ margin: 0, fontSize: "13.5px", fontWeight: 700, color: "var(--text)" }}>{label}</p>
-                <p style={{ margin: "2px 0 0", fontSize: "11.5px", color: "var(--text-faint)", lineHeight: 1.4 }}>{desc}</p>
-              </div>
-              <ArrowRight size={14} style={{ color: "var(--text-faint)", flexShrink: 0, marginTop: 10 }} />
-            </Link>
-          ))}
-        </div>
-      </div>
     </div>
   );
 }

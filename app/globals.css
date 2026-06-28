@@ -853,6 +853,72 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* ══════════════════════════════════════════════════════════════════
+   VIEW TRANSITIONS — Next.js 15 native page transitions
+   ══════════════════════════════════════════════════════════════════ */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-6px); }
+}
+
+::view-transition-old(root) {
+  animation: 180ms ease-out both fadeOut;
+}
+::view-transition-new(root) {
+  animation: 220ms ease-out both fadeIn;
+}
+
+/* Respeita prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) { animation: none; }
+}
+
+/* ── Activity feed ───────────────────────────────────────────────── */
+.hub-activity-item {
+  display:     flex;
+  align-items: flex-start;
+  gap:         12px;
+  padding:     10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.hub-activity-item:last-child { border-bottom: none; }
+.hub-activity-dot {
+  width:         8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink:   0;
+  margin-top:    5px;
+  background:    var(--primary);
+}
+.hub-activity-dot.success { background: var(--c-success); }
+.hub-activity-dot.warning { background: var(--c-warning); }
+.hub-activity-dot.danger  { background: var(--c-danger); }
+.hub-activity-dot.info    { background: var(--c-info); }
+
+/* ── Recent list item ────────────────────────────────────────────── */
+.hub-recent-item {
+  display:       flex;
+  align-items:   center;
+  gap:           12px;
+  padding:       10px 14px;
+  border-radius: var(--r-md);
+  transition:    background 0.12s;
+  text-decoration: none;
+  color:         inherit;
+}
+.hub-recent-item:hover { background: var(--surface-2); }
+
+/* ── Spin animation (loader) ─────────────────────────────────────── */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* ══════════════════════════════════════════════════════════════════
    ANIMAÇÕES DO ECOSSISTEMA FROPTY
    ══════════════════════════════════════════════════════════════════ */
 

@@ -32,22 +32,37 @@ export default async function PortalLayout({
   const initials      = displayName.slice(0, 2).toUpperCase();
   const email         = user?.email ?? "";
 
-  // Contagem de tickets abertos para badge (seguro contra user null)
-  const { count: openTickets, error: ticketsError } = user
-    ? await supabase
-        .from("tickets")
-        .select("id", { count: "exact", head: true })
-        .eq("client_id", user.id)
-        .in("status", ["aberto", "em_andamento"])
-    : { count: 0, error: null };
+  // Contagens para badges — todas em paralelo
+  const [ticketsRes, projectsRes, contractsRes] = await Promise.all([
+    user
+      ? supabase.from("tickets").select("id", { count: "exact", head: true })
+          .eq("client_id", user.id).in("status", ["aberto", "em_andamento"])
+      : Promise.resolve({ count: 0, error: null }),
+    user
+      ? supabase.from("projects").select("id", { count: "exact", head: true })
+          .eq("client_id", user.id).in("status", ["em_andamento", "planejamento"])
+      : Promise.resolve({ count: 0, error: null }),
+    user
+      ? supabase.from("contracts").select("id", { count: "exact", head: true })
+          .eq("client_id", user.id).eq("status", "pendente_assinatura")
+      : Promise.resolve({ count: 0, error: null }),
+  ]);
 
-  if (ticketsError) console.error("[portal/layout] tickets error:", ticketsError.message);
+  if (ticketsRes.error)   console.error("[portal/layout] tickets error:",   ticketsRes.error.message);
+  if (projectsRes.error)  console.error("[portal/layout] projects error:",  projectsRes.error.message);
+  if (contractsRes.error) console.error("[portal/layout] contracts error:", contractsRes.error.message);
+
+  const openTickets   = ticketsRes.count   ?? 0;
+  const activeProjects = projectsRes.count  ?? 0;
+  const pendingContracts = contractsRes.count ?? 0;
 
   const isAdmin = profile?.role === "admin";
 
   const portalNav = [
     { id: "dashboard",         href: "/portal/dashboard",         icon: "LayoutDashboard",   label: "Painel" },
-    { id: "suporte",           href: "/portal/suporte",           icon: "MessageCircle",     label: "Suporte", badge: openTickets ?? 0 },
+    { id: "suporte",           href: "/portal/suporte",           icon: "MessageCircle",     label: "Suporte",             badge: openTickets },
+    { id: "projetos",          href: "/portal/projetos",          icon: "FolderKanban",      label: "Projetos",            badge: activeProjects },
+    { id: "contratos",         href: "/portal/contratos",         icon: "FileSignature",     label: "Contratos",           badge: pendingContracts },
     { id: "financeiro",        href: "/portal/financeiro",        icon: "CreditCard",        label: "Financeiro" },
     { id: "roadmap",           href: "/portal/roadmap",           icon: "Map",               label: "Roadmap" },
     { id: "feedback",          href: "/portal/feedback",          icon: "MessageSquarePlus", label: "Feedback" },

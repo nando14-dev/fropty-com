@@ -29,6 +29,9 @@ if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_A
 
 const nextConfig: NextConfig = {
   env: {},
+  experimental: {
+    viewTransition: true,
+  },
   async rewrites() {
     return [
       {
