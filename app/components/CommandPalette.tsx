@@ -159,31 +159,7 @@ export function CommandPalette() {
 
   let globalIdx = 0;
 
-  if (!open) {
-    return (
-      <button
-        onClick={openPalette}
-        title="Buscar (Ctrl+K)"
-        style={{
-          display: "inline-flex", alignItems: "center", gap: 6,
-          background: "var(--surface-2)", border: "1px solid var(--border)",
-          borderRadius: "var(--r-md)", padding: "6px 12px",
-          fontSize: "12px", color: "var(--text-faint)",
-          cursor: "pointer", transition: "border-color 0.15s",
-        }}
-      >
-        <Search size={13} />
-        <span>Buscar</span>
-        <kbd style={{
-          background: "var(--bg)", border: "1px solid var(--border)",
-          borderRadius: 4, padding: "1px 5px", fontSize: "10px",
-          fontFamily: "inherit", color: "var(--text-faint)", lineHeight: "16px",
-        }}>
-          ⌘K
-        </kbd>
-      </button>
-    );
-  }
+  if (!open) return null;
 
   return (
     <>

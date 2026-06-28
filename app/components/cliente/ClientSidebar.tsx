@@ -9,7 +9,7 @@ import type { ClientUser } from "../../lib/types/cliente";
 import {
   LayoutDashboard, MessageCircle, CreditCard, UserCircle, BookOpen, Map,
   MessageSquarePlus, FolderKanban, FileSignature, LogOut, Loader2,
-  Menu, X, ChevronLeft, ChevronRight, Coins,
+  Menu, X, ChevronLeft, ChevronRight, Coins, Search,
 } from "lucide-react";
 
 interface NavItem {
@@ -212,6 +212,51 @@ export function ClientSidebar({ user, navItems, initialTheme = "dark" }: Props) 
               {user.avatarInitials}
             </div>
           </div>
+        )}
+
+        {/* ── Cmd+K search trigger ── */}
+        {!collapsed ? (
+          <button
+            onClick={() => {
+              window.dispatchEvent(new KeyboardEvent("keydown", {
+                key: "k", ctrlKey: true, metaKey: true, bubbles: true,
+              }));
+            }}
+            style={{
+              display: "flex", alignItems: "center", gap: 8, width: "100%",
+              padding: "7px 11px", marginBottom: 10,
+              background: "var(--surface-2)", border: "1px solid var(--border)",
+              borderRadius: "var(--r-md)", cursor: "pointer", color: "var(--text-faint)",
+              fontSize: "12px", fontFamily: "inherit", transition: "border-color 0.15s",
+              textAlign: "left",
+            }}
+          >
+            <Search size={13} style={{ flexShrink: 0 }} />
+            <span style={{ flex: 1 }}>Buscar…</span>
+            <kbd style={{
+              background: "var(--bg)", border: "1px solid var(--border)",
+              borderRadius: 3, padding: "1px 5px", fontSize: "10px",
+              fontFamily: "inherit", lineHeight: "15px",
+            }}>⌘K</kbd>
+          </button>
+        ) : (
+          <button
+            onClick={() => {
+              window.dispatchEvent(new KeyboardEvent("keydown", {
+                key: "k", ctrlKey: true, metaKey: true, bubbles: true,
+              }));
+            }}
+            title="Buscar (Ctrl+K)"
+            style={{
+              width: 32, height: 32, borderRadius: "var(--r-md)", marginBottom: 8,
+              alignSelf: "center",
+              background: "var(--surface-2)", border: "1px solid var(--border)",
+              cursor: "pointer", color: "var(--text-faint)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+            }}
+          >
+            <Search size={14} />
+          </button>
         )}
 
         {/* ── Nav ── */}

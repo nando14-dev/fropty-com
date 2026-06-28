@@ -1,17 +1,17 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { FileSignature, ChevronRight, Calendar, DollarSign, Download } from "lucide-react";
+import { Calendar, DollarSign, ChevronRight, Download, MessageSquarePlus } from "lucide-react";
 import { getClientContracts } from "@/app/actions/contracts";
 import { CONTRACT_STATUS_MAP, CONTRACT_TYPE_MAP } from "@/app/lib/constants/projects";
+import { HubEmptyState } from "@/app/components/ui/HubEmptyState";
 
 export const metadata: Metadata = { title: "Contratos" };
 
-function formatDate(d?: string) {
-  if (!d) return null;
+function fDate(d?: string | null) {
+  if (!d) return "—";
   return new Date(d).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" });
 }
-
-function formatCurrency(v?: number) {
+function fCurrency(v?: number | null) {
   if (v == null) return null;
   return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
@@ -19,111 +19,146 @@ function formatCurrency(v?: number) {
 export default async function ContratosPage() {
   const contracts = await getClientContracts();
 
-  if (contracts.length === 0) {
-    return (
-      <div style={{ padding: "32px 24px", maxWidth: 900, margin: "0 auto" }}>
-        <div style={{ marginBottom: 28 }}>
-          <h1 style={{ margin: 0, fontSize: "1.4rem", fontWeight: 800, color: "var(--text)" }}>Contratos</h1>
-          <p style={{ margin: "6px 0 0", fontSize: "13px", color: "var(--text-muted)" }}>
-            Seus contratos com a Fropty
-          </p>
-        </div>
-
-        <div style={{
-          display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-          padding: "64px 24px", textAlign: "center",
-          background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 16,
-        }}>
-          <div style={{
-            width: 56, height: 56, borderRadius: 14,
-            background: "rgba(91,87,232,0.08)", border: "1px solid rgba(91,87,232,0.18)",
-            display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 16,
-          }}>
-            <FileSignature size={26} style={{ color: "var(--primary)" }} />
-          </div>
-          <h3 style={{ margin: "0 0 8px", fontSize: "1.05rem", fontWeight: 700, color: "var(--text)" }}>
-            Nenhum contrato ainda
-          </h3>
-          <p style={{ margin: 0, fontSize: "13px", color: "var(--text-muted)", maxWidth: 320 }}>
-            Os contratos firmados com a Fropty aparecerão aqui para consulta.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div style={{ padding: "32px 24px", maxWidth: 900, margin: "0 auto" }}>
-      <div style={{ marginBottom: 28 }}>
-        <h1 style={{ margin: 0, fontSize: "1.4rem", fontWeight: 800, color: "var(--text)" }}>Contratos</h1>
-        <p style={{ margin: "6px 0 0", fontSize: "13px", color: "var(--text-muted)" }}>
-          {contracts.length} contrato{contracts.length !== 1 ? "s" : ""}
-        </p>
+    <div style={{ padding: "36px 32px", maxWidth: 1020, margin: "0 auto" }}>
+
+      {/* ── Page header ── */}
+      <div style={{
+        display: "flex", alignItems: "flex-start", justifyContent: "space-between",
+        gap: 16, marginBottom: 28, flexWrap: "wrap",
+      }}>
+        <div>
+          <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 800, color: "var(--text)", letterSpacing: "-0.03em" }}>
+            Contratos
+          </h1>
+          <p style={{ margin: "5px 0 0", fontSize: "13px", color: "var(--text-faint)" }}>
+            Contratos e propostas firmados com a Fropty
+          </p>
+        </div>
+        <Link
+          href="/portal/suporte/novo"
+          style={{
+            display: "inline-flex", alignItems: "center", gap: 7,
+            background: "var(--primary)", color: "#fff",
+            borderRadius: "var(--r-md)", padding: "9px 18px",
+            fontSize: "13px", fontWeight: 700, textDecoration: "none",
+            boxShadow: "var(--shadow-brand)",
+          }}
+        >
+          <MessageSquarePlus size={14} /> Solicitar contrato
+        </Link>
       </div>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        {contracts.map((contract) => {
-          const st = CONTRACT_STATUS_MAP[contract.status] ?? { label: contract.status, color: "#94a3b8" };
-          const typeLabel = CONTRACT_TYPE_MAP[contract.type] ?? contract.type;
+      {contracts.length === 0 ? (
+        <div className="hub-card">
+          <HubEmptyState variant="contratos" />
+        </div>
+      ) : (
+        <div className="hub-card" style={{ overflow: "hidden" }}>
+          {/* Toolbar */}
+          <div style={{
+            display: "flex", alignItems: "center", justifyContent: "space-between",
+            padding: "14px 20px", borderBottom: "1px solid var(--border)",
+          }}>
+            <span style={{ fontSize: "13px", fontWeight: 700, color: "var(--text)" }}>
+              {contracts.length} contrato{contracts.length !== 1 ? "s" : ""}
+            </span>
+          </div>
 
-          return (
-            <Link
-              key={contract.id}
-              href={`/portal/contratos/${contract.id}`}
-              style={{
-                display: "flex", alignItems: "center", gap: 16, padding: "16px 20px",
-                background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 14,
-                textDecoration: "none", transition: "border-color 0.15s",
-              }}
-            >
-              <div style={{
-                width: 40, height: 40, borderRadius: 10, flexShrink: 0,
-                background: `${st.color}18`, border: `1px solid ${st.color}30`,
-                display: "flex", alignItems: "center", justifyContent: "center",
-              }}>
-                <FileSignature size={18} style={{ color: st.color }} />
-              </div>
+          {/* Column headers */}
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "2fr 110px 100px 150px 110px 32px",
+            padding: "9px 20px",
+            background: "var(--surface-2)",
+            borderBottom: "1px solid var(--border)",
+            fontSize: "11px", fontWeight: 700,
+            textTransform: "uppercase", letterSpacing: "0.07em",
+            color: "var(--text-faint)",
+          }}>
+            <span>Contrato</span>
+            <span>Status</span>
+            <span>Tipo</span>
+            <span>Período</span>
+            <span style={{ textAlign: "right" }}>Valor</span>
+            <span />
+          </div>
 
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 4 }}>
-                  <span style={{ fontSize: "14px", fontWeight: 700, color: "var(--text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                    {contract.title}
+          {/* Rows */}
+          {contracts.map((c, i) => {
+            const st        = CONTRACT_STATUS_MAP[c.status] ?? { label: c.status,   color: "#94a3b8" };
+            const typeLabel = CONTRACT_TYPE_MAP[c.type]     ?? c.type;
+
+            return (
+              <Link
+                key={c.id}
+                href={`/portal/contratos/${c.id}`}
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "2fr 110px 100px 150px 110px 32px",
+                  padding: "13px 20px", alignItems: "center",
+                  borderBottom: i < contracts.length - 1 ? "1px solid var(--border)" : "none",
+                  textDecoration: "none", color: "inherit",
+                  transition: "background 0.1s",
+                }}
+                onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.background = "var(--surface-2)"}
+                onMouseLeave={e => (e.currentTarget as HTMLAnchorElement).style.background = "transparent"}
+              >
+                {/* Title */}
+                <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
+                  {c.file_url && (
+                    <Download size={13} style={{ color: "var(--primary)", flexShrink: 0 }} />
+                  )}
+                  <span style={{
+                    fontSize: "13.5px", fontWeight: 600, color: "var(--text)",
+                    overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                  }}>
+                    {c.title}
                   </span>
-                  <span style={{
-                    fontSize: "11px", fontWeight: 700, padding: "2px 8px", borderRadius: 99,
-                    background: `${st.color}18`, color: st.color, flexShrink: 0,
-                  }}>{st.label}</span>
-                  <span style={{
-                    fontSize: "11px", fontWeight: 600, padding: "2px 8px", borderRadius: 99,
-                    background: "var(--surface-2)", color: "var(--text-faint)", flexShrink: 0,
-                  }}>{typeLabel}</span>
                 </div>
 
-                <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
-                  {contract.start_date && (
-                    <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: "12px", color: "var(--text-faint)" }}>
-                      <Calendar size={11} /> {formatDate(contract.start_date)}
-                      {contract.end_date && ` → ${formatDate(contract.end_date)}`}
-                    </span>
-                  )}
-                  {contract.value != null && (
-                    <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: "12px", color: "var(--text-faint)" }}>
-                      <DollarSign size={11} /> {formatCurrency(contract.value)}
-                    </span>
-                  )}
-                  {contract.file_url && (
-                    <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: "12px", color: "var(--primary)" }}>
-                      <Download size={11} /> Arquivo disponível
-                    </span>
-                  )}
-                </div>
-              </div>
+                {/* Status */}
+                <span style={{
+                  fontSize: "11px", fontWeight: 700, color: st.color,
+                  background: `${st.color}15`, border: `1px solid ${st.color}28`,
+                  borderRadius: "var(--r-full)", padding: "3px 10px",
+                  whiteSpace: "nowrap", display: "inline-block",
+                }}>
+                  {st.label}
+                </span>
 
-              <ChevronRight size={16} style={{ color: "var(--text-faint)", flexShrink: 0 }} />
-            </Link>
-          );
-        })}
-      </div>
+                {/* Tipo */}
+                <span style={{
+                  fontSize: "11px", fontWeight: 600, color: "var(--text-muted)",
+                  background: "var(--surface-2)", border: "1px solid var(--border)",
+                  borderRadius: "var(--r-full)", padding: "3px 10px",
+                  whiteSpace: "nowrap", display: "inline-block",
+                }}>
+                  {typeLabel}
+                </span>
+
+                {/* Período */}
+                <span style={{ fontSize: "12px", color: "var(--text-faint)", display: "flex", alignItems: "center", gap: 5 }}>
+                  <Calendar size={11} style={{ flexShrink: 0 }} />
+                  {c.start_date ? (
+                    <>
+                      {fDate(c.start_date)}
+                      {c.end_date && <span style={{ opacity: 0.6 }}> → {fDate(c.end_date)}</span>}
+                    </>
+                  ) : "—"}
+                </span>
+
+                {/* Valor */}
+                <span style={{ fontSize: "12px", color: "var(--text-faint)", textAlign: "right" }}>
+                  {fCurrency(c.value) ?? "—"}
+                </span>
+
+                <ChevronRight size={14} style={{ color: "var(--text-faint)" }} />
+              </Link>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
