@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { getProfile } from "@/app/lib/auth/session";
 import { createClient } from "@/app/lib/supabase/server";
+import { headers } from "next/headers";
 import { ClientSidebar } from "@/app/components/cliente/ClientSidebar";
 import { AdminSidebar } from "@/app/components/admin/AdminSidebar";
 import { UserAvatarMenu } from "@/app/components/auth/UserAvatarMenu";
@@ -28,6 +30,16 @@ export default async function PortalLayout({
 
   if (userError) console.error("[portal/layout] getUser error:", userError.message);
   if (!user)     console.error("[portal/layout] getUser returned null user — profile:", profile?.id);
+
+  // Redireciona para onboarding se o perfil ainda não foi configurado,
+  // mas só fora da própria página de onboarding.
+  if (profile && profile.onboarding_completed === false) {
+    const reqHeaders = await headers();
+    const pathname = reqHeaders.get("x-pathname") ?? "";
+    if (!pathname.startsWith("/portal/onboarding")) {
+      redirect("/portal/onboarding");
+    }
+  }
 
   const displayName   = profile?.name || user?.email?.split("@")[0] || "Cliente";
   const initials      = displayName.slice(0, 2).toUpperCase();
