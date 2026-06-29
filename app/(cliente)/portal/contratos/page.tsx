@@ -1,11 +1,17 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Calendar, DollarSign, ChevronRight, Download, MessageSquarePlus } from "lucide-react";
+import { Calendar, ChevronRight, Download, MessageSquarePlus, AlertTriangle } from "lucide-react";
 import { getClientContracts } from "@/app/actions/contracts";
 import { CONTRACT_STATUS_MAP, CONTRACT_TYPE_MAP } from "@/app/lib/constants/projects";
 import { HubEmptyState } from "@/app/components/ui/HubEmptyState";
 
 export const metadata: Metadata = { title: "Contratos" };
+
+function daysUntil(d?: string | null): number | null {
+  if (!d) return null;
+  const diff = new Date(d).getTime() - Date.now();
+  return Math.ceil(diff / (1000 * 60 * 60 * 24));
+}
 
 function fDate(d?: string | null) {
   if (!d) return "—";
@@ -88,6 +94,9 @@ export default async function ContratosPage() {
           {contracts.map((c, i) => {
             const st        = CONTRACT_STATUS_MAP[c.status] ?? { label: c.status,   color: "#94a3b8" };
             const typeLabel = CONTRACT_TYPE_MAP[c.type]     ?? c.type;
+            const days      = c.status === "assinado" ? daysUntil(c.end_date) : null;
+            const renewalUrgent = days !== null && days <= 30;
+            const renewalWarn   = days !== null && days > 30 && days <= 60;
 
             return (
               <Link
@@ -108,12 +117,25 @@ export default async function ContratosPage() {
                   {c.file_url && (
                     <Download size={13} style={{ color: "var(--primary)", flexShrink: 0 }} />
                   )}
-                  <span style={{
-                    fontSize: "13.5px", fontWeight: 600, color: "var(--text)",
-                    overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
-                  }}>
-                    {c.title}
-                  </span>
+                  <div style={{ minWidth: 0 }}>
+                    <span style={{
+                      fontSize: "13.5px", fontWeight: 600, color: "var(--text)",
+                      overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", display: "block",
+                    }}>
+                      {c.title}
+                    </span>
+                    {(renewalUrgent || renewalWarn) && days !== null && (
+                      <span style={{
+                        display: "inline-flex", alignItems: "center", gap: 4,
+                        fontSize: "10.5px", fontWeight: 700,
+                        color: renewalUrgent ? "#ef4444" : "#EF9F27",
+                        marginTop: 2,
+                      }}>
+                        <AlertTriangle size={10} />
+                        {days <= 0 ? "Vencido" : `Renova em ${days}d`}
+                      </span>
+                    )}
+                  </div>
                 </div>
 
                 {/* Status */}

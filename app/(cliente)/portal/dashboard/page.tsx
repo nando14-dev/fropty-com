@@ -6,7 +6,7 @@ import { createClient } from "@/app/lib/supabase/server";
 import {
   CalendarDays, Coins, MessageCircle, MessageSquarePlus,
   CreditCard, ArrowRight, Zap, FolderKanban, ChevronRight,
-  Clock, CheckCircle2, AlertCircle, CircleDot,
+  Clock, CheckCircle2, AlertCircle, CircleDot, Heart, ShieldAlert,
 } from "lucide-react";
 import { OnboardingBanner } from "@/app/components/cliente/OnboardingBanner";
 import { OnboardingChecklist } from "@/app/components/cliente/OnboardingChecklist";
@@ -61,6 +61,7 @@ export default async function PortalDashboardPage() {
     projectsRes,
     recentTicketsRes,
     recentProjectsRes,
+    healthRes,
   ] = await Promise.all([
     user
       ? supabase.from("tickets").select("id", { count: "exact", head: true })
@@ -84,12 +85,17 @@ export default async function PortalDashboardPage() {
           .order("updated_at", { ascending: false })
           .limit(3)
       : Promise.resolve({ data: [] }),
+    user
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ? (supabase as any).from("health_scores").select("risk_level, score_total").eq("client_id", user.id).maybeSingle()
+      : Promise.resolve({ data: null }),
   ]);
 
   const openTickets    = ticketsRes.count    ?? 0;
   const activeProjects = projectsRes.count   ?? 0;
   const recentTickets  = (recentTicketsRes as { data: Record<string, unknown>[] | null }).data ?? [];
   const recentProjects = (recentProjectsRes as { data: Record<string, unknown>[] | null }).data ?? [];
+  const healthData     = (healthRes as { data: { risk_level: string; score_total: number } | null }).data;
 
   const firstName     = (profile?.name || user?.email?.split("@")[0] || "Cliente").split(" ")[0];
   const tokenBalance  = profile?.token_balance ?? 0;
@@ -212,6 +218,44 @@ export default async function PortalDashboardPage() {
           );
         })}
       </div>
+
+      {/* ── Health score banner ── */}
+      {healthData && healthData.risk_level !== "saudavel" && (
+        <div style={{
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          gap: 14, flexWrap: "wrap", marginBottom: 20,
+          background: healthData.risk_level === "risco" ? "rgba(239,68,68,0.07)" : "rgba(245,158,11,0.07)",
+          border: `1px solid ${healthData.risk_level === "risco" ? "rgba(239,68,68,0.25)" : "rgba(245,158,11,0.25)"}`,
+          borderRadius: 14, padding: "14px 18px",
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{ width: 36, height: 36, borderRadius: 10, background: healthData.risk_level === "risco" ? "rgba(239,68,68,0.12)" : "rgba(245,158,11,0.12)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <ShieldAlert size={17} style={{ color: healthData.risk_level === "risco" ? "#ef4444" : "#f59e0b" }} />
+            </div>
+            <div>
+              <p style={{ margin: 0, fontSize: "13px", fontWeight: 700, color: "var(--text)" }}>
+                {healthData.risk_level === "risco" ? "Sua conta precisa de atenção" : "Sua conta está em atenção"}
+              </p>
+              <p style={{ margin: "2px 0 0", fontSize: "12px", color: "var(--text-muted)" }}>
+                {healthData.risk_level === "risco"
+                  ? "Nosso time irá entrar em contato. Abra um chamado se precisar de ajuda imediata."
+                  : "Identificamos alguns pontos de melhoria. Fale conosco se tiver dúvidas."}
+              </p>
+            </div>
+          </div>
+          <a href="/portal/suporte/novo" style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: "12px", fontWeight: 700, color: healthData.risk_level === "risco" ? "#ef4444" : "#f59e0b", textDecoration: "none", whiteSpace: "nowrap" }}>
+            Abrir chamado <ChevronRight size={13} />
+          </a>
+        </div>
+      )}
+      {healthData && healthData.risk_level === "saudavel" && (
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20, background: "rgba(34,197,94,0.06)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 14, padding: "12px 18px" }}>
+          <Heart size={15} style={{ color: "#22c55e", flexShrink: 0 }} />
+          <span style={{ fontSize: "12.5px", fontWeight: 600, color: "var(--text-muted)" }}>
+            Sua conta está <strong style={{ color: "#22c55e" }}>saudável</strong> — pontuação {healthData.score_total}/100
+          </span>
+        </div>
+      )}
 
       {/* ── Onboarding ── */}
       {showOnboarding && onboardingSteps && hasIncompleteSteps && (

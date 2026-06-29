@@ -3,7 +3,7 @@ import { createClient } from "@/app/lib/supabase/server";
 import { TrendingUp, Users, MessageCircle, CheckCircle, Zap, Clock } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
-export const metadata: Metadata = { title: "Analytics "” Admin" };
+export const metadata: Metadata = { title: "Analytics — Admin" };
 
 export default async function AdminAnalyticsPage() {
   const supabase = await createClient();
@@ -18,6 +18,7 @@ export default async function AdminAnalyticsPage() {
     { data: ticketsByStatus },
     { data: ticketsByPriority },
     { data: recentClients },
+    { data: resolvedWithDates },
   ] = await Promise.all([
     supabase.rpc("admin_mrr"),
     supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "cliente"),
@@ -28,9 +29,24 @@ export default async function AdminAnalyticsPage() {
     supabase.from("tickets").select("status"),
     supabase.from("tickets").select("priority"),
     supabase.from("profiles").select("name, email, plan, created_at").eq("role", "cliente").order("created_at", { ascending: false }).limit(5),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (supabase as any).from("tickets").select("created_at, resolved_at").in("status", ["resolvido", "fechado"]).not("resolved_at", "is", null).limit(200),
   ]);
 
   const mrr = (mrrData as unknown as number) ?? 0;
+
+  const resolvedList = (resolvedWithDates ?? []) as { created_at: string; resolved_at: string }[];
+  const avgResolutionHours = resolvedList.length > 0
+    ? Math.round(resolvedList.reduce((sum, t) => {
+        const h = (new Date(t.resolved_at).getTime() - new Date(t.created_at).getTime()) / 3600000;
+        return sum + h;
+      }, 0) / resolvedList.length)
+    : null;
+  const avgResolutionLabel = avgResolutionHours == null
+    ? "—"
+    : avgResolutionHours < 24
+      ? `${avgResolutionHours}h`
+      : `${Math.round(avgResolutionHours / 24)}d`;
 
   const planCounts = { sem_plano: 0, basico: 0, pro: 0 };
   (planBreakdown ?? []).forEach((p) => {
@@ -59,6 +75,8 @@ export default async function AdminAnalyticsPage() {
     { label: "Clientes ativos", value: totalClients ?? 0, Icon: Users, color: "#3b82f6", sub: `${planCounts.sem_plano} sem plano` },
     { label: "Tickets abertos", value: openTickets ?? 0, Icon: MessageCircle, color: "var(--brand-accent)", sub: `${resolvedTickets ?? 0} resolvidos/fechados` },
     { label: "Taxa de resolução", value: `${resolvedRate}%`, Icon: CheckCircle, color: resolvedRate >= 80 ? "#22c55e" : resolvedRate >= 50 ? "#f59e0b" : "#ef4444", sub: `${openTickets ?? 0} abertos · ${resolvedTickets ?? 0} resolvidos` },
+    { label: "Tempo médio resolução", value: avgResolutionLabel, Icon: Clock, color: avgResolutionHours != null && avgResolutionHours <= 24 ? "#22c55e" : avgResolutionHours != null && avgResolutionHours <= 72 ? "#f59e0b" : "#94a3b8", sub: `base: ${resolvedList.length} tickets resolvidos` },
+    { label: "Tokens consumidos (30d)", value: tokensOut, Icon: Zap, color: "var(--brand-accent)", sub: `${tokensIn} adicionados` },
   ];
 
   const statusLabels: Record<string, string> = {
@@ -179,7 +197,7 @@ export default async function AdminAnalyticsPage() {
         <div style={{ background: "var(--card-bg)", border: "1px solid var(--card-border)", borderRadius: 14, padding: "20px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
             <Clock size={14} style={{ color: "var(--text-muted)" }} />
-            <h2 style={{ margin: 0, fontSize: "0.875rem", fontWeight: 700, color: "var(--text)" }}>Tokens "” últimos 30 dias</h2>
+            <h2 style={{ margin: 0, fontSize: "0.875rem", fontWeight: 700, color: "var(--text)" }}>Tokens "" últimos 30 dias</h2>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
             {([["Emitidos", tokensIn, "#22c55e"], ["Consumidos", tokensOut, "#ef4444"]] as [string, number, string][]).map(([label, val, color]) => (
@@ -213,7 +231,7 @@ export default async function AdminAnalyticsPage() {
               <p style={{ margin: 0, fontSize: "13px", color: "var(--text-faint)" }}>Nenhum cliente ainda.</p>
             ) : (recentClients ?? []).map((c, i, arr) => {
               const initials = (c.name ?? c.email ?? "?").slice(0, 2).toUpperCase();
-              const planLabel = PLAN_LABEL[c.plan ?? "sem_plano"] ?? ""”";
+              const planLabel = PLAN_LABEL[c.plan ?? "sem_plano"] ?? "";
               const planColor = c.plan === "pro" ? "var(--primary)" : c.plan === "basico" ? "#3b82f6" : "var(--text-faint)";
               return (
                 <div key={c.email} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 0", borderBottom: i < arr.length - 1 ? "1px solid var(--border)" : "none" }}>
@@ -221,7 +239,7 @@ export default async function AdminAnalyticsPage() {
                     {initials}
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ margin: 0, fontSize: "12.5px", fontWeight: 600, color: "var(--text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.name ?? ""”"}</p>
+                    <p style={{ margin: 0, fontSize: "12.5px", fontWeight: 600, color: "var(--text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.name ?? ""}</p>
                     <p style={{ margin: 0, fontSize: "11px", color: "var(--text-faint)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.email}</p>
                   </div>
                   <span style={{ fontSize: "10px", fontWeight: 700, color: planColor, background: `color-mix(in srgb, ${planColor} 10%, transparent)`, padding: "2px 8px", borderRadius: 99, whiteSpace: "nowrap", flexShrink: 0 }}>{planLabel}</span>
