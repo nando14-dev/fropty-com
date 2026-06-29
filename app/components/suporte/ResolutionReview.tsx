@@ -98,7 +98,7 @@ export function ResolutionReview({ ticketId }: Props) {
               type="button"
               onClick={() => submit("reprovar")}
               disabled={pending}
-              style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "11px 20px", borderRadius: 10, border: "none", background: "#ef4444", color: "#fff", fontSize: "13px", fontWeight: 700, cursor: pending ? "wait" : "pointer", fontFamily: "inherit" }}
+              style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "11px 20px", borderRadius: 10, border: "none", background: "var(--cta-bg)", color: "var(--cta-text)", fontSize: "13px", fontWeight: 700, cursor: pending ? "wait" : "pointer", fontFamily: "inherit" }}
             >
               {pending ? <Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} /> : <Send size={14} />}
               Reabrir chamado

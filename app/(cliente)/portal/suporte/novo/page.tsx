@@ -32,7 +32,7 @@ export default async function NovoChamadoPage() {
             Você não possui tokens disponíveis para abrir um chamado de suporte. Adquira tokens para continuar.
           </p>
           <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
-            <Link href="/portal/financeiro" style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "10px 22px", background: "#EF9F27", color: "#fff", fontWeight: 700, fontSize: "13px", borderRadius: 10, textDecoration: "none" }}>
+            <Link href="/portal/financeiro" style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "10px 22px", background: "var(--cta-bg)", color: "var(--cta-text)", fontWeight: 700, fontSize: "13px", borderRadius: 10, textDecoration: "none" }}>
               <Coins size={14} /> Ver planos e tokens
             </Link>
             <Link href="/portal/suporte" style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "10px 22px", background: "var(--surface)", color: "var(--text-muted)", fontWeight: 600, fontSize: "13px", borderRadius: 10, textDecoration: "none", border: "1px solid var(--border)" }}>
