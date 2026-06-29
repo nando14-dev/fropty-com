@@ -63,7 +63,7 @@ export default function ProfileForm({ name, email }: Props) {
           <button
             type="submit"
             disabled={isPending}
-            style={{ padding: "10px 22px", borderRadius: 9, border: "none", background: "var(--primary)", color: "#fff", fontSize: "13px", fontWeight: 700, cursor: isPending ? "not-allowed" : "pointer", fontFamily: "inherit", opacity: isPending ? 0.7 : 1 }}
+            style={{ padding: "10px 22px", borderRadius: 9, border: "none", background: "var(--cta-bg)", color: "var(--cta-text)", fontSize: "13px", fontWeight: 700, cursor: isPending ? "not-allowed" : "pointer", fontFamily: "inherit", opacity: isPending ? 0.7 : 1 }}
           >
             <Save size={14} style={{ marginRight: 6 }} />
             {isPending ? "Salvando…" : "Salvar alterações"}

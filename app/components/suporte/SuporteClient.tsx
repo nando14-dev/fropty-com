@@ -44,7 +44,7 @@ function NoTokenModal({ onClose }: { onClose: () => void }) {
           Você precisa de tokens para abrir chamados de suporte. Adquira tokens ou um plano para continuar.
         </p>
         <div style={{ display: "flex", gap: 10, justifyContent: "center" }}>
-          <Link href="/portal/financeiro" style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "10px 20px", background: "#EF9F27", color: "#fff", fontWeight: 700, fontSize: "13px", borderRadius: 10, textDecoration: "none" }}>
+          <Link href="/portal/financeiro" style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "10px 20px", background: "var(--cta-bg)", color: "var(--cta-text)", fontWeight: 700, fontSize: "13px", borderRadius: 10, textDecoration: "none" }}>
             <Coins size={13} /> Ver tokens
           </Link>
           <button onClick={onClose} style={{ padding: "10px 18px", background: "var(--surface-2)", color: "var(--text-muted)", fontWeight: 600, fontSize: "13px", borderRadius: 10, border: "1px solid var(--border)", cursor: "pointer", fontFamily: "inherit" }}>
@@ -107,14 +107,14 @@ export function SuporteClient({ tickets, isAdmin, tokenBalance = 0 }: Props) {
         {!isAdmin && tokenBalance <= 0 ? (
           <button
             onClick={() => setShowNoToken(true)}
-            style={{ display: "inline-flex", alignItems: "center", gap: 7, background: "var(--primary)", color: "#fff", border: "none", padding: "9px 18px", borderRadius: "var(--r-md)", fontWeight: 700, cursor: "pointer", fontSize: "13px", fontFamily: "inherit", boxShadow: "var(--shadow-brand)" }}
+            style={{ display: "inline-flex", alignItems: "center", gap: 7, background: "var(--cta-bg)", color: "var(--cta-text)", border: "none", padding: "9px 18px", borderRadius: "var(--r-md)", fontWeight: 700, cursor: "pointer", fontSize: "13px", fontFamily: "inherit", boxShadow: "var(--shadow-brand)" }}
           >
             <Plus size={14} /> Novo chamado
           </button>
         ) : (
           <Link
             href="/portal/suporte/novo"
-            style={{ display: "inline-flex", alignItems: "center", gap: 7, background: "var(--primary)", color: "#fff", padding: "9px 18px", borderRadius: "var(--r-md)", fontWeight: 700, fontSize: "13px", textDecoration: "none", boxShadow: "var(--shadow-brand)" }}
+            style={{ display: "inline-flex", alignItems: "center", gap: 7, background: "var(--cta-bg)", color: "var(--cta-text)", padding: "9px 18px", borderRadius: "var(--r-md)", fontWeight: 700, fontSize: "13px", textDecoration: "none", boxShadow: "var(--shadow-brand)" }}
           >
             <Plus size={14} /> Novo chamado
           </Link>
@@ -185,7 +185,7 @@ export function SuporteClient({ tickets, isAdmin, tokenBalance = 0 }: Props) {
             {isAdmin ? "Nenhum cliente abriu chamado ainda." : "Quando precisar de suporte, estamos aqui."}
           </p>
           {!isAdmin && (
-            <Link href="/portal/suporte/novo" style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "9px 20px", background: "var(--primary)", color: "#fff", borderRadius: "var(--r-md)", fontWeight: 700, fontSize: "13px", textDecoration: "none" }}>
+            <Link href="/portal/suporte/novo" style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "9px 20px", background: "var(--cta-bg)", color: "var(--cta-text)", borderRadius: "var(--r-md)", fontWeight: 700, fontSize: "13px", textDecoration: "none" }}>
               <Plus size={14} /> Abrir primeiro chamado
             </Link>
           )}

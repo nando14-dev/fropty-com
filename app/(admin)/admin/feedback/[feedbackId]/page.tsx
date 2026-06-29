@@ -142,7 +142,7 @@ export default function AdminFeedbackDetailPage() {
           type="submit"
           disabled={pending}
           style={{
-            background: "var(--primary)", color: "#fff",
+            background: "var(--cta-bg)", color: "var(--cta-text)",
             border: "none", borderRadius: 10, padding: "11px 20px",
             fontSize: "14px", fontWeight: 700,
             cursor: pending ? "not-allowed" : "pointer",

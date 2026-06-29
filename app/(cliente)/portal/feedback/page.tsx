@@ -70,7 +70,7 @@ export default async function FeedbackPage() {
           href="/portal/feedback/novo"
           style={{
             display: "inline-flex", alignItems: "center", gap: 7,
-            background: "var(--primary)", color: "#fff",
+            background: "var(--cta-bg)", color: "var(--cta-text)",
             borderRadius: "var(--r-md)", padding: "9px 18px",
             fontSize: "13px", fontWeight: 700, textDecoration: "none",
             boxShadow: "var(--shadow-brand)",

@@ -34,7 +34,7 @@ export default async function AdminBaseConhecimentoPage() {
           style={{
             display: "inline-flex", alignItems: "center", gap: 7,
             padding: "9px 18px", borderRadius: 9,
-            background: "var(--primary)", color: "#fff",
+            background: "var(--cta-bg)", color: "var(--cta-text)",
             fontSize: "0.85rem", fontWeight: 700, textDecoration: "none",
             flexShrink: 0,
           }}

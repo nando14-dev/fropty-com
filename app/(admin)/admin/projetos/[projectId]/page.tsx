@@ -125,7 +125,7 @@ export default async function AdminProjetoDetailPage({ params }: { params: Promi
             <button
               type="submit"
               style={{
-                padding: "8px 16px", background: "#EF9F27", color: "#fff",
+                padding: "8px 16px", background: "var(--cta-bg)", color: "var(--cta-text)",
                 fontWeight: 700, fontSize: "12px", borderRadius: 8,
                 border: "none", cursor: "pointer", fontFamily: "inherit",
               }}
@@ -189,7 +189,7 @@ export default async function AdminProjetoDetailPage({ params }: { params: Promi
             <button
               type="submit"
               style={{
-                padding: "9px 16px", background: "#EF9F27", color: "#fff",
+                padding: "9px 16px", background: "var(--cta-bg)", color: "var(--cta-text)",
                 fontWeight: 700, fontSize: "13px", borderRadius: 9,
                 border: "none", cursor: "pointer", fontFamily: "inherit",
               }}

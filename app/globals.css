@@ -182,9 +182,9 @@
   --accent:       var(--brand-accent);
   --ac:           var(--brand-400);
 
-  /* Hero / CTA */
-  --cta-bg:       var(--brand-500);
-  --cta-text:     #ffffff;
+  /* Hero / CTA — branco em dark, preto em light */
+  --cta-bg:       #ffffff;
+  --cta-text:     #111111;
   --hero-overlay: linear-gradient(110deg, rgba(13,13,13,0.96) 0%, rgba(13,13,13,0.80) 42%, rgba(13,13,13,0.30) 80%, transparent 100%);
 
   /* Dots pattern */

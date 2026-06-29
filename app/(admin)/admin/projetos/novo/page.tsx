@@ -131,7 +131,7 @@ export default async function NovoProjetoPage() {
             <button
               type="submit"
               style={{
-                padding: "9px 20px", background: "#EF9F27", color: "#fff",
+                padding: "9px 20px", background: "var(--cta-bg)", color: "var(--cta-text)",
                 fontWeight: 700, fontSize: "13px", borderRadius: 9,
                 border: "none", cursor: "pointer", fontFamily: "inherit",
               }}

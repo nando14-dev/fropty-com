@@ -101,7 +101,7 @@ export default function InviteForm() {
         <button
           type="submit"
           disabled={isPending}
-          style={{ padding: "8px 18px", borderRadius: 8, border: "none", background: "#185FA5", color: "#fff", fontSize: "13px", fontWeight: 700, cursor: isPending ? "not-allowed" : "pointer", fontFamily: "inherit", opacity: isPending ? 0.7 : 1, alignSelf: "flex-end", height: 38 }}
+          style={{ padding: "8px 18px", borderRadius: 8, border: "none", background: "var(--cta-bg)", color: "var(--cta-text)", fontSize: "13px", fontWeight: 700, cursor: isPending ? "not-allowed" : "pointer", fontFamily: "inherit", opacity: isPending ? 0.7 : 1, alignSelf: "flex-end", height: 38 }}
         >
           <Send size={14} style={{ marginRight: 6 }} />
           {isPending ? "Enviando…" : "Convidar"}

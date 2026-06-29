@@ -44,7 +44,7 @@ export default async function AdminContratosPage({
           href="/admin/contratos/novo"
           style={{
             display: "inline-flex", alignItems: "center", gap: 6,
-            padding: "9px 16px", background: "#EF9F27", color: "#fff",
+            padding: "9px 16px", background: "var(--cta-bg)", color: "var(--cta-text)",
             fontWeight: 700, fontSize: "13px", borderRadius: 9, textDecoration: "none",
           }}
         >

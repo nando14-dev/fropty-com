@@ -358,7 +358,7 @@ function TwoFactorSection() {
                 <button
                   onClick={verify}
                   disabled={loading || code.length !== 6}
-                  style={{ padding: "9px 18px", borderRadius: 8, border: "none", background: "var(--primary)", color: "#fff", fontSize: "13px", fontWeight: 700, cursor: (loading || code.length !== 6) ? "not-allowed" : "pointer", fontFamily: "inherit", opacity: (loading || code.length !== 6) ? 0.6 : 1, display: "flex", alignItems: "center", gap: 6, whiteSpace: "nowrap" }}
+                  style={{ padding: "9px 18px", borderRadius: 8, border: "none", background: "var(--cta-bg)", color: "var(--cta-text)", fontSize: "13px", fontWeight: 700, cursor: (loading || code.length !== 6) ? "not-allowed" : "pointer", fontFamily: "inherit", opacity: (loading || code.length !== 6) ? 0.6 : 1, display: "flex", alignItems: "center", gap: 6, whiteSpace: "nowrap" }}
                 >
                   {loading ? <Loader2 size={13} style={{ animation: "spin 0.8s linear infinite" }} /> : <Check size={13} />}
                   Verificar

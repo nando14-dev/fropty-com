@@ -189,7 +189,7 @@ export function ArticleForm({ article, action }: Props) {
           disabled={pending}
           style={{
             padding: "10px 24px", borderRadius: 9,
-            background: "var(--primary)", color: "#fff", border: "none",
+            background: "var(--cta-bg)", color: "var(--cta-text)", border: "none",
             fontSize: "0.88rem", fontWeight: 700, cursor: pending ? "not-allowed" : "pointer",
             opacity: pending ? 0.7 : 1, fontFamily: "inherit",
             display: "flex", alignItems: "center", gap: 8,

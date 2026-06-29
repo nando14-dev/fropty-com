@@ -88,7 +88,7 @@ export default async function ContractDetailPage({ params }: Props) {
               href={contract.file_url}
               target="_blank"
               rel="noopener noreferrer"
-              style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "9px 16px", background: "var(--primary)", color: "#fff", borderRadius: "var(--r-md)", fontWeight: 700, fontSize: "13px", textDecoration: "none", flexShrink: 0 }}
+              style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "9px 16px", background: "var(--cta-bg)", color: "var(--cta-text)", borderRadius: "var(--r-md)", fontWeight: 700, fontSize: "13px", textDecoration: "none", flexShrink: 0 }}
             >
               <Download size={14} /> Baixar contrato
             </a>
@@ -123,7 +123,7 @@ export default async function ContractDetailPage({ params }: Props) {
         </div>
         <Link
           href="/portal/suporte/novo"
-          style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "9px 18px", background: "var(--primary)", color: "#fff", borderRadius: "var(--r-md)", fontWeight: 700, fontSize: "13px", textDecoration: "none", whiteSpace: "nowrap" }}
+          style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "9px 18px", background: "var(--cta-bg)", color: "var(--cta-text)", borderRadius: "var(--r-md)", fontWeight: 700, fontSize: "13px", textDecoration: "none", whiteSpace: "nowrap" }}
         >
           Abrir chamado
         </Link>

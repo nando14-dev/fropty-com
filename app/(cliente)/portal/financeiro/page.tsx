@@ -237,7 +237,7 @@ export default async function FinanceiroPage({ searchParams }: Props) {
                       <span style={{
                         position: "absolute", top: -10, left: 20,
                         fontSize: "10px", fontWeight: 800,
-                        background: "var(--primary)", color: "#fff",
+                        background: "var(--cta-bg)", color: "var(--cta-text)",
                         padding: "3px 10px", borderRadius: "var(--r-full)",
                         textTransform: "uppercase", letterSpacing: "0.06em",
                       }}>
@@ -299,7 +299,7 @@ export default async function FinanceiroPage({ searchParams }: Props) {
               ))}
             </select>
             <button type="submit" style={{
-              background: "var(--primary)", color: "#fff", border: "none",
+              background: "var(--cta-bg)", color: "var(--cta-text)", border: "none",
               padding: "9px 18px", borderRadius: "var(--r-md)",
               fontWeight: 700, fontSize: "13px", cursor: "pointer", fontFamily: "inherit",
               display: "flex", alignItems: "center", gap: 6,

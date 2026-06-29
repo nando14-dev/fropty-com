@@ -176,7 +176,7 @@ export default function PasswordChangeForm() {
             disabled={isPending || (!!newPwd && !!strength && strength.issues.length > 0)}
             style={{
               padding: "10px 22px", borderRadius: 9, border: "none",
-              background: "var(--primary)", color: "#fff",
+              background: "var(--cta-bg)", color: "var(--cta-text)",
               fontSize: "13px", fontWeight: 700,
               cursor: (isPending || (!!newPwd && !!strength && strength.issues.length > 0)) ? "not-allowed" : "pointer",
               fontFamily: "inherit", whiteSpace: "nowrap",

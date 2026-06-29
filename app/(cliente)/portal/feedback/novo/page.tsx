@@ -70,7 +70,7 @@ export default function NovoFeedbackPage() {
           <p style={{ color: "var(--text-faint)", fontSize: "13px", margin: "0 0 24px" }}>Obrigado. Nossa equipe vai analisar em breve.</p>
           <Link
             href="/portal/feedback"
-            style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "9px 20px", background: "var(--primary)", color: "#fff", borderRadius: "var(--r-md)", fontWeight: 700, fontSize: "13px", textDecoration: "none" }}
+            style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "9px 20px", background: "var(--cta-bg)", color: "var(--cta-text)", borderRadius: "var(--r-md)", fontWeight: 700, fontSize: "13px", textDecoration: "none" }}
           >
             Ver feedbacks
           </Link>
@@ -172,7 +172,7 @@ export default function NovoFeedbackPage() {
               <button
                 type="submit"
                 disabled={pending}
-                style={{ display: "inline-flex", alignItems: "center", gap: 7, background: "var(--primary)", color: "#fff", border: "none", borderRadius: "var(--r-md)", padding: "9px 22px", fontSize: "13px", fontWeight: 700, cursor: pending ? "not-allowed" : "pointer", opacity: pending ? 0.7 : 1, fontFamily: "inherit", boxShadow: "var(--shadow-brand)" }}
+                style={{ display: "inline-flex", alignItems: "center", gap: 7, background: "var(--cta-bg)", color: "var(--cta-text)", border: "none", borderRadius: "var(--r-md)", padding: "9px 22px", fontSize: "13px", fontWeight: 700, cursor: pending ? "not-allowed" : "pointer", opacity: pending ? 0.7 : 1, fontFamily: "inherit", boxShadow: "var(--shadow-brand)" }}
               >
                 {pending
                   ? <><Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} /> Enviando…</>
