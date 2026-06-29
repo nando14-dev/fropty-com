@@ -1,19 +1,19 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import Link from "next/link";
 import { Plus, FileSignature, User, Calendar, CheckCircle, Clock, XCircle } from "lucide-react";
 import { getAllContracts } from "@/app/actions/contracts";
 import { CONTRACT_STATUS_MAP, CONTRACT_TYPE_MAP } from "@/app/lib/constants/projects";
 import type { ContractStatus } from "@/app/lib/types/projects";
 
-export const metadata: Metadata = { title: "Admin — Contratos" };
+export const metadata: Metadata = { title: "Admin â€” Contratos" };
 
 function formatDate(d?: string) {
-  if (!d) return "—";
+  if (!d) return "â€”";
   return new Date(d).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" });
 }
 
 function formatCurrency(v?: number) {
-  if (v == null) return "—";
+  if (v == null) return "â€”";
   return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
 
@@ -45,7 +45,7 @@ export default async function AdminContratosPage({
   ];
 
   return (
-    <div style={{ padding: "32px 24px", maxWidth: 1100, margin: "0 auto" }}>
+    <div style={{ padding: "32px 24px", maxWidth: 1400, margin: "0 auto" }}>
       {/* Header */}
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 28, flexWrap: "wrap", gap: 12 }}>
         <div>
@@ -104,14 +104,14 @@ export default async function AdminContratosPage({
         <div style={{ padding: "56px", textAlign: "center", background: "var(--card-bg)", border: "1px solid var(--card-border)", borderRadius: 14 }}>
           <FileSignature size={32} style={{ color: "var(--text-faint)", marginBottom: 12, display: "block", margin: "0 auto 12px" }} />
           <p style={{ margin: 0, fontSize: "14px", fontWeight: 700, color: "var(--text)" }}>Nenhum contrato encontrado</p>
-          <p style={{ margin: "6px 0 0", fontSize: "13px", color: "var(--text-faint)" }}>Crie o primeiro contrato para começar.</p>
+          <p style={{ margin: "6px 0 0", fontSize: "13px", color: "var(--text-faint)" }}>Crie o primeiro contrato para comeÃ§ar.</p>
         </div>
       ) : (
         <div style={{ background: "var(--card-bg)", border: "1px solid var(--card-border)", borderRadius: 14, overflow: "hidden" }}>
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
               <tr style={{ borderBottom: "1px solid var(--border)" }}>
-                {["Contrato / Cliente", "Status", "Tipo", "Valor/Mês", "Vigência", ""].map((h) => (
+                {["Contrato / Cliente", "Status", "Tipo", "Valor/MÃªs", "VigÃªncia", ""].map((h) => (
                   <th key={h} style={{ padding: "11px 16px", textAlign: "left", fontSize: "11px", fontWeight: 700, color: "var(--text-faint)", textTransform: "uppercase", letterSpacing: "0.05em" }}>{h}</th>
                 ))}
               </tr>
@@ -126,7 +126,7 @@ export default async function AdminContratosPage({
                         {contract.title}
                       </p>
                       <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: "11px", color: "var(--text-faint)" }}>
-                        <User size={10} /> {contract.client_name ?? "—"}
+                        <User size={10} /> {contract.client_name ?? "â€”"}
                       </span>
                     </td>
                     <td style={{ padding: "13px 16px" }}>
@@ -144,10 +144,10 @@ export default async function AdminContratosPage({
                       {(contract.start_date || contract.end_date) ? (
                         <span style={{ display: "flex", alignItems: "center", gap: 5, fontSize: "12px", color: "var(--text-faint)" }}>
                           <Calendar size={11} />
-                          {formatDate(contract.start_date)} – {formatDate(contract.end_date)}
+                          {formatDate(contract.start_date)} â€“ {formatDate(contract.end_date)}
                         </span>
                       ) : (
-                        <span style={{ fontSize: "12px", color: "var(--text-faint)" }}>—</span>
+                        <span style={{ fontSize: "12px", color: "var(--text-faint)" }}>â€”</span>
                       )}
                     </td>
                     <td style={{ padding: "13px 16px" }}>
@@ -168,3 +168,4 @@ export default async function AdminContratosPage({
     </div>
   );
 }
+

@@ -1,14 +1,14 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import Link from "next/link";
 import { Plus, FolderKanban, Calendar, User, BarChart2 } from "lucide-react";
 import { getAllProjects } from "@/app/actions/projects";
 import { PROJECT_STATUSES, PROJECT_PRIORITY_MAP } from "@/app/lib/constants/projects";
 import type { ProjectStatus } from "@/app/lib/types/projects";
 
-export const metadata: Metadata = { title: "Admin — Projetos" };
+export const metadata: Metadata = { title: "Admin â€” Projetos" };
 
 function formatDate(d?: string) {
-  if (!d) return "—";
+  if (!d) return "â€”";
   return new Date(d).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" });
 }
 
@@ -36,7 +36,7 @@ export default async function AdminProjetosPage({
   }));
 
   return (
-    <div style={{ padding: "32px 24px", maxWidth: 1100, margin: "0 auto" }}>
+    <div style={{ padding: "32px 24px", maxWidth: 1400, margin: "0 auto" }}>
       {/* Header */}
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 28, flexWrap: "wrap", gap: 12 }}>
         <div>
@@ -95,7 +95,7 @@ export default async function AdminProjetosPage({
         <div style={{ padding: "56px", textAlign: "center", background: "var(--card-bg)", border: "1px solid var(--card-border)", borderRadius: 14 }}>
           <FolderKanban size={32} style={{ color: "var(--text-faint)", marginBottom: 12, display: "block", margin: "0 auto 12px" }} />
           <p style={{ margin: 0, fontSize: "14px", fontWeight: 700, color: "var(--text)" }}>Nenhum projeto encontrado</p>
-          <p style={{ margin: "6px 0 0", fontSize: "13px", color: "var(--text-faint)" }}>Crie o primeiro projeto para começar.</p>
+          <p style={{ margin: "6px 0 0", fontSize: "13px", color: "var(--text-faint)" }}>Crie o primeiro projeto para comeÃ§ar.</p>
         </div>
       ) : (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 16 }}>
@@ -116,7 +116,7 @@ export default async function AdminProjetosPage({
                       {project.title}
                     </p>
                     <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: "12px", color: "var(--text-faint)" }}>
-                      <User size={11} /> {project.client_name ?? "—"}
+                      <User size={11} /> {project.client_name ?? "â€”"}
                     </span>
                   </div>
                   <span style={{
@@ -162,3 +162,4 @@ export default async function AdminProjetosPage({
     </div>
   );
 }
+

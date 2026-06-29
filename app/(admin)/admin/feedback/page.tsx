@@ -1,22 +1,22 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import Link from "next/link";
 import { getAllFeedbacksAdmin } from "@/app/actions/feedback";
 import { MessageSquare, Bug, Star, AlertCircle, HelpCircle, Inbox } from "lucide-react";
 import type { FeedbackType, FeedbackStatus } from "@/app/lib/types/feedback";
 
-export const metadata: Metadata = { title: "Feedback — Admin" };
+export const metadata: Metadata = { title: "Feedback â€” Admin" };
 
 const TYPE_CONFIG: Record<FeedbackType, { label: string; color: string; bg: string; Icon: React.ComponentType<{ size?: number; style?: React.CSSProperties }> }> = {
-  sugestao: { label: "Sugestão", color: "var(--primary)",  bg: "rgba(91,87,232,0.12)",  Icon: MessageSquare },
+  sugestao: { label: "SugestÃ£o", color: "var(--primary)",  bg: "rgba(91,87,232,0.12)",  Icon: MessageSquare },
   bug:      { label: "Bug",      color: "#ef4444",         bg: "rgba(239,68,68,0.12)",  Icon: Bug },
   elogio:   { label: "Elogio",   color: "#22c55e",         bg: "rgba(34,197,94,0.12)",  Icon: Star },
-  critica:  { label: "Crítica",  color: "#EF9F27",         bg: "rgba(239,159,39,0.12)", Icon: AlertCircle },
+  critica:  { label: "CrÃ­tica",  color: "#EF9F27",         bg: "rgba(239,159,39,0.12)", Icon: AlertCircle },
   outro:    { label: "Outro",    color: "#94a3b8",         bg: "rgba(148,163,184,0.12)",Icon: HelpCircle },
 };
 
 const STATUS_CONFIG: Record<FeedbackStatus, { label: string; color: string }> = {
   recebido:    { label: "Recebido",    color: "#94a3b8" },
-  em_analise:  { label: "Em Análise",  color: "#EF9F27" },
+  em_analise:  { label: "Em AnÃ¡lise",  color: "#EF9F27" },
   aprovado:    { label: "Aprovado",    color: "var(--primary)" },
   descartado:  { label: "Descartado",  color: "#ef4444" },
   implementado:{ label: "Implementado",color: "#22c55e" },
@@ -46,7 +46,7 @@ export default async function AdminFeedbackPage({
   }));
 
   return (
-    <div style={{ padding: "40px 32px", maxWidth: 1100, margin: "0 auto" }}>
+    <div style={{ padding: "40px 32px", maxWidth: 1400, margin: "0 auto" }}>
       {/* Header */}
       <div style={{ marginBottom: 28 }}>
         <h1 style={{ fontSize: "1.5rem", fontWeight: 800, margin: "0 0 4px", color: "var(--text)", letterSpacing: "-0.02em" }}>Feedback</h1>
@@ -99,7 +99,7 @@ export default async function AdminFeedbackPage({
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ borderBottom: "1px solid var(--border)" }}>
-              {["Cliente", "Tipo", "Título", "Produto", "Status", "Data"].map((h) => (
+              {["Cliente", "Tipo", "TÃ­tulo", "Produto", "Status", "Data"].map((h) => (
                 <th key={h} style={{ padding: "11px 16px", textAlign: "left", fontSize: "11px", fontWeight: 700, color: "var(--text-faint)", textTransform: "uppercase", letterSpacing: "0.05em" }}>{h}</th>
               ))}
             </tr>
@@ -121,7 +121,7 @@ export default async function AdminFeedbackPage({
               return (
                 <tr key={fb.id} style={{ borderBottom: idx < feedbacks.length - 1 ? "1px solid var(--border)" : "none" }}>
                   <td style={{ padding: "13px 16px", fontSize: "13px", color: "var(--text-muted)", fontWeight: 600, whiteSpace: "nowrap" }}>
-                    {fb.client_name ?? "—"}
+                    {fb.client_name ?? "â€”"}
                   </td>
                   <td style={{ padding: "13px 16px" }}>
                     <span style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: "11px", fontWeight: 700, padding: "3px 9px", borderRadius: 99, background: typeCfg.bg, color: typeCfg.color }}>
@@ -134,7 +134,7 @@ export default async function AdminFeedbackPage({
                     </Link>
                   </td>
                   <td style={{ padding: "13px 16px", fontSize: "12px", color: "var(--text-faint)" }}>
-                    {fb.product || "—"}
+                    {fb.product || "â€”"}
                   </td>
                   <td style={{ padding: "13px 16px" }}>
                     <span style={{ fontSize: "11px", fontWeight: 700, padding: "3px 9px", borderRadius: 99, background: `${statusCfg.color}18`, color: statusCfg.color }}>
@@ -153,3 +153,4 @@ export default async function AdminFeedbackPage({
     </div>
   );
 }
+

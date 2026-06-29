@@ -14,7 +14,7 @@ const securityHeaders = [
       "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com data:",
-      `img-src 'self' data: blob: https://cdn.jsdelivr.net https://randomuser.me https://loremflickr.com https://loremflickr.com/cache ${process.env.NEXT_PUBLIC_SUPABASE_URL ?? ""}`,
+      `img-src 'self' data: blob: https://cdn.jsdelivr.net https://randomuser.me https://loremflickr.com https://loremflickr.com/cache https://lh3.googleusercontent.com https://avatars.githubusercontent.com ${process.env.NEXT_PUBLIC_SUPABASE_URL ?? ""}`,
       "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.resend.com",
       "frame-ancestors 'none'",
     ].join("; "),
@@ -70,6 +70,8 @@ const nextConfig: NextConfig = {
         hostname: "*.supabase.co",
         pathname: "/storage/v1/object/public/**",
       },
+      { protocol: "https", hostname: "lh3.googleusercontent.com" },
+      { protocol: "https", hostname: "avatars.githubusercontent.com" },
     ],
   },
   // Turbopack warning: definir root explícito

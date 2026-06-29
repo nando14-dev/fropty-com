@@ -97,6 +97,16 @@ export async function dismissOnboarding(): Promise<void> {
   revalidatePath("/portal/dashboard");
 }
 
+export async function saveAvatarUrl(url: string): Promise<{ error?: string }> {
+  const userId = await requireAuth();
+  const supabase = await createClient();
+  const { error } = await supabase.from("profiles").update({ avatar_url: url }).eq("id", userId);
+  if (error) return { error: "Erro ao salvar foto." };
+  revalidatePath("/portal/perfil");
+  revalidatePath("/admin/perfil");
+  return {};
+}
+
 export async function uploadAvatar(formData: FormData): Promise<{ error?: string; url?: string }> {
   const userId = await requireAuth();
   const file = formData.get("avatar") as File | null;

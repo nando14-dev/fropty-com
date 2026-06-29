@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@/app/lib/supabase/server";
 import {
@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
-export const metadata: Metadata = { title: "Visão Geral — Admin" };
+export const metadata: Metadata = { title: "VisÃ£o Geral â€” Admin" };
 
 export default async function AdminOverviewPage() {
   const supabase = await createClient();
@@ -60,7 +60,7 @@ export default async function AdminOverviewPage() {
     {
       label: "Clientes ativos",
       value: totalClients ?? 0,
-      sub: `${atRisk > 0 ? `${atRisk} em risco` : "todos saudáveis"}`,
+      sub: `${atRisk > 0 ? `${atRisk} em risco` : "todos saudÃ¡veis"}`,
       Icon: Users,
       accent: "var(--c-info)",
       bg: "var(--c-info-bg)",
@@ -85,7 +85,7 @@ export default async function AdminOverviewPage() {
       href: "/admin/financeiro",
     },
     {
-      label: "Taxa de resolução",
+      label: "Taxa de resoluÃ§Ã£o",
       value: `${resolvedRate}%`,
       sub: `${closedTickets ?? 0} tickets resolvidos`,
       Icon: CheckCircle,
@@ -108,18 +108,18 @@ export default async function AdminOverviewPage() {
   function timeAgo(dateStr: string) {
     const diff = Math.floor((now.getTime() - new Date(dateStr).getTime()) / 60000);
     if (diff < 1) return "agora";
-    if (diff < 60) return `${diff}m atrás`;
-    if (diff < 1440) return `${Math.floor(diff / 60)}h atrás`;
-    return `${Math.floor(diff / 1440)}d atrás`;
+    if (diff < 60) return `${diff}m atrÃ¡s`;
+    if (diff < 1440) return `${Math.floor(diff / 60)}h atrÃ¡s`;
+    return `${Math.floor(diff / 1440)}d atrÃ¡s`;
   }
 
   return (
-    <div style={{ padding: "36px 32px", maxWidth: 1100, margin: "0 auto" }}>
+    <div style={{ padding: "36px 32px", maxWidth: 1400, margin: "0 auto" }}>
 
       {/* Header */}
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, flexWrap: "wrap", marginBottom: 28 }}>
         <div>
-          <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 800, color: "var(--text)", letterSpacing: "-0.02em" }}>Visão Geral</h1>
+          <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 800, color: "var(--text)", letterSpacing: "-0.02em" }}>VisÃ£o Geral</h1>
           <p style={{ margin: "4px 0 0", fontSize: "13px", color: "var(--text-faint)" }}>Resumo operacional do ecossistema Fropty</p>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 12px", borderRadius: 8, background: "var(--surface-2)", border: "1px solid var(--border)" }}>
@@ -158,8 +158,8 @@ export default async function AdminOverviewPage() {
         {[
           { href: "/admin/projetos",         label: "Projetos ativos",    value: openProjects ?? 0,    Icon: FolderKanban, color: "var(--primary)" },
           { href: "/admin/contratos",         label: "Contratos ativos",   value: activeContracts ?? 0, Icon: FileText,     color: "var(--c-success)" },
-          { href: "/admin/customer-success",  label: "CS em atenção",      value: healthCounts.atencao, Icon: Heart,        color: "var(--brand-accent)" },
-          { href: "/admin/customer-success",  label: "CS em risco/crítico", value: atRisk,              Icon: AlertTriangle, color: "var(--c-danger)" },
+          { href: "/admin/customer-success",  label: "CS em atenÃ§Ã£o",      value: healthCounts.atencao, Icon: Heart,        color: "var(--brand-accent)" },
+          { href: "/admin/customer-success",  label: "CS em risco/crÃ­tico", value: atRisk,              Icon: AlertTriangle, color: "var(--c-danger)" },
         ].map(({ href, label, value, Icon, color }) => (
           <Link key={label} href={href}
             style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 16px", background: "var(--card-bg)", border: "1px solid var(--card-border)", borderRadius: 12, textDecoration: "none", transition: "border-color 0.15s" }}
@@ -217,7 +217,7 @@ export default async function AdminOverviewPage() {
                         {ref && <span style={{ fontSize: "10px", fontWeight: 700, color: "var(--text-faint)", fontFamily: "monospace", flexShrink: 0 }}>{ref}</span>}
                         <p style={{ margin: 0, fontSize: "13px", fontWeight: 600, color: "var(--text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{t.subject}</p>
                       </div>
-                      <p style={{ margin: 0, fontSize: "11px", color: "var(--text-faint)" }}>{clientName ?? "—"}</p>
+                      <p style={{ margin: 0, fontSize: "11px", color: "var(--text-faint)" }}>{clientName ?? "â€”"}</p>
                     </div>
                     <span style={{ fontSize: "10px", fontWeight: 700, background: "var(--c-danger-bg)", color: "var(--c-danger)", padding: "2px 8px", borderRadius: 99, whiteSpace: "nowrap", flexShrink: 0 }}>urgente</span>
                   </Link>
@@ -256,7 +256,7 @@ export default async function AdminOverviewPage() {
                     <div style={{ minWidth: 0, flex: 1 }}>
                       <p style={{ margin: "0 0 1px", fontSize: "13px", fontWeight: 600, color: "var(--text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{t.subject}</p>
                       <p style={{ margin: 0, fontSize: "11px", color: "var(--text-faint)" }}>
-                        {clientName ?? "—"} · {timeAgo(t.created_at)}
+                        {clientName ?? "â€”"} Â· {timeAgo(t.created_at)}
                       </p>
                     </div>
                     <span style={{ fontSize: "10px", fontWeight: 700, color: STATUS_COLOR[status] ?? "var(--text-faint)", background: `color-mix(in srgb, ${STATUS_COLOR[status] ?? "transparent"} 10%, transparent)`, padding: "2px 8px", borderRadius: 99, whiteSpace: "nowrap", flexShrink: 0, border: `1px solid color-mix(in srgb, ${STATUS_COLOR[status] ?? "transparent"} 20%, transparent)` }}>
@@ -272,10 +272,10 @@ export default async function AdminOverviewPage() {
 
       {/* Quick links */}
       <div style={{ marginTop: 20 }}>
-        <p style={{ margin: "0 0 10px", fontSize: "12px", fontWeight: 700, color: "var(--text-faint)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Acesso rápido</p>
+        <p style={{ margin: "0 0 10px", fontSize: "12px", fontWeight: 700, color: "var(--text-faint)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Acesso rÃ¡pido</p>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: 8 }}>
           {[
-            { href: "/admin/usuarios",        label: "Usuários" },
+            { href: "/admin/usuarios",        label: "UsuÃ¡rios" },
             { href: "/admin/customer-success", label: "Customer Success" },
             { href: "/admin/projetos",         label: "Projetos" },
             { href: "/admin/contratos",        label: "Contratos" },
@@ -297,3 +297,4 @@ export default async function AdminOverviewPage() {
     </div>
   );
 }
+
