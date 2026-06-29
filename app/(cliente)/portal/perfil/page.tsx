@@ -10,8 +10,10 @@ export default async function PerfilPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  const name  = profile?.name || user?.email?.split("@")[0] || "Cliente";
-  const email = user?.email ?? "";
+  const name           = profile?.name || user?.email?.split("@")[0] || "Cliente";
+  const email          = user?.email ?? "";
+  const avatarUrl      = (profile as { avatar_url?: string })?.avatar_url ?? null;
+  const googlePhotoUrl = (user?.user_metadata?.avatar_url || user?.user_metadata?.picture) ?? null;
 
   return (
     <div style={{ padding: "40px 40px" }}>
@@ -19,7 +21,7 @@ export default async function PerfilPage() {
         <h1 style={{ margin: 0, fontSize: "1.25rem", fontWeight: 800, color: "var(--text)", letterSpacing: "-0.02em" }}>Conta</h1>
         <p style={{ margin: "4px 0 0", fontSize: "13px", color: "var(--text-faint)" }}>Gerencie suas informações pessoais e segurança.</p>
       </div>
-      <ProfileSettings name={name} email={email} role="cliente" />
+      <ProfileSettings name={name} email={email} role="cliente" avatarUrl={avatarUrl} googlePhotoUrl={googlePhotoUrl} />
     </div>
   );
 }

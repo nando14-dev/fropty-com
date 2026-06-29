@@ -179,7 +179,7 @@ export default function PasswordChangeForm() {
               background: "var(--primary)", color: "#fff",
               fontSize: "13px", fontWeight: 700,
               cursor: (isPending || (!!newPwd && !!strength && strength.issues.length > 0)) ? "not-allowed" : "pointer",
-              fontFamily: "inherit",
+              fontFamily: "inherit", whiteSpace: "nowrap",
               opacity: (isPending || (!!newPwd && !!strength && strength.issues.length > 0)) ? 0.6 : 1,
             }}
           >

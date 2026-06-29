@@ -97,6 +97,38 @@ export async function dismissOnboarding(): Promise<void> {
   revalidatePath("/portal/dashboard");
 }
 
+export async function uploadAvatar(formData: FormData): Promise<{ error?: string; url?: string }> {
+  const userId = await requireAuth();
+  const file = formData.get("avatar") as File | null;
+  if (!file || file.size === 0) return { error: "Nenhum arquivo selecionado." };
+  if (file.size > 2 * 1024 * 1024) return { error: "Imagem deve ter no máximo 2MB." };
+  if (!file.type.startsWith("image/")) return { error: "Formato inválido. Use JPG, PNG ou WebP." };
+
+  const ext  = file.type.split("/")[1]?.replace("jpeg", "jpg") ?? "jpg";
+  const path = `${userId}/avatar.${ext}`;
+
+  const supabase = await createClient();
+  const { error: uploadError } = await supabase.storage
+    .from("avatars")
+    .upload(path, file, { upsert: true, contentType: file.type });
+
+  if (uploadError) return { error: "Erro ao fazer upload. Tente novamente." };
+
+  const { data: { publicUrl } } = supabase.storage.from("avatars").getPublicUrl(path);
+  const urlWithBust = `${publicUrl}?t=${Date.now()}`;
+
+  const { error: dbError } = await supabase
+    .from("profiles")
+    .update({ avatar_url: urlWithBust })
+    .eq("id", userId);
+
+  if (dbError) return { error: "Erro ao salvar foto." };
+
+  revalidatePath("/portal/perfil");
+  revalidatePath("/admin/perfil");
+  return { url: urlWithBust };
+}
+
 export async function updateTheme(theme: "dark" | "light"): Promise<void> {
   const userId = await requireAuth();
   if (theme !== "dark" && theme !== "light") return;
