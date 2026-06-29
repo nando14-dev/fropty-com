@@ -10,6 +10,7 @@ import {
   UserCircle, BookOpen, Map, MessageSquarePlus, FolderKanban, FileSignature,
   HeartPulse, Menu, LogOut, Loader2, PanelLeftClose, Shield,
   ChevronUp, ChevronDown, UserPlus, ListFilter, Sparkles,
+  MessagesSquare, LayoutGrid, CalendarDays,
 } from "lucide-react";
 import { NotificationBell } from "@/app/components/NotificationBell";
 import Image from "next/image";
@@ -32,6 +33,9 @@ const NAV: NavItem[] = [
   { id: "contratos",         href: "/admin/contratos",         Icon: FileSignature,     label: "Contratos",           group: "ops" },
   { id: "financeiro",        href: "/admin/financeiro",        Icon: CreditCard,        label: "Financeiro",          group: "ops" },
   { id: "suporte",           href: "/portal/suporte",          Icon: MessageCircle,     label: "Suporte",             group: "ops" },
+  { id: "chat",              href: "/portal/chat",             Icon: MessagesSquare,    label: "Chat",                group: "ops" },
+  { id: "kanban",            href: "/portal/kanban",           Icon: LayoutGrid,        label: "Kanban",              group: "ops" },
+  { id: "calendario",        href: "/portal/calendario",       Icon: CalendarDays,      label: "Calendário",          group: "ops" },
   { id: "planos",            href: "/portal/planos",           Icon: Sparkles,          label: "Planos",              group: "ops" },
   { id: "roadmap",           href: "/admin/roadmap",           Icon: Map,               label: "Roadmap",             group: "produto" },
   { id: "feedback",          href: "/admin/feedback",          Icon: MessageSquarePlus, label: "Feedback",            group: "produto" },

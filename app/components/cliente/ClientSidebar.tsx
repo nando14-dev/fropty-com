@@ -11,6 +11,7 @@ import {
   LayoutDashboard, MessageCircle, CreditCard, UserCircle, BookOpen, Map,
   MessageSquarePlus, FolderKanban, FileSignature, LogOut, Loader2,
   Menu, X, PanelLeftClose, PanelLeftOpen, Search, Coins, Sparkles,
+  MessagesSquare, LayoutGrid, CalendarDays,
 } from "lucide-react";
 import Image from "next/image";
 
@@ -33,6 +34,7 @@ const DEFAULT_NAV: NavItem[] = PORTAL_NAV_ITEMS;
 const ICON_MAP: Record<string, React.ComponentType<{ size?: number }>> = {
   LayoutDashboard, MessageCircle, CreditCard, UserCircle, BookOpen, Map,
   MessageSquarePlus, FolderKanban, FileSignature, Sparkles,
+  MessagesSquare, LayoutGrid, CalendarDays,
 };
 
 function NavIcon({ name, size = 16 }: { name: string; size?: number }) {
