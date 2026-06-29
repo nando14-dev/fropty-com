@@ -51,13 +51,16 @@ export function AdminSidebar({ name, initials, userId, initialTheme = "dark" }: 
 
   useEffect(() => {
     const saved = localStorage.getItem("hub-admin-sidebar-collapsed");
-    if (saved === "1") setCollapsed(true);
+    const isCollapsed = saved === "1";
+    if (isCollapsed) setCollapsed(true);
+    document.documentElement.style.setProperty("--sidebar-w", isCollapsed ? "60px" : "224px");
   }, []);
 
   function toggleCollapse() {
     const next = !collapsed;
     setCollapsed(next);
     localStorage.setItem("hub-admin-sidebar-collapsed", next ? "1" : "0");
+    document.documentElement.style.setProperty("--sidebar-w", next ? "60px" : "224px");
   }
 
   function handleSignOut() {
@@ -176,10 +179,10 @@ export function AdminSidebar({ name, initials, userId, initialTheme = "dark" }: 
                       borderRadius: "var(--r-md)",
                       fontSize: "13px", fontWeight: active ? 600 : 500,
                       textDecoration: "none",
-                      color: active ? "var(--sidebar-item-active-text)" : "var(--text-muted)",
-                      background: active ? "var(--sidebar-item-active)" : "transparent",
-                      borderLeft: active && !collapsed ? "2px solid var(--primary)" : "2px solid transparent",
-                      paddingLeft: active && !collapsed ? 9 : 10,
+                      color: active ? "var(--text)" : "var(--text-muted)",
+                      background: active ? "var(--surface-2)" : "transparent",
+                      borderLeft: "none",
+                      paddingLeft: 10,
                       transition: "background 0.12s, color 0.12s",
                       whiteSpace: "nowrap", overflow: "hidden", position: "relative",
                     }}

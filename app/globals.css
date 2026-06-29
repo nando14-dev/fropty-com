@@ -782,18 +782,22 @@ a { color: inherit; text-decoration: none; }
 }
 .portal-sidebar-close:hover { background: var(--surface-3); color: var(--text); }
 
-/* Main content area */
+/* Main content area — offset matches the fixed sidebar width via JS var */
 .portal-main-content {
   flex: 1;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  margin-left: var(--sidebar-w, 224px);
+  transition: margin-left 0.22s cubic-bezier(0.4,0,0.2,1);
 }
 
 /* ── RESPONSIVO (mobile ≤ 768px) ─────────────────────────────────── */
 @media (max-width: 768px) {
   .portal-topbar { display: flex; }
+
+  .portal-main-content { margin-left: 0 !important; }
 
   .portal-sidebar {
     position:   fixed !important;
