@@ -46,6 +46,20 @@ export async function updateProfile(formData: FormData): Promise<{ error?: strin
   return { success: "Perfil atualizado!" };
 }
 
+export async function updatePhoneNumber(phone: string): Promise<{ error?: string; success?: string }> {
+  const userId = await requireAuth();
+  const cleaned = phone.replace(/\s/g, "").slice(0, 20);
+  if (cleaned && !/^\+?\d{8,15}$/.test(cleaned)) return { error: "Telefone inválido. Use formato +5511999990000." };
+
+  const supabase = await createClient();
+  const { error } = await supabase.from("profiles").update({ phone_number: cleaned || null } as never).eq("id", userId);
+  if (error) return { error: "Erro ao salvar telefone." };
+
+  revalidatePath("/portal/perfil");
+  revalidatePath("/admin/perfil");
+  return { success: "Telefone atualizado!" };
+}
+
 export async function changePassword(formData: FormData): Promise<{ error?: string; success?: string }> {
   await requireAuth();
 

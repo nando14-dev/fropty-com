@@ -17,15 +17,22 @@ interface Props {
   role:            "admin" | "cliente";
   avatarUrl?:      string | null;
   googlePhotoUrl?: string | null;
+  phoneNumber?:    string | null;
 }
 
-export function ProfileSettings({ name: initialName, email, role, avatarUrl, googlePhotoUrl }: Props) {
+export function ProfileSettings({ name: initialName, email, role, avatarUrl, googlePhotoUrl, phoneNumber: initialPhone }: Props) {
   const [section, setSection]         = useState<Section>("info");
   const [editingName, setEditingName] = useState(false);
   const [nameValue, setNameValue]     = useState(initialName);
   const [savedName, setSavedName]     = useState(initialName);
   const [nameMsg, setNameMsg]         = useState<{ ok: boolean; text: string } | null>(null);
   const [namePending, startNameTrans] = useTransition();
+
+  const [editingPhone, setEditingPhone] = useState(false);
+  const [phoneValue, setPhoneValue]     = useState(initialPhone ?? "");
+  const [savedPhone, setSavedPhone]     = useState(initialPhone ?? "");
+  const [phoneMsg, setPhoneMsg]         = useState<{ ok: boolean; text: string } | null>(null);
+  const [phonePending, startPhoneTrans] = useTransition();
 
   const fileRef                             = useRef<HTMLInputElement>(null);
   const [currentAvatar, setCurrentAvatar]   = useState<string | null | undefined>(avatarUrl || googlePhotoUrl);
@@ -83,6 +90,22 @@ export function ProfileSettings({ name: initialName, email, role, avatarUrl, goo
     }
     setUploading(false);
     e.target.value = "";
+  }
+
+  /* ── Salvar telefone ── */
+  function savePhone() {
+    startPhoneTrans(async () => {
+      const { updatePhoneNumber } = await import("@/app/actions/profile");
+      const res = await updatePhoneNumber(phoneValue.trim());
+      if (res.success) {
+        setSavedPhone(phoneValue.trim());
+        setEditingPhone(false);
+        setPhoneMsg({ ok: true, text: res.success });
+        setTimeout(() => setPhoneMsg(null), 3000);
+      } else {
+        setPhoneMsg({ ok: false, text: res.error ?? "Erro ao salvar." });
+      }
+    });
   }
 
   /* ── Salvar nome ── */
@@ -314,6 +337,39 @@ export function ProfileSettings({ name: initialName, email, role, avatarUrl, goo
                 </div>
               </FieldRow>
 
+              {/* Telefone */}
+              <FieldRow label="Telefone">
+                {editingPhone ? (
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, flex: 1, flexWrap: "wrap" }}>
+                    <input
+                      value={phoneValue}
+                      onChange={e => setPhoneValue(e.target.value)}
+                      onKeyDown={e => { if (e.key === "Enter") savePhone(); if (e.key === "Escape") { setPhoneValue(savedPhone); setEditingPhone(false); } }}
+                      autoFocus
+                      placeholder="+5511999990000"
+                      style={{ flex: 1, maxWidth: 280, padding: "7px 12px", borderRadius: 8, border: "1px solid var(--primary)", background: "var(--surface-2)", color: "var(--text)", fontSize: 14, fontFamily: "inherit", outline: "none" }}
+                    />
+                    <button onClick={savePhone} disabled={phonePending} style={iconBtnStyle("#22c55e")}>
+                      {phonePending ? <Loader2 size={13} style={{ animation: "spin 0.8s linear infinite" }} /> : <Check size={13} />}
+                    </button>
+                    <button onClick={() => { setPhoneValue(savedPhone); setEditingPhone(false); }} style={iconBtnStyle("var(--text-faint)")}>
+                      <X size={13} />
+                    </button>
+                  </div>
+                ) : (
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flex: 1 }}>
+                    <span style={{ fontSize: 14, color: savedPhone ? "var(--text)" : "var(--text-faint)", fontWeight: savedPhone ? 500 : 400 }}>
+                      {savedPhone || "Não informado"}
+                    </span>
+                    <button onClick={() => setEditingPhone(true)} style={editBtnStyle}>Editar</button>
+                  </div>
+                )}
+                {phoneMsg && <p style={{ margin: "4px 0 0", fontSize: 12, color: phoneMsg.ok ? "#22c55e" : "#ef4444" }}>{phoneMsg.text}</p>}
+                <p style={{ margin: "4px 0 0", fontSize: 11, color: "var(--text-faint)" }}>
+                  Usado para verificação via SMS. Formato: +5511999990000
+                </p>
+              </FieldRow>
+
               {/* Papel */}
               <FieldRow label="Papel" noBorder>
                 <span style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "3px 10px", borderRadius: 999, background: "var(--surface-2)", border: "1px solid var(--border)", fontSize: 12, fontWeight: 700, color: "var(--text-faint)" }}>
@@ -380,8 +436,10 @@ export function ProfileSettings({ name: initialName, email, role, avatarUrl, goo
 }
 
 /* ── 2FA Section ── */
+import { useEffect } from "react";
+
 function TwoFactorSection() {
-  const [step, setStep]         = useState<"idle" | "qr" | "done">("idle");
+  const [step, setStep]         = useState<"loading" | "idle" | "qr" | "done">("loading");
   const [factorId, setFactorId] = useState("");
   const [qrCode, setQrCode]     = useState("");
   const [secret, setSecret]     = useState("");
@@ -390,10 +448,33 @@ function TwoFactorSection() {
   const [loading, setLoading]   = useState(false);
   const [copied, setCopied]     = useState(false);
 
+  /* Detecta estado real do MFA ao montar */
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.mfa.listFactors().then(({ data }) => {
+      const verified = data?.totp?.find(f => f.status === "verified");
+      if (verified) {
+        setStep("done");
+        setFactorId(verified.id);
+      } else {
+        setStep("idle");
+      }
+    });
+  }, []);
+
   async function startEnroll() {
     setLoading(true);
     setError("");
     const supabase = createClient();
+    // Remove fatores não verificados anteriores antes de criar novo
+    // Tenta remover fatores existentes não verificados (melhor esforço)
+    try {
+      const res = await (supabase.auth.mfa as unknown as { listFactors: (o: object) => Promise<{ data?: { totp?: { id: string; status: string }[] } }> }).listFactors({});
+      for (const f of res.data?.totp ?? []) {
+        if (f.status !== "verified") await supabase.auth.mfa.unenroll({ factorId: f.id });
+      }
+    } catch { /* ignora */ }
+
     const { data, error: err } = await supabase.auth.mfa.enroll({ factorType: "totp" });
     if (err || !data) {
       setError(err?.message ?? "Erro ao iniciar. Tente novamente.");
@@ -420,10 +501,30 @@ function TwoFactorSection() {
     setLoading(false);
   }
 
+  async function disable2FA() {
+    if (!factorId) return;
+    setLoading(true);
+    const supabase = createClient();
+    await supabase.auth.mfa.unenroll({ factorId });
+    setFactorId("");
+    setCode("");
+    setError("");
+    setStep("idle");
+    setLoading(false);
+  }
+
   function copySecret() {
     navigator.clipboard.writeText(secret);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  }
+
+  if (step === "loading") {
+    return (
+      <div style={{ padding: "24px 0", borderTop: "1px solid var(--border)", display: "flex", alignItems: "center", gap: 8, color: "var(--text-faint)", fontSize: 13 }}>
+        <Loader2 size={14} style={{ animation: "spin 0.8s linear infinite" }} /> Verificando 2FA…
+      </div>
+    );
   }
 
   return (
@@ -453,45 +554,31 @@ function TwoFactorSection() {
             <QrCode size={15} /> Configure o autenticador
           </p>
           <p style={{ margin: "0 0 20px", fontSize: 13, color: "var(--text-faint)", lineHeight: 1.5 }}>
-            Escaneie o QR code com o Google Authenticator, Authy ou similar, depois insira o código de 6 dígitos gerado.
+            Escaneie o QR code com Google Authenticator, Authy ou similar, depois insira o código gerado.
           </p>
-
           <div className="ps-2fa-qr">
-            {/* QR code */}
-            <div
-              style={{ background: "#fff", padding: 10, borderRadius: 12, border: "1px solid var(--border)", flexShrink: 0 }}
-              dangerouslySetInnerHTML={{ __html: qrCode }}
-            />
-
-            {/* Inputs */}
+            <div style={{ background: "#fff", padding: 10, borderRadius: 12, border: "1px solid var(--border)", flexShrink: 0 }} dangerouslySetInnerHTML={{ __html: qrCode }} />
             <div style={{ flex: 1, minWidth: 200 }}>
-              {/* Código manual */}
               <p style={{ margin: "0 0 6px", fontSize: 11, fontWeight: 700, color: "var(--text-faint)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Código manual</p>
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
-                <code style={{ flex: 1, fontSize: 12, background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: 7, padding: "6px 10px", color: "var(--text)", letterSpacing: "0.1em", wordBreak: "break-all" }}>
-                  {secret}
-                </code>
+                <code style={{ flex: 1, fontSize: 12, background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: 7, padding: "6px 10px", color: "var(--text)", letterSpacing: "0.1em", wordBreak: "break-all" }}>{secret}</code>
                 <button onClick={copySecret} style={{ display: "flex", alignItems: "center", gap: 4, padding: "6px 10px", borderRadius: 7, border: "1px solid var(--border)", background: "var(--surface-2)", cursor: "pointer", color: copied ? "#22c55e" : "var(--text-faint)", fontSize: 11, fontWeight: 600, fontFamily: "inherit", whiteSpace: "nowrap", flexShrink: 0 }}>
                   {copied ? <CheckCircle size={12} /> : <Copy size={12} />}
                   {copied ? "Copiado" : "Copiar"}
                 </button>
               </div>
-
-              {/* Código do app */}
               <p style={{ margin: "0 0 6px", fontSize: 11, fontWeight: 700, color: "var(--text-faint)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Código do app</p>
               <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
                 <input
                   value={code}
                   onChange={e => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                  onKeyDown={e => e.key === "Enter" && verify()}
                   placeholder="000000"
                   maxLength={6}
+                  autoFocus
                   style={{ width: 120, padding: "9px 12px", borderRadius: 8, border: "1px solid var(--border)", background: "var(--surface-2)", color: "var(--text)", fontSize: 18, letterSpacing: "0.2em", fontFamily: "monospace", outline: "none", textAlign: "center" }}
                 />
-                <button
-                  onClick={verify}
-                  disabled={loading || code.length !== 6}
-                  style={{ display: "flex", alignItems: "center", gap: 6, padding: "9px 18px", borderRadius: 8, border: "none", background: "var(--cta-bg)", color: "var(--cta-text)", fontSize: 13, fontWeight: 700, cursor: (loading || code.length !== 6) ? "not-allowed" : "pointer", fontFamily: "inherit", opacity: (loading || code.length !== 6) ? 0.6 : 1, whiteSpace: "nowrap" }}
-                >
+                <button onClick={verify} disabled={loading || code.length !== 6} style={{ display: "flex", alignItems: "center", gap: 6, padding: "9px 18px", borderRadius: 8, border: "none", background: "var(--cta-bg)", color: "var(--cta-text)", fontSize: 13, fontWeight: 700, cursor: (loading || code.length !== 6) ? "not-allowed" : "pointer", fontFamily: "inherit", opacity: (loading || code.length !== 6) ? 0.6 : 1, whiteSpace: "nowrap" }}>
                   {loading ? <Loader2 size={13} style={{ animation: "spin 0.8s linear infinite" }} /> : <Check size={13} />}
                   Verificar
                 </button>
@@ -506,14 +593,24 @@ function TwoFactorSection() {
       )}
 
       {step === "done" && (
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <div style={{ width: 38, height: 38, borderRadius: "50%", background: "rgba(34,197,94,0.12)", border: "1px solid rgba(34,197,94,0.3)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-            <CheckCircle size={18} color="#22c55e" />
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 20, flexWrap: "wrap" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <div style={{ width: 38, height: 38, borderRadius: "50%", background: "rgba(34,197,94,0.12)", border: "1px solid rgba(34,197,94,0.3)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <CheckCircle size={18} color="#22c55e" />
+            </div>
+            <div>
+              <p style={{ margin: 0, fontSize: 14, fontWeight: 700, color: "var(--text)" }}>2FA ativo</p>
+              <p style={{ margin: "3px 0 0", fontSize: "12.5px", color: "var(--text-faint)" }}>Código exigido em cada login.</p>
+            </div>
           </div>
-          <div>
-            <p style={{ margin: 0, fontSize: 14, fontWeight: 700, color: "var(--text)" }}>Autenticação em dois fatores ativa</p>
-            <p style={{ margin: "3px 0 0", fontSize: "12.5px", color: "var(--text-faint)" }}>Sua conta está protegida. Um código será exigido em cada login.</p>
-          </div>
+          <button
+            onClick={disable2FA}
+            disabled={loading}
+            style={{ display: "flex", alignItems: "center", gap: 6, padding: "7px 14px", borderRadius: 8, border: "1px solid #ef4444", background: "transparent", color: "#ef4444", fontSize: "12px", fontWeight: 600, cursor: loading ? "not-allowed" : "pointer", fontFamily: "inherit", flexShrink: 0, whiteSpace: "nowrap", alignSelf: "center" }}
+          >
+            {loading ? <Loader2 size={11} style={{ animation: "spin 0.8s linear infinite" }} /> : <X size={11} />}
+            Desativar 2FA
+          </button>
         </div>
       )}
     </div>

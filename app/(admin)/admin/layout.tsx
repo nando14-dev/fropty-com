@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { getProfile } from "@/app/lib/auth/session";
 import { createClient } from "@/app/lib/supabase/server";
 import { AdminSidebar } from "@/app/components/admin/AdminSidebar";
@@ -9,6 +10,12 @@ export default async function AdminPortalLayout({ children }: { children: React.
   const profile  = await getProfile();
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
+
+  // Se o usuário tem MFA ativo e o AAL ainda é 1, redireciona para o challenge
+  const { data: aalData } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+  if (aalData?.currentLevel === "aal1" && aalData?.nextLevel === "aal2") {
+    redirect("/auth/mfa");
+  }
 
   const name         = profile?.name || user?.email?.split("@")[0] || "Admin";
   const initials     = name.slice(0, 2).toUpperCase();

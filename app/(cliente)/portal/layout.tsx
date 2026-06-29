@@ -40,6 +40,12 @@ export default async function PortalLayout({
     }
   }
 
+  // Se o usuário tem MFA ativo e o AAL ainda é 1, redireciona para o challenge
+  const { data: aalData } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+  if (aalData?.currentLevel === "aal1" && aalData?.nextLevel === "aal2") {
+    redirect("/auth/mfa");
+  }
+
   const displayName   = profile?.name || user?.email?.split("@")[0] || "Cliente";
   const initials      = displayName.slice(0, 2).toUpperCase();
   const email         = user?.email ?? "";
