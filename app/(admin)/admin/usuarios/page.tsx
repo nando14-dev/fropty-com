@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@/app/lib/supabase/server";
+import { createServiceClient } from "@/app/lib/supabase/service";
 import { BulkUsuariosClient } from "@/app/components/admin/BulkUsuariosClient";
 import { ChevronLeft, ChevronRight, UserPlus, Users, UserCheck, UserX, ShieldCheck, Download, Upload, SlidersHorizontal } from "lucide-react";
 
@@ -50,7 +51,27 @@ export default async function AdminUsuariosPage({ searchParams }: Props) {
     })(),
   ]);
 
-  const list       = usersFiltered ?? [];
+  const rawList = usersFiltered ?? [];
+
+  // Merge avatar_url do auth.users para quem só tem foto via OAuth (Google etc.)
+  let list = rawList;
+  if (rawList.some(u => !u.avatar_url)) {
+    try {
+      const service = createServiceClient();
+      const ids = rawList.filter(u => !u.avatar_url).map(u => u.id);
+      const { data: authUsers } = await service.auth.admin.listUsers({ perPage: 1000 });
+      const metaMap = new Map(
+        (authUsers?.users ?? [])
+          .filter(u => ids.includes(u.id))
+          .map(u => [u.id, u.user_metadata?.avatar_url ?? u.user_metadata?.picture ?? null])
+      );
+      list = rawList.map(u => ({
+        ...u,
+        avatar_url: u.avatar_url ?? metaMap.get(u.id) ?? null,
+      }));
+    } catch { /* service client indisponível — usa profiles apenas */ }
+  }
+
   const totalPages = Math.ceil((filteredTotal ?? 0) / PAGE_SIZE);
 
   const stats = [

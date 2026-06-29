@@ -160,7 +160,7 @@ export default function NovoUsuarioPage() {
                 />
               </Field>
               <Field label="Início do contrato" icon={<span style={{ fontSize: 13 }}>📅</span>}>
-                <input name="contract_start" type="date" style={inputStyle} />
+                <input name="contract_start" type="date" style={{ ...inputStyle, colorScheme: "dark" }} />
               </Field>
             </div>
 

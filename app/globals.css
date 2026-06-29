@@ -1,5 +1,19 @@
 @import "tailwindcss";
 
+/* Date/time inputs seguem o color-scheme do tema ativo */
+.dark input[type="date"],
+.dark input[type="datetime-local"],
+.dark input[type="time"],
+.dark input[type="month"] {
+  color-scheme: dark;
+}
+:root:not(.dark) input[type="date"],
+:root:not(.dark) input[type="datetime-local"],
+:root:not(.dark) input[type="time"],
+:root:not(.dark) input[type="month"] {
+  color-scheme: light;
+}
+
 /* ═══════════════════════════════════════════════════════════════════
    FROPTY HUB — DESIGN SYSTEM GLOBAL
    Baseado em: shared/design-system + Preline UI patterns
