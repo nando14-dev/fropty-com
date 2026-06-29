@@ -102,8 +102,9 @@ export default function RootLayout({
     <html lang="pt-BR">
       <head>
         <meta charSet="utf-8" />
-        <link rel="icon" type="image/png" href="/hub-logo.png" sizes="32x32" />
-        <link rel="apple-touch-icon" href="/hub-logo.png" />
+        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="apple-touch-icon" href="/favicon.ico" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="Fropty Hub" />
