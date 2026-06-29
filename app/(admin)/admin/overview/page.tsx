@@ -1,14 +1,15 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@/app/lib/supabase/server";
 import {
   Users, MessageCircle, DollarSign, ChevronRight,
   AlertTriangle, TrendingUp, CheckCircle, Activity,
   FolderKanban, FileText, Heart, ArrowUpRight,
+  BarChart2, Settings, BookOpen, Star, Zap,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
-export const metadata: Metadata = { title: "VisÃ£o Geral â€” Admin" };
+export const metadata: Metadata = { title: "Visão Geral — Admin" };
 
 export default async function AdminOverviewPage() {
   const supabase = await createClient();
@@ -56,42 +57,54 @@ export default async function AdminOverviewPage() {
   });
   const atRisk = healthCounts.risco + healthCounts.critico;
 
-  const kpis: { label: string; value: string | number; sub: string; Icon: LucideIcon; accent: string; bg: string; href: string }[] = [
+  const kpis: {
+    label: string; value: string | number; sub: string;
+    Icon: LucideIcon; accent: string; bg: string; href: string;
+    trend?: string; trendDir?: "up" | "down" | "neutral";
+  }[] = [
     {
       label: "Clientes ativos",
       value: totalClients ?? 0,
-      sub: `${atRisk > 0 ? `${atRisk} em risco` : "todos saudÃ¡veis"}`,
+      sub: atRisk > 0 ? `${atRisk} em risco` : "todos saudáveis",
       Icon: Users,
       accent: "var(--c-info)",
       bg: "var(--c-info-bg)",
       href: "/admin/usuarios",
+      trendDir: atRisk > 0 ? "down" : "up",
+      trend: atRisk > 0 ? `${atRisk} risco` : "Saudável",
     },
     {
       label: "Tickets abertos",
       value: openTickets ?? 0,
-      sub: `${closedTickets ?? 0} resolvidos no total`,
+      sub: `${closedTickets ?? 0} resolvidos`,
       Icon: MessageCircle,
       accent: "var(--brand-accent)",
       bg: "rgba(239,159,39,0.10)",
       href: "/portal/suporte",
+      trendDir: (openTickets ?? 0) > 5 ? "down" : "neutral",
+      trend: `${totalTickets} total`,
     },
     {
       label: "MRR",
-      value: `R$${mrr.toFixed(2).replace(".", ",")}`,
-      sub: `${(totalClients ?? 0)} clientes ativos`,
+      value: `R$${mrr.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`,
+      sub: `${totalClients ?? 0} clientes ativos`,
       Icon: DollarSign,
       accent: "var(--c-success)",
       bg: "var(--c-success-bg)",
       href: "/admin/financeiro",
+      trendDir: "up",
+      trend: "Ativo",
     },
     {
-      label: "Taxa de resoluÃ§Ã£o",
+      label: "Taxa de resolução",
       value: `${resolvedRate}%`,
       sub: `${closedTickets ?? 0} tickets resolvidos`,
       Icon: CheckCircle,
       accent: resolvedRate >= 80 ? "var(--c-success)" : resolvedRate >= 50 ? "var(--brand-accent)" : "var(--c-danger)",
       bg: resolvedRate >= 80 ? "var(--c-success-bg)" : resolvedRate >= 50 ? "rgba(239,159,39,0.10)" : "var(--c-danger-bg)",
       href: "/admin/analytics",
+      trendDir: resolvedRate >= 80 ? "up" : resolvedRate >= 50 ? "neutral" : "down",
+      trend: `${resolvedRate}% SLA`,
     },
   ];
 
@@ -99,28 +112,43 @@ export default async function AdminOverviewPage() {
     aberto: "Aberto", em_andamento: "Em andamento", reaberto: "Reaberto",
     resolvido: "Resolvido", fechado: "Fechado",
   };
-  const STATUS_COLOR: Record<string, string> = {
-    aberto: "var(--c-danger)", em_andamento: "var(--brand-accent)", reaberto: "var(--c-warning)",
-    resolvido: "var(--c-success)", fechado: "var(--text-faint)",
+  const STATUS_BADGE: Record<string, string> = {
+    aberto: "hub-badge hub-badge-danger",
+    em_andamento: "hub-badge hub-badge-warning",
+    reaberto: "hub-badge hub-badge-warning",
+    resolvido: "hub-badge hub-badge-success",
+    fechado: "hub-badge hub-badge-neutral",
   };
 
   const now = new Date();
   function timeAgo(dateStr: string) {
     const diff = Math.floor((now.getTime() - new Date(dateStr).getTime()) / 60000);
     if (diff < 1) return "agora";
-    if (diff < 60) return `${diff}m atrÃ¡s`;
-    if (diff < 1440) return `${Math.floor(diff / 60)}h atrÃ¡s`;
-    return `${Math.floor(diff / 1440)}d atrÃ¡s`;
+    if (diff < 60) return `${diff}m atrás`;
+    if (diff < 1440) return `${Math.floor(diff / 60)}h atrás`;
+    return `${Math.floor(diff / 1440)}d atrás`;
   }
 
-  return (
-    <div style={{ padding: "36px 32px", maxWidth: 1400, margin: "0 auto" }}>
+  const quickLinks: { href: string; label: string; Icon: LucideIcon }[] = [
+    { href: "/admin/usuarios",         label: "Usuários",          Icon: Users },
+    { href: "/admin/customer-success", label: "Customer Success",  Icon: Heart },
+    { href: "/admin/projetos",         label: "Projetos",          Icon: FolderKanban },
+    { href: "/admin/contratos",        label: "Contratos",         Icon: FileText },
+    { href: "/admin/financeiro",       label: "Financeiro",        Icon: DollarSign },
+    { href: "/admin/roadmap",          label: "Roadmap",           Icon: TrendingUp },
+    { href: "/admin/feedback",         label: "Feedback",          Icon: Star },
+    { href: "/admin/analytics",        label: "Analytics",         Icon: BarChart2 },
+    { href: "/admin/base-conhecimento",label: "Base de Conhecimento", Icon: BookOpen },
+  ];
 
-      {/* Header */}
-      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, flexWrap: "wrap", marginBottom: 28 }}>
+  return (
+    <div className="hub-page">
+
+      {/* ── Page header ── */}
+      <div className="hub-page-header" style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
         <div>
-          <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 800, color: "var(--text)", letterSpacing: "-0.02em" }}>VisÃ£o Geral</h1>
-          <p style={{ margin: "4px 0 0", fontSize: "13px", color: "var(--text-faint)" }}>Resumo operacional do ecossistema Fropty</p>
+          <h1 className="hub-page-title">Visão Geral</h1>
+          <p className="hub-page-sub">Resumo operacional do ecossistema Fropty</p>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 12px", borderRadius: 8, background: "var(--surface-2)", border: "1px solid var(--border)" }}>
           <Activity size={12} style={{ color: "var(--c-success)" }} />
@@ -128,79 +156,78 @@ export default async function AdminOverviewPage() {
         </div>
       </div>
 
-      {/* KPI cards */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 14, marginBottom: 28 }}>
-        {kpis.map(({ label, value, sub, Icon, accent, bg, href }) => (
+      {/* ── KPI cards (4 cols) ── */}
+      <div className="hub-grid-4" style={{ marginBottom: 20 }}>
+        {kpis.map(({ label, value, sub, Icon, accent, bg, href, trend, trendDir }) => (
           <Link key={label} href={href} style={{ textDecoration: "none" }}>
-            <div style={{
-              background: "var(--card-bg)", border: "1px solid var(--card-border)",
-              borderRadius: 14, padding: "20px", cursor: "pointer",
-              transition: "border-color 0.15s, box-shadow 0.15s",
-            }}
-              className="hub-card-hover"
-            >
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
-                <div style={{ width: 36, height: 36, borderRadius: 10, background: bg, display: "flex", alignItems: "center", justifyContent: "center", color: accent }}>
+            <div className="hub-stat-card hub-card-hover">
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <div className="hub-stat-icon" style={{ background: bg, color: accent }}>
                   <Icon size={17} />
                 </div>
                 <ArrowUpRight size={13} style={{ color: "var(--text-faint)" }} />
               </div>
-              <p style={{ margin: "0 0 4px", fontSize: "1.75rem", fontWeight: 900, color: "var(--text)", lineHeight: 1, letterSpacing: "-0.02em" }}>{value}</p>
-              <p style={{ margin: "0 0 2px", fontSize: "12px", fontWeight: 600, color: "var(--text-muted)" }}>{label}</p>
-              <p style={{ margin: 0, fontSize: "11px", color: "var(--text-faint)" }}>{sub}</p>
+              <p className="hub-stat-value" style={{ fontSize: "2rem" }}>{value}</p>
+              <p className="hub-stat-label">{label}</p>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
+                <span style={{ fontSize: "11px", color: "var(--text-faint)" }}>{sub}</span>
+                {trend && (
+                  <span className={`hub-stat-trend ${trendDir ?? "neutral"}`}>{trend}</span>
+                )}
+              </div>
             </div>
           </Link>
         ))}
       </div>
 
-      {/* Secondary metrics strip */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 10, marginBottom: 28 }}>
+      {/* ── Secondary metrics strip ── */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 10, marginBottom: 28 }}>
         {[
-          { href: "/admin/projetos",         label: "Projetos ativos",    value: openProjects ?? 0,    Icon: FolderKanban, color: "var(--primary)" },
-          { href: "/admin/contratos",         label: "Contratos ativos",   value: activeContracts ?? 0, Icon: FileText,     color: "var(--c-success)" },
-          { href: "/admin/customer-success",  label: "CS em atenÃ§Ã£o",      value: healthCounts.atencao, Icon: Heart,        color: "var(--brand-accent)" },
-          { href: "/admin/customer-success",  label: "CS em risco/crÃ­tico", value: atRisk,              Icon: AlertTriangle, color: "var(--c-danger)" },
+          { href: "/admin/projetos",         label: "Projetos ativos",    value: openProjects ?? 0,    Icon: FolderKanban,  color: "var(--primary)" },
+          { href: "/admin/contratos",        label: "Contratos ativos",   value: activeContracts ?? 0, Icon: FileText,      color: "var(--c-success)" },
+          { href: "/admin/customer-success", label: "CS — atenção",       value: healthCounts.atencao, Icon: Heart,         color: "var(--brand-accent)" },
+          { href: "/admin/customer-success", label: "CS — risco/crítico", value: atRisk,               Icon: AlertTriangle, color: "var(--c-danger)" },
         ].map(({ href, label, value, Icon, color }) => (
-          <Link key={label} href={href}
-            style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 16px", background: "var(--card-bg)", border: "1px solid var(--card-border)", borderRadius: 12, textDecoration: "none", transition: "border-color 0.15s" }}
-            className="hub-card-hover"
-          >
-            <div style={{ width: 32, height: 32, borderRadius: 9, background: `color-mix(in srgb, ${color} 12%, transparent)`, display: "flex", alignItems: "center", justifyContent: "center", color, flexShrink: 0 }}>
+          <Link key={label} href={href} className="hub-card hub-card-sm hub-card-hover" style={{ display: "flex", alignItems: "center", gap: 12, textDecoration: "none" }}>
+            <div style={{ width: 34, height: 34, borderRadius: 9, background: `color-mix(in srgb, ${color} 12%, transparent)`, display: "flex", alignItems: "center", justifyContent: "center", color, flexShrink: 0 }}>
               <Icon size={15} />
             </div>
-            <div>
-              <p style={{ margin: 0, fontSize: "18px", fontWeight: 800, color: "var(--text)", lineHeight: 1 }}>{value}</p>
-              <p style={{ margin: "2px 0 0", fontSize: "11.5px", color: "var(--text-faint)", fontWeight: 500 }}>{label}</p>
+            <div style={{ minWidth: 0 }}>
+              <p style={{ margin: 0, fontSize: "20px", fontWeight: 800, color: "var(--text)", lineHeight: 1, fontVariantNumeric: "tabular-nums" }}>{value}</p>
+              <p style={{ margin: "2px 0 0", fontSize: "11px", color: "var(--text-faint)", fontWeight: 500 }}>{label}</p>
             </div>
           </Link>
         ))}
       </div>
 
-      {/* Two-column bottom */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+      {/* ── Two-column: tickets urgentes + atividade recente ── */}
+      <div className="hub-split" style={{ marginBottom: 28 }}>
 
         {/* Tickets urgentes */}
         <div>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+          <div className="hub-section-header">
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <AlertTriangle size={14} style={{ color: "var(--c-danger)" }} />
-              <span style={{ fontSize: "13px", fontWeight: 700, color: "var(--text)" }}>Alta prioridade</span>
+              <span className="hub-section-title">Alta prioridade</span>
               {(urgentTickets?.length ?? 0) > 0 && (
-                <span style={{ fontSize: "10px", fontWeight: 800, background: "var(--c-danger-bg)", color: "var(--c-danger)", padding: "2px 7px", borderRadius: 99, border: "1px solid rgba(220,38,38,0.18)" }}>
+                <span className="hub-badge hub-badge-danger" style={{ fontSize: "10px", padding: "1px 7px" }}>
                   {urgentTickets!.length}
                 </span>
               )}
             </div>
-            <Link href="/portal/suporte" style={{ fontSize: "12px", color: "var(--text-muted)", fontWeight: 600, textDecoration: "none", display: "flex", alignItems: "center", gap: 4 }}>
+            <Link href="/portal/suporte" className="hub-link-arrow" style={{ fontSize: "12px" }}>
               Ver todos <ChevronRight size={12} />
             </Link>
           </div>
-          <div style={{ background: "var(--card-bg)", border: "1px solid var(--card-border)", borderRadius: 12, overflow: "hidden" }}>
+
+          <div className="hub-card" style={{ padding: 0, overflow: "hidden" }}>
             {(urgentTickets ?? []).length === 0 ? (
-              <div style={{ padding: "32px 16px", textAlign: "center" }}>
-                <CheckCircle size={20} style={{ color: "var(--c-success)", marginBottom: 8 }} />
-                <p style={{ margin: 0, fontSize: "13px", fontWeight: 600, color: "var(--c-success)" }}>Tudo em dia</p>
-                <p style={{ margin: "4px 0 0", fontSize: "12px", color: "var(--text-faint)" }}>Nenhum ticket urgente em aberto.</p>
+              <div className="hub-empty" style={{ padding: "28px 16px" }}>
+                <div className="hub-empty-icon">
+                  <CheckCircle size={20} style={{ color: "var(--c-success)" }} />
+                </div>
+                <p className="hub-empty-title" style={{ color: "var(--c-success)" }}>Tudo em dia</p>
+                <p className="hub-empty-desc">Nenhum ticket urgente em aberto.</p>
               </div>
             ) : (
               (urgentTickets ?? []).map((t, i, arr) => {
@@ -209,17 +236,17 @@ export default async function AdminOverviewPage() {
                 const clientName = (t.profiles as any)?.name;
                 return (
                   <Link key={t.id} href={`/portal/suporte/${t.id}`}
-                    style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10, padding: "12px 16px", textDecoration: "none", borderBottom: i < arr.length - 1 ? "1px solid var(--border)" : "none" }}
+                    style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10, padding: "11px 16px", textDecoration: "none", borderBottom: i < arr.length - 1 ? "1px solid var(--border)" : "none" }}
                     className="hub-row-link"
                   >
                     <div style={{ minWidth: 0, flex: 1 }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 1 }}>
-                        {ref && <span style={{ fontSize: "10px", fontWeight: 700, color: "var(--text-faint)", fontFamily: "monospace", flexShrink: 0 }}>{ref}</span>}
+                        {ref && <code className="hub-code" style={{ padding: "1px 5px" }}>{ref}</code>}
                         <p style={{ margin: 0, fontSize: "13px", fontWeight: 600, color: "var(--text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{t.subject}</p>
                       </div>
-                      <p style={{ margin: 0, fontSize: "11px", color: "var(--text-faint)" }}>{clientName ?? "â€”"}</p>
+                      <p style={{ margin: 0, fontSize: "11px", color: "var(--text-faint)" }}>{clientName ?? "—"}</p>
                     </div>
-                    <span style={{ fontSize: "10px", fontWeight: 700, background: "var(--c-danger-bg)", color: "var(--c-danger)", padding: "2px 8px", borderRadius: 99, whiteSpace: "nowrap", flexShrink: 0 }}>urgente</span>
+                    <span className="hub-badge hub-badge-danger" style={{ fontSize: "10px" }}>urgente</span>
                   </Link>
                 );
               })
@@ -229,19 +256,20 @@ export default async function AdminOverviewPage() {
 
         {/* Atividade recente */}
         <div>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+          <div className="hub-section-header">
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <TrendingUp size={14} style={{ color: "var(--text-muted)" }} />
-              <span style={{ fontSize: "13px", fontWeight: 700, color: "var(--text)" }}>Tickets recentes</span>
+              <span className="hub-section-title">Tickets recentes</span>
             </div>
-            <Link href="/portal/suporte" style={{ fontSize: "12px", color: "var(--text-muted)", fontWeight: 600, textDecoration: "none", display: "flex", alignItems: "center", gap: 4 }}>
+            <Link href="/portal/suporte" className="hub-link-arrow" style={{ fontSize: "12px" }}>
               Ver todos <ChevronRight size={12} />
             </Link>
           </div>
-          <div style={{ background: "var(--card-bg)", border: "1px solid var(--card-border)", borderRadius: 12, overflow: "hidden" }}>
+
+          <div className="hub-card" style={{ padding: 0, overflow: "hidden" }}>
             {(recentTickets ?? []).length === 0 ? (
-              <div style={{ padding: "32px 16px", textAlign: "center" }}>
-                <p style={{ margin: 0, fontSize: "13px", color: "var(--text-faint)" }}>Nenhum ticket ainda.</p>
+              <div className="hub-empty" style={{ padding: "28px 16px" }}>
+                <p className="hub-empty-desc">Nenhum ticket ainda.</p>
               </div>
             ) : (
               (recentTickets ?? []).map((t, i, arr) => {
@@ -250,16 +278,16 @@ export default async function AdminOverviewPage() {
                 const clientName = (t.profiles as any)?.name;
                 return (
                   <Link key={t.id} href={`/portal/suporte/${t.id}`}
-                    style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10, padding: "12px 16px", textDecoration: "none", borderBottom: i < arr.length - 1 ? "1px solid var(--border)" : "none" }}
+                    style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10, padding: "11px 16px", textDecoration: "none", borderBottom: i < arr.length - 1 ? "1px solid var(--border)" : "none" }}
                     className="hub-row-link"
                   >
                     <div style={{ minWidth: 0, flex: 1 }}>
                       <p style={{ margin: "0 0 1px", fontSize: "13px", fontWeight: 600, color: "var(--text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{t.subject}</p>
                       <p style={{ margin: 0, fontSize: "11px", color: "var(--text-faint)" }}>
-                        {clientName ?? "â€”"} Â· {timeAgo(t.created_at)}
+                        {clientName ?? "—"} · {timeAgo(t.created_at)}
                       </p>
                     </div>
-                    <span style={{ fontSize: "10px", fontWeight: 700, color: STATUS_COLOR[status] ?? "var(--text-faint)", background: `color-mix(in srgb, ${STATUS_COLOR[status] ?? "transparent"} 10%, transparent)`, padding: "2px 8px", borderRadius: 99, whiteSpace: "nowrap", flexShrink: 0, border: `1px solid color-mix(in srgb, ${STATUS_COLOR[status] ?? "transparent"} 20%, transparent)` }}>
+                    <span className={STATUS_BADGE[status] ?? "hub-badge hub-badge-neutral"} style={{ fontSize: "10px" }}>
                       {STATUS_LABEL[status] ?? status}
                     </span>
                   </Link>
@@ -270,31 +298,24 @@ export default async function AdminOverviewPage() {
         </div>
       </div>
 
-      {/* Quick links */}
-      <div style={{ marginTop: 20 }}>
-        <p style={{ margin: "0 0 10px", fontSize: "12px", fontWeight: 700, color: "var(--text-faint)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Acesso rÃ¡pido</p>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: 8 }}>
-          {[
-            { href: "/admin/usuarios",        label: "UsuÃ¡rios" },
-            { href: "/admin/customer-success", label: "Customer Success" },
-            { href: "/admin/projetos",         label: "Projetos" },
-            { href: "/admin/contratos",        label: "Contratos" },
-            { href: "/admin/financeiro",       label: "Financeiro" },
-            { href: "/admin/roadmap",          label: "Roadmap" },
-            { href: "/admin/feedback",         label: "Feedback" },
-            { href: "/admin/analytics",        label: "Analytics" },
-          ].map(({ href, label }) => (
+      {/* ── Quick links ── */}
+      <div>
+        <div className="hub-section-divider">
+          <span className="hub-section-divider-label">Acesso rápido</span>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: 8 }}>
+          {quickLinks.map(({ href, label, Icon }) => (
             <Link key={href} href={href}
-              style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", background: "var(--card-bg)", border: "1px solid var(--card-border)", borderRadius: 10, textDecoration: "none" }}
-              className="hub-card-hover"
+              className="hub-card-sm hub-card-hover"
+              style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}
             >
+              <Icon size={14} style={{ color: "var(--text-faint)", flexShrink: 0 }} />
               <span style={{ fontSize: "12.5px", fontWeight: 600, color: "var(--text)" }}>{label}</span>
-              <ChevronRight size={12} style={{ color: "var(--text-faint)", flexShrink: 0 }} />
             </Link>
           ))}
         </div>
       </div>
+
     </div>
   );
 }
-

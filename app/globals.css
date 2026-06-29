@@ -1122,3 +1122,643 @@ a { color: inherit; text-decoration: none; }
 /* ── Hover helpers (CSS-only, usáveis em Server Components) ── */
 .hub-row-link:hover    { background: var(--surface-2) !important; }
 .hub-action-link:hover { background: var(--surface-2) !important; border-color: var(--border-hover) !important; }
+
+/* ══════════════════════════════════════════════════════════════════
+   PRELINE-ALIGNED EXTENSIONS — adicionados para fidelidade ao
+   design system Preline UI (tabelas, filtros, paginação, etc.)
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── Table overflow wrapper (responsivo, Preline padrão) ─────── */
+.hub-table-wrap {
+  width:    100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.hub-table-wrap::-webkit-scrollbar        { height: 4px; }
+.hub-table-wrap::-webkit-scrollbar-track  { background: transparent; }
+.hub-table-wrap::-webkit-scrollbar-thumb  { background: var(--border-2); border-radius: var(--r-full); }
+
+/* ── Table toolbar (search + filtros + CTA, Preline padrão) ──── */
+.hub-table-toolbar {
+  display:        flex;
+  align-items:    center;
+  justify-content: space-between;
+  gap:            12px;
+  padding:        12px 16px;
+  border-bottom:  1px solid var(--border);
+  flex-wrap:      wrap;
+}
+.hub-table-toolbar-left  { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.hub-table-toolbar-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+/* ── Table row count / info text ────────────────────────────── */
+.hub-table-info {
+  font-size:   12.5px;
+  color:       var(--text-faint);
+  white-space: nowrap;
+}
+
+/* ── Striped rows variant ────────────────────────────────────── */
+.hub-table.striped tbody tr:nth-child(odd) td {
+  background: var(--surface-2);
+}
+
+/* ── Sort header ─────────────────────────────────────────────── */
+.hub-th-sort {
+  cursor:       pointer;
+  user-select:  none;
+}
+.hub-th-sort:hover { color: var(--text-muted); }
+
+/* ── Filter strip / segmented control (Preline pill pattern) ── */
+.hub-filter-strip {
+  display:   flex;
+  align-items: center;
+  gap:       4px;
+  flex-wrap: wrap;
+}
+.hub-filter-chip {
+  display:        inline-flex;
+  align-items:    center;
+  gap:            5px;
+  padding:        5px 13px;
+  border-radius:  var(--r-full);
+  border:         1px solid var(--border);
+  background:     transparent;
+  color:          var(--text-muted);
+  font-size:      12.5px;
+  font-weight:    500;
+  cursor:         pointer;
+  font-family:    inherit;
+  transition:     all 0.12s;
+  white-space:    nowrap;
+  text-decoration: none;
+}
+.hub-filter-chip:hover { background: var(--surface-2); color: var(--text); border-color: var(--border-2); }
+.hub-filter-chip.active {
+  background:    rgba(91,87,232,0.12);
+  border-color:  rgba(91,87,232,0.28);
+  color:         var(--brand-500);
+  font-weight:   600;
+}
+.hub-filter-chip.success.active { background: var(--c-success-bg); border-color: rgba(34,197,94,0.28);  color: var(--c-success); }
+.hub-filter-chip.warning.active { background: var(--c-warning-bg); border-color: rgba(245,158,11,0.28); color: var(--c-warning); }
+.hub-filter-chip.danger.active  { background: var(--c-danger-bg);  border-color: rgba(220,38,38,0.28);  color: var(--c-danger); }
+.hub-filter-chip.info.active    { background: var(--c-info-bg);    border-color: rgba(59,130,246,0.28); color: var(--c-info); }
+
+/* ── Pagination (Preline padrão) ─────────────────────────────── */
+.hub-pagination {
+  display:     flex;
+  align-items: center;
+  gap:         3px;
+}
+.hub-page-btn {
+  display:         inline-flex;
+  align-items:     center;
+  justify-content: center;
+  min-width:       32px; height: 32px;
+  padding:         0 8px;
+  border-radius:   var(--r-sm);
+  border:          1px solid var(--border);
+  background:      transparent;
+  color:           var(--text-muted);
+  font-size:       13px;
+  font-weight:     500;
+  cursor:          pointer;
+  font-family:     inherit;
+  transition:      all 0.12s;
+  white-space:     nowrap;
+  text-decoration: none;
+}
+.hub-page-btn:hover { background: var(--surface-2); color: var(--text); }
+.hub-page-btn.active {
+  background:   var(--primary);
+  border-color: var(--primary);
+  color:        #ffffff;
+  font-weight:  700;
+}
+.hub-page-btn:disabled,
+.hub-page-btn[aria-disabled="true"] { opacity: 0.35; cursor: not-allowed; pointer-events: none; }
+.hub-page-sep { color: var(--text-faint); padding: 0 4px; font-size: 13px; }
+
+/* ── Input with icon wrapper (Preline padrão) ────────────────── */
+.hub-input-wrap {
+  position: relative;
+  display:  flex;
+  align-items: center;
+}
+.hub-input-icon {
+  position:        absolute;
+  left:            12px;
+  color:           var(--text-faint);
+  pointer-events:  none;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+}
+.hub-input-icon-right {
+  position:        absolute;
+  right:           12px;
+  color:           var(--text-faint);
+  pointer-events:  none;
+  display:         flex;
+  align-items:     center;
+}
+.hub-input-wrap > .hub-input { padding-left: 38px; }
+.hub-input-wrap.icon-right > .hub-input { padding-right: 38px; }
+
+/* ── Avatar group (Preline overlapping pattern) ──────────────── */
+.hub-avatar-group {
+  display:        inline-flex;
+  flex-direction: row-reverse;
+  align-items:    center;
+}
+.hub-avatar-group .hub-avatar {
+  border:       2.5px solid var(--surface);
+  margin-left: -10px;
+  transition:   transform 0.12s;
+}
+.hub-avatar-group .hub-avatar:first-child { margin-left: 0; }
+.hub-avatar-group:hover .hub-avatar { transform: translateX(3px); }
+.hub-avatar-group:hover .hub-avatar + .hub-avatar { transform: none; }
+
+/* ── Stat card trend delta (Preline KPI pattern) ─────────────── */
+.hub-stat-trend {
+  display:        inline-flex;
+  align-items:    center;
+  gap:            3px;
+  font-size:      11.5px;
+  font-weight:    700;
+  padding:        2px 8px;
+  border-radius:  var(--r-full);
+}
+.hub-stat-trend.up      { color: var(--c-success); background: var(--c-success-bg); }
+.hub-stat-trend.down    { color: var(--c-danger);  background: var(--c-danger-bg);  }
+.hub-stat-trend.neutral { color: var(--text-faint); background: var(--surface-2);   }
+
+/* ── Row action button (kebab / ellipsis) ────────────────────── */
+.hub-row-action {
+  width:           28px; height: 28px;
+  display:         inline-flex;
+  align-items:     center;
+  justify-content: center;
+  border-radius:   var(--r-sm);
+  border:          1px solid transparent;
+  background:      transparent;
+  color:           var(--text-faint);
+  cursor:          pointer;
+  transition:      all 0.12s;
+}
+.hub-row-action:hover {
+  background:   var(--surface-2);
+  border-color: var(--border);
+  color:        var(--text);
+}
+
+/* ── Breadcrumb (Preline padrão) ─────────────────────────────── */
+.hub-breadcrumb {
+  display:     flex;
+  align-items: center;
+  gap:         6px;
+  font-size:   12.5px;
+  color:       var(--text-faint);
+  flex-wrap:   wrap;
+}
+.hub-breadcrumb a { color: var(--text-muted); transition: color 0.12s; text-decoration: none; }
+.hub-breadcrumb a:hover { color: var(--text); }
+.hub-breadcrumb .crumb-current { color: var(--text); font-weight: 600; }
+.hub-breadcrumb-sep { color: var(--border-2); }
+
+/* ── Card with header / body / footer sections ───────────────── */
+.hub-card-header {
+  padding:         16px 22px;
+  border-bottom:   1px solid var(--border);
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  gap:             12px;
+  flex-wrap:       wrap;
+}
+.hub-card-body   { padding: 20px 22px; }
+.hub-card-footer {
+  padding:       12px 22px;
+  border-top:    1px solid var(--border);
+  background:    var(--surface-2);
+  border-radius: 0 0 var(--r-lg) var(--r-lg);
+  display:       flex;
+  align-items:   center;
+  justify-content: space-between;
+  gap:           12px;
+}
+/* card variant com padding zero (para tabelas flush) */
+.hub-card.no-pad { padding: 0; }
+.hub-card.no-pad .hub-card-header { border-radius: var(--r-lg) var(--r-lg) 0 0; }
+
+/* ── Section divider with label ──────────────────────────────── */
+.hub-section-divider {
+  display:     flex;
+  align-items: center;
+  gap:         12px;
+  margin:      24px 0;
+}
+.hub-section-divider::before,
+.hub-section-divider::after {
+  content:    '';
+  flex:       1;
+  height:     1px;
+  background: var(--border);
+}
+.hub-section-divider-label {
+  font-size:      11px;
+  font-weight:    700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color:          var(--text-faint);
+  white-space:    nowrap;
+}
+
+/* ── Timeline (Preline padrão) ───────────────────────────────── */
+.hub-timeline { display: flex; flex-direction: column; }
+.hub-timeline-item {
+  display:       flex;
+  gap:           12px;
+  padding:       12px 0;
+  border-bottom: 1px solid var(--border);
+  position:      relative;
+}
+.hub-timeline-item:last-child { border-bottom: none; }
+.hub-timeline-bullet {
+  width:           28px; height: 28px;
+  border-radius:   50%;
+  flex-shrink:     0;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+}
+.hub-timeline-bullet.success { background: var(--c-success-bg); color: var(--c-success); }
+.hub-timeline-bullet.warning { background: var(--c-warning-bg); color: var(--c-warning); }
+.hub-timeline-bullet.danger  { background: var(--c-danger-bg);  color: var(--c-danger); }
+.hub-timeline-bullet.info    { background: var(--c-info-bg);    color: var(--c-info); }
+.hub-timeline-bullet.neutral { background: var(--surface-2);    color: var(--text-faint); }
+
+/* ── Stat icon container (Preline KPI icon badge) ────────────── */
+.hub-stat-icon {
+  width:           40px; height: 40px;
+  border-radius:   var(--r-md);
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  flex-shrink:     0;
+}
+
+/* ── Description list (Preline dl pattern) ───────────────────── */
+.hub-dl {
+  display:               grid;
+  grid-template-columns: 1fr;
+  gap:                   0;
+}
+@media (min-width: 640px) {
+  .hub-dl { grid-template-columns: 180px 1fr; }
+}
+.hub-dl-row {
+  display:       contents;
+}
+.hub-dl dt {
+  font-size:   12.5px;
+  font-weight: 600;
+  color:       var(--text-faint);
+  padding:     12px 0;
+  border-bottom: 1px solid var(--border);
+}
+.hub-dl dd {
+  font-size:   14px;
+  font-weight: 500;
+  color:       var(--text);
+  padding:     12px 0;
+  border-bottom: 1px solid var(--border);
+}
+.hub-dl dt:last-of-type,
+.hub-dl dd:last-of-type { border-bottom: none; }
+
+/* ── Step indicator (Preline stepper) ────────────────────────── */
+.hub-stepper {
+  display:   flex;
+  align-items: flex-start;
+  gap:       0;
+}
+.hub-step {
+  display:        flex;
+  flex-direction: column;
+  align-items:    center;
+  flex:           1;
+  position:       relative;
+}
+.hub-step:not(:last-child)::after {
+  content:    '';
+  position:   absolute;
+  top:        14px;
+  left:       calc(50% + 14px);
+  right:      calc(-50% + 14px);
+  height:     2px;
+  background: var(--border);
+}
+.hub-step.completed:not(:last-child)::after {
+  background: var(--primary);
+}
+.hub-step-circle {
+  width:           28px; height: 28px;
+  border-radius:   50%;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  font-size:       12px;
+  font-weight:     700;
+  border:          2px solid var(--border);
+  background:      var(--surface);
+  color:           var(--text-faint);
+  position:        relative;
+  z-index:         1;
+  transition:      all 0.2s;
+}
+.hub-step.active   .hub-step-circle { border-color: var(--primary); background: var(--primary); color: #fff; }
+.hub-step.completed .hub-step-circle { border-color: var(--primary); background: var(--primary); color: #fff; }
+.hub-step-label {
+  font-size:  11px;
+  font-weight: 600;
+  color:       var(--text-faint);
+  margin-top:  6px;
+  text-align:  center;
+}
+.hub-step.active    .hub-step-label { color: var(--primary); }
+.hub-step.completed .hub-step-label { color: var(--text-muted); }
+
+/* ── Kbd key indicator (Preline KBD) ────────────────────────── */
+.hub-kbd {
+  display:        inline-flex;
+  align-items:    center;
+  justify-content: center;
+  padding:        2px 6px;
+  border-radius:  var(--r-sm);
+  background:     var(--surface-2);
+  border:         1px solid var(--border);
+  border-bottom:  2px solid var(--border-2);
+  font-size:      11px;
+  font-weight:    600;
+  font-family:    monospace;
+  color:          var(--text-muted);
+  white-space:    nowrap;
+}
+
+/* ── Tag / category chip (neutral, sem cor de estado) ────────── */
+.hub-tag {
+  display:        inline-flex;
+  align-items:    center;
+  gap:            4px;
+  padding:        3px 9px;
+  border-radius:  var(--r-full);
+  background:     var(--surface-2);
+  border:         1px solid var(--border);
+  font-size:      11.5px;
+  font-weight:    600;
+  color:          var(--text-muted);
+  white-space:    nowrap;
+}
+
+/* ── Callout / featured info box ─────────────────────────────── */
+.hub-callout {
+  border-left:   3px solid var(--primary);
+  background:    rgba(91,87,232,0.05);
+  border-radius: 0 var(--r-md) var(--r-md) 0;
+  padding:       14px 18px;
+  font-size:     13.5px;
+  color:         var(--text-muted);
+  line-height:   1.6;
+}
+.hub-callout.success { border-left-color: var(--c-success); background: var(--c-success-bg); }
+.hub-callout.warning { border-left-color: var(--c-warning); background: var(--c-warning-bg); }
+.hub-callout.danger  { border-left-color: var(--c-danger);  background: var(--c-danger-bg); }
+.hub-callout.info    { border-left-color: var(--c-info);    background: var(--c-info-bg); }
+
+/* ── Responsive grid helpers ─────────────────────────────────── */
+.hub-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.hub-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.hub-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.hub-grid-auto { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+@media (max-width: 900px) {
+  .hub-grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .hub-grid-3 { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 560px) {
+  .hub-grid-4, .hub-grid-3, .hub-grid-2 { grid-template-columns: 1fr; }
+}
+
+/* ── Floating action / FAB button ────────────────────────────── */
+.hub-fab {
+  position:        fixed;
+  bottom:          28px;
+  right:           28px;
+  width:           52px; height: 52px;
+  border-radius:   50%;
+  background:      var(--primary);
+  color:           #fff;
+  border:          none;
+  cursor:          pointer;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  box-shadow:      var(--shadow-brand);
+  z-index:         50;
+  transition:      transform 0.15s, box-shadow 0.15s;
+}
+.hub-fab:hover { transform: scale(1.07); box-shadow: 0 8px 28px rgba(91,87,232,0.4); }
+
+/* ── Dropdown menu (Preline pattern) ─────────────────────────── */
+.hub-dropdown {
+  position:     absolute;
+  z-index:      200;
+  min-width:    180px;
+  background:   var(--surface);
+  border:       1px solid var(--border);
+  border-radius: var(--r-md);
+  box-shadow:   var(--shadow-dropdown);
+  padding:      4px;
+  animation:    slideDown 0.12s ease both;
+}
+.hub-dropdown-item {
+  display:        flex;
+  align-items:    center;
+  gap:            9px;
+  padding:        8px 12px;
+  border-radius:  var(--r-sm);
+  color:          var(--text-muted);
+  font-size:      13.5px;
+  font-weight:    500;
+  cursor:         pointer;
+  transition:     background 0.1s, color 0.1s;
+  white-space:    nowrap;
+  border:         none;
+  background:     transparent;
+  font-family:    inherit;
+  width:          100%;
+  text-align:     left;
+  text-decoration: none;
+}
+.hub-dropdown-item:hover { background: var(--surface-2); color: var(--text); }
+.hub-dropdown-item.danger:hover { background: var(--c-danger-bg); color: var(--c-danger); }
+.hub-dropdown-sep {
+  height:     1px;
+  background: var(--border);
+  margin:     4px 0;
+}
+.hub-dropdown-header {
+  padding:        6px 12px 4px;
+  font-size:      10.5px;
+  font-weight:    800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color:          var(--text-faint);
+}
+
+/* ── Collapse / accordion item ───────────────────────────────── */
+.hub-accordion-item {
+  border-bottom: 1px solid var(--border);
+}
+.hub-accordion-trigger {
+  width:           100%;
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  padding:         14px 0;
+  background:      transparent;
+  border:          none;
+  cursor:          pointer;
+  font-size:       14px;
+  font-weight:     600;
+  color:           var(--text);
+  font-family:     inherit;
+  text-align:      left;
+  gap:             12px;
+}
+.hub-accordion-trigger:hover { color: var(--primary); }
+.hub-accordion-body {
+  font-size:    13.5px;
+  color:        var(--text-muted);
+  line-height:  1.65;
+  padding:      0 0 16px;
+}
+
+/* ── Link with arrow (Preline "see more" pattern) ────────────── */
+.hub-link-arrow {
+  display:         inline-flex;
+  align-items:     center;
+  gap:             4px;
+  font-size:       13px;
+  font-weight:     600;
+  color:           var(--primary);
+  text-decoration: none;
+  transition:      gap 0.15s;
+}
+.hub-link-arrow:hover { gap: 7px; }
+
+/* ── Notification dot (unread indicator) ─────────────────────── */
+.hub-notif-dot {
+  display:        inline-flex;
+  align-items:    center;
+  justify-content: center;
+  min-width:      18px; height: 18px;
+  padding:        0 4px;
+  border-radius:  var(--r-full);
+  background:     var(--c-danger);
+  color:          #fff;
+  font-size:      10px;
+  font-weight:    800;
+  letter-spacing: -0.01em;
+}
+
+/* ── Code block ──────────────────────────────────────────────── */
+.hub-code {
+  background:    var(--surface-2);
+  border:        1px solid var(--border);
+  border-radius: var(--r-sm);
+  padding:       3px 8px;
+  font-family:   monospace;
+  font-size:     12.5px;
+  color:         var(--brand-500);
+}
+
+/* ── Responsive page padding ─────────────────────────────────── */
+.hub-page {
+  padding:    32px 28px;
+  max-width:  1400px;
+  margin:     0 auto;
+}
+@media (max-width: 1024px) { .hub-page { padding: 28px 20px; } }
+@media (max-width: 768px)  { .hub-page { padding: 20px 14px; } }
+@media (max-width: 480px)  { .hub-page { padding: 16px 12px; } }
+
+/* ── Sticky table footer (pagination row) ────────────────────── */
+.hub-table-footer {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  gap:             12px;
+  padding:         12px 16px;
+  border-top:      1px solid var(--border);
+  flex-wrap:       wrap;
+}
+
+/* ── Data grid cell variants ─────────────────────────────────── */
+.hub-table td.hub-td-primary { color: var(--text); font-weight: 600; }
+.hub-table td.hub-td-mono    { font-family: monospace; font-size: 12px; color: var(--text-muted); }
+.hub-table td.hub-td-right   { text-align: right; }
+.hub-table td.hub-td-center  { text-align: center; }
+.hub-table td.hub-td-action  { text-align: right; width: 1%; white-space: nowrap; }
+
+/* ── Inline form row ──────────────────────────────────────────── */
+.hub-form-row {
+  display:   flex;
+  gap:       12px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+.hub-form-row .hub-field { flex: 1; min-width: 160px; }
+
+/* ── Side-by-side split layout ───────────────────────────────── */
+.hub-split {
+  display: grid;
+  gap:     24px;
+  grid-template-columns: 1fr 1fr;
+}
+@media (max-width: 860px) { .hub-split { grid-template-columns: 1fr; } }
+
+/* ── Feature/highlight card variant ─────────────────────────── */
+.hub-feature-card {
+  background:    var(--card-bg);
+  border:        1px solid var(--card-border);
+  border-radius: var(--r-lg);
+  padding:       22px;
+  display:       flex;
+  flex-direction: column;
+  gap:           14px;
+}
+.hub-feature-card-icon {
+  width:           42px; height: 42px;
+  border-radius:   var(--r-md);
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  flex-shrink:     0;
+}
+
+/* ── Metric comparator row ───────────────────────────────────── */
+.hub-metric-row {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  gap:             12px;
+  padding:         10px 0;
+  border-bottom:   1px solid var(--border);
+}
+.hub-metric-row:last-child { border-bottom: none; }
+.hub-metric-label { font-size: 13px; color: var(--text-muted); }
+.hub-metric-value { font-size: 14px; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }

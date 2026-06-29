@@ -4,19 +4,19 @@ import { getAllFeedbacksAdmin } from "@/app/actions/feedback";
 import { MessageSquare, Bug, Star, AlertCircle, HelpCircle, Inbox } from "lucide-react";
 import type { FeedbackType, FeedbackStatus } from "@/app/lib/types/feedback";
 
-export const metadata: Metadata = { title: "Feedback â€” Admin" };
+export const metadata: Metadata = { title: “Feedback — Admin” };
 
 const TYPE_CONFIG: Record<FeedbackType, { label: string; color: string; bg: string; Icon: React.ComponentType<{ size?: number; style?: React.CSSProperties }> }> = {
-  sugestao: { label: "SugestÃ£o", color: "var(--primary)",  bg: "rgba(91,87,232,0.12)",  Icon: MessageSquare },
+  sugestao: { label: "Sugestão", color: "var(--primary)",  bg: "rgba(91,87,232,0.12)",  Icon: MessageSquare },
   bug:      { label: "Bug",      color: "#ef4444",         bg: "rgba(239,68,68,0.12)",  Icon: Bug },
   elogio:   { label: "Elogio",   color: "#22c55e",         bg: "rgba(34,197,94,0.12)",  Icon: Star },
-  critica:  { label: "CrÃ­tica",  color: "#EF9F27",         bg: "rgba(239,159,39,0.12)", Icon: AlertCircle },
+  critica:  { label: "Crítica",  color: "#EF9F27",         bg: "rgba(239,159,39,0.12)", Icon: AlertCircle },
   outro:    { label: "Outro",    color: "#94a3b8",         bg: "rgba(148,163,184,0.12)",Icon: HelpCircle },
 };
 
 const STATUS_CONFIG: Record<FeedbackStatus, { label: string; color: string }> = {
   recebido:    { label: "Recebido",    color: "#94a3b8" },
-  em_analise:  { label: "Em AnÃ¡lise",  color: "#EF9F27" },
+  em_analise:  { label: "Em Análise",  color: "#EF9F27" },
   aprovado:    { label: "Aprovado",    color: "var(--primary)" },
   descartado:  { label: "Descartado",  color: "#ef4444" },
   implementado:{ label: "Implementado",color: "#22c55e" },
@@ -46,109 +46,113 @@ export default async function AdminFeedbackPage({
   }));
 
   return (
-    <div style={{ padding: "40px 32px", maxWidth: 1400, margin: "0 auto" }}>
-      {/* Header */}
-      <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontSize: "1.5rem", fontWeight: 800, margin: "0 0 4px", color: "var(--text)", letterSpacing: "-0.02em" }}>Feedback</h1>
-        <p style={{ margin: 0, fontSize: "13px", color: "var(--text-faint)" }}>{allFeedbacks.length} registros no total</p>
+    <div className=”hub-page”>
+
+      {/* ── Page header ── */}
+      <div className=”hub-page-header”>
+        <h1 className=”hub-page-title”>Feedback</h1>
+        <p className=”hub-page-sub”>{allFeedbacks.length} registros no total</p>
       </div>
 
-      {/* KPI strip */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 14, marginBottom: 28 }}>
+      {/* ── KPI strip (por tipo) ── */}
+      <div style={{ display: “grid”, gridTemplateColumns: “repeat(auto-fill, minmax(150px, 1fr))”, gap: 12, marginBottom: 24 }}>
         {kpis.map((k) => (
-          <div key={k.key} style={{ background: "var(--card-bg)", border: "1px solid var(--card-border)", borderRadius: 14, padding: "16px 18px" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
-              <div style={{ width: 32, height: 32, borderRadius: 9, background: `${k.color}18`, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <k.Icon size={15} style={{ color: k.color }} />
+          <div key={k.key} className=”hub-stat-card”>
+            <div style={{ display: “flex”, alignItems: “center”, gap: 8 }}>
+              <div className=”hub-stat-icon” style={{ width: 32, height: 32, background: `${k.color}18`, color: k.color }}>
+                <k.Icon size={14} style={{ color: k.color }} />
               </div>
-              <span style={{ fontSize: "11px", fontWeight: 600, color: "var(--text-muted)" }}>{k.label}</span>
+              <span className=”hub-stat-label” style={{ margin: 0 }}>{k.label}</span>
             </div>
-            <p style={{ margin: 0, fontSize: "1.7rem", fontWeight: 900, color: "var(--text)", lineHeight: 1, letterSpacing: "-0.02em" }}>{k.count}</p>
+            <p className=”hub-stat-value”>{k.count}</p>
           </div>
         ))}
       </div>
 
-      {/* Filtros por tipo */}
-      <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 8 }}>
-        {[{ key: "todos", label: "Todos os tipos", color: "var(--text-muted)" }, ...Object.entries(TYPE_CONFIG).map(([key, cfg]) => ({ key, label: cfg.label, color: cfg.color }))].map(({ key, label, color }) => {
-          const active = (filterTipo ?? "todos") === key;
+      {/* ── Filtros por tipo ── */}
+      <div className=”hub-filter-strip” style={{ marginBottom: 8 }}>
+        {[{ key: “todos”, label: “Todos os tipos” }, ...Object.entries(TYPE_CONFIG).map(([key, cfg]) => ({ key, label: cfg.label }))].map(({ key, label }) => {
+          const active = (filterTipo ?? “todos”) === key;
           return (
-            <Link key={key} href={`/admin/feedback?tipo=${key}${filterStatus ? `&status=${filterStatus}` : ""}`}
-              style={{ padding: "6px 14px", borderRadius: 8, fontSize: "12px", fontWeight: 600, textDecoration: "none", background: active ? `${color}20` : "transparent", color: active ? color : "var(--text-muted)", border: `1px solid ${active ? color + "40" : "var(--border)"}` }}>
+            <Link key={key} href={`/admin/feedback?tipo=${key}${filterStatus ? `&status=${filterStatus}` : “”}`}
+              className={`hub-filter-chip${active ? “ active” : “”}`}>
               {label}
             </Link>
           );
         })}
       </div>
 
-      {/* Filtros por status */}
-      <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 20 }}>
-        {[{ key: "todos", label: "Todos os status", color: "var(--text-muted)" }, ...Object.entries(STATUS_CONFIG).map(([key, cfg]) => ({ key, label: cfg.label, color: cfg.color }))].map(({ key, label, color }) => {
-          const active = (filterStatus ?? "todos") === key;
+      {/* ── Filtros por status ── */}
+      <div className=”hub-filter-strip” style={{ marginBottom: 20 }}>
+        {[{ key: “todos”, label: “Todos os status” }, ...Object.entries(STATUS_CONFIG).map(([key, cfg]) => ({ key, label: cfg.label }))].map(({ key, label }) => {
+          const active = (filterStatus ?? “todos”) === key;
           return (
-            <Link key={key} href={`/admin/feedback?${filterTipo ? `tipo=${filterTipo}&` : ""}status=${key}`}
-              style={{ padding: "5px 12px", borderRadius: 8, fontSize: "11px", fontWeight: 600, textDecoration: "none", background: active ? `${color}20` : "transparent", color: active ? color : "var(--text-muted)", border: `1px solid ${active ? color + "40" : "var(--border)"}` }}>
+            <Link key={key} href={`/admin/feedback?${filterTipo ? `tipo=${filterTipo}&` : “”}status=${key}`}
+              className={`hub-filter-chip${active ? “ active” : “”}`} style={{ fontSize: “11px” }}>
               {label}
             </Link>
           );
         })}
       </div>
 
-      {/* Tabela */}
-      <div style={{ background: "var(--card-bg)", border: "1px solid var(--card-border)", borderRadius: 14, overflow: "hidden" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
-          <thead>
-            <tr style={{ borderBottom: "1px solid var(--border)" }}>
-              {["Cliente", "Tipo", "TÃ­tulo", "Produto", "Status", "Data"].map((h) => (
-                <th key={h} style={{ padding: "11px 16px", textAlign: "left", fontSize: "11px", fontWeight: 700, color: "var(--text-faint)", textTransform: "uppercase", letterSpacing: "0.05em" }}>{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {feedbacks.length === 0 ? (
+      {/* ── Tabela ── */}
+      <div className=”hub-card” style={{ padding: 0, overflow: “hidden” }}>
+        <div className=”hub-table-wrap”>
+          <table className=”hub-table”>
+            <thead>
               <tr>
-                <td colSpan={6} style={{ padding: "56px 16px", textAlign: "center" }}>
-                  <Inbox size={28} style={{ color: "var(--text-faint)", display: "block", margin: "0 auto 10px" }} />
-                  <p style={{ margin: 0, fontSize: "13px", color: "var(--text-faint)" }}>Nenhum feedback encontrado.</p>
-                </td>
+                {[“Cliente”, “Tipo”, “Título”, “Produto”, “Status”, “Data”].map((h) => (
+                  <th key={h}>{h}</th>
+                ))}
               </tr>
-            ) : feedbacks.map((fb, idx) => {
-              const type   = fb.type   as FeedbackType;
-              const status = fb.status as FeedbackStatus;
-              const typeCfg   = TYPE_CONFIG[type]   ?? { label: type,   color: "#94a3b8", bg: "rgba(148,163,184,0.12)", Icon: HelpCircle };
-              const statusCfg = STATUS_CONFIG[status] ?? { label: status, color: "#94a3b8" };
-              const TypeIcon = typeCfg.Icon;
-              return (
-                <tr key={fb.id} style={{ borderBottom: idx < feedbacks.length - 1 ? "1px solid var(--border)" : "none" }}>
-                  <td style={{ padding: "13px 16px", fontSize: "13px", color: "var(--text-muted)", fontWeight: 600, whiteSpace: "nowrap" }}>
-                    {fb.client_name ?? "â€”"}
-                  </td>
-                  <td style={{ padding: "13px 16px" }}>
-                    <span style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: "11px", fontWeight: 700, padding: "3px 9px", borderRadius: 99, background: typeCfg.bg, color: typeCfg.color }}>
-                      <TypeIcon size={11} /> {typeCfg.label}
-                    </span>
-                  </td>
-                  <td style={{ padding: "13px 16px" }}>
-                    <Link href={`/admin/feedback/${fb.id}`} style={{ fontSize: "13px", fontWeight: 600, color: "var(--text)", textDecoration: "none" }}>
-                      {fb.title}
-                    </Link>
-                  </td>
-                  <td style={{ padding: "13px 16px", fontSize: "12px", color: "var(--text-faint)" }}>
-                    {fb.product || "â€”"}
-                  </td>
-                  <td style={{ padding: "13px 16px" }}>
-                    <span style={{ fontSize: "11px", fontWeight: 700, padding: "3px 9px", borderRadius: 99, background: `${statusCfg.color}18`, color: statusCfg.color }}>
-                      {statusCfg.label}
-                    </span>
-                  </td>
-                  <td style={{ padding: "13px 16px", fontSize: "12px", color: "var(--text-faint)", whiteSpace: "nowrap" }}>
-                    {new Date(fb.created_at).toLocaleDateString("pt-BR")}
+            </thead>
+            <tbody>
+              {feedbacks.length === 0 ? (
+                <tr>
+                  <td colSpan={6} style={{ padding: “56px 16px”, textAlign: “center” }}>
+                    <div className=”hub-empty” style={{ padding: 0 }}>
+                      <div className=”hub-empty-icon”><Inbox size={22} /></div>
+                      <p className=”hub-empty-desc”>Nenhum feedback encontrado.</p>
+                    </div>
                   </td>
                 </tr>
-              );
-            })}
-          </tbody>
-        </table>
+              ) : feedbacks.map((fb) => {
+                const type   = fb.type   as FeedbackType;
+                const status = fb.status as FeedbackStatus;
+                const typeCfg   = TYPE_CONFIG[type]   ?? { label: type,   color: “#94a3b8”, bg: “rgba(148,163,184,0.12)”, Icon: HelpCircle };
+                const statusCfg = STATUS_CONFIG[status] ?? { label: status, color: “#94a3b8” };
+                const TypeIcon = typeCfg.Icon;
+                return (
+                  <tr key={fb.id}>
+                    <td style={{ fontWeight: 600, whiteSpace: “nowrap” }}>{fb.client_name ?? “—“}</td>
+                    <td>
+                      <span className=”hub-badge” style={{ background: typeCfg.bg, color: typeCfg.color, border: `1px solid ${typeCfg.color}30`, display: “inline-flex”, alignItems: “center”, gap: 5 }}>
+                        <TypeIcon size={10} /> {typeCfg.label}
+                      </span>
+                    </td>
+                    <td className=”hub-td-primary”>
+                      <Link href={`/admin/feedback/${fb.id}`} style={{ fontWeight: 600, color: “var(--text)”, textDecoration: “none” }}>
+                        {fb.title}
+                      </Link>
+                    </td>
+                    <td>{fb.product || “—“}</td>
+                    <td>
+                      <span className=”hub-badge” style={{ background: `${statusCfg.color}18`, color: statusCfg.color, border: `1px solid ${statusCfg.color}30` }}>
+                        {statusCfg.label}
+                      </span>
+                    </td>
+                    <td style={{ whiteSpace: “nowrap” }}>
+                      {new Date(fb.created_at).toLocaleDateString(“pt-BR”)}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        <div className=”hub-table-footer”>
+          <span className=”hub-table-info”>{feedbacks.length} de {allFeedbacks.length} registros</span>
+        </div>
       </div>
     </div>
   );
