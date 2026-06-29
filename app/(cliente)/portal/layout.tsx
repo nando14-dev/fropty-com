@@ -86,6 +86,7 @@ export default async function PortalLayout({
     { id: "projetos",          href: "/portal/projetos",          icon: "FolderKanban",      label: "Projetos",            badge: activeProjects },
     { id: "contratos",         href: "/portal/contratos",         icon: "FileSignature",     label: "Contratos",           badge: pendingContracts },
     { id: "financeiro",        href: "/portal/financeiro",        icon: "CreditCard",        label: "Financeiro" },
+    { id: "planos",            href: "/portal/planos",            icon: "Sparkles",          label: "Planos" },
     { id: "roadmap",           href: "/portal/roadmap",           icon: "Map",               label: "Roadmap" },
     { id: "feedback",          href: "/portal/feedback",          icon: "MessageSquarePlus", label: "Feedback" },
     { id: "base-conhecimento", href: "/portal/base-conhecimento", icon: "BookOpen",          label: "Base de Conhecimento" },
