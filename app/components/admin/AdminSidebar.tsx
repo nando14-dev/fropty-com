@@ -8,18 +8,25 @@ import { PortalThemeToggle } from "@/app/components/cliente/PortalThemeToggle";
 import {
   LayoutDashboard, Users, CreditCard, MessageCircle, BarChart2, ShieldCheck,
   UserCircle, BookOpen, Map, MessageSquarePlus, FolderKanban, FileSignature,
-  HeartPulse, Menu, LogOut, Loader2, PanelLeftClose, PanelLeftOpen, Shield,
-  ChevronUp,
+  HeartPulse, Menu, LogOut, Loader2, PanelLeftClose, Shield,
+  ChevronUp, ChevronDown, UserPlus, ListFilter,
 } from "lucide-react";
 import { NotificationBell } from "@/app/components/NotificationBell";
 import Image from "next/image";
 import type { LucideIcon } from "lucide-react";
 
-type NavItem = { id: string; href: string; Icon: LucideIcon; label: string; group?: string };
+type SubItem = { id: string; href: string; label: string; Icon?: LucideIcon };
+type NavItem = { id: string; href: string; Icon: LucideIcon; label: string; group?: string; subItems?: SubItem[] };
 
 const NAV: NavItem[] = [
   { id: "overview",          href: "/admin/overview",          Icon: LayoutDashboard,   label: "Visão Geral",         group: "main" },
-  { id: "usuarios",          href: "/admin/usuarios",          Icon: Users,             label: "Usuários",            group: "main" },
+  {
+    id: "usuarios", href: "/admin/usuarios", Icon: Users, label: "Usuários", group: "main",
+    subItems: [
+      { id: "usuarios-overview", href: "/admin/usuarios",      label: "Visão Geral",   Icon: ListFilter },
+      { id: "usuarios-novo",     href: "/admin/usuarios/novo", label: "Novo Usuário",  Icon: UserPlus },
+    ],
+  },
   { id: "customer-success",  href: "/admin/customer-success",  Icon: HeartPulse,        label: "Customer Success",    group: "main" },
   { id: "projetos",          href: "/admin/projetos",          Icon: FolderKanban,      label: "Projetos",            group: "ops" },
   { id: "contratos",         href: "/admin/contratos",         Icon: FileSignature,     label: "Contratos",           group: "ops" },
@@ -51,8 +58,25 @@ export function AdminSidebar({ name, initials, userId, initialTheme = "dark", av
   const [collapsed,  setCollapsed]  = useState(false);
   const [menuOpen,   setMenuOpen]   = useState(false);
   const [popPos,     setPopPos]     = useState<{ bottom: number; left: number } | null>(null);
+  // Track which accordion items are expanded
+  const [expanded, setExpanded] = useState<Set<string>>(() => {
+    // Auto-expand if current path is under usuarios
+    if (typeof window !== "undefined" && window.location.pathname.startsWith("/admin/usuarios")) {
+      return new Set(["usuarios"]);
+    }
+    return new Set();
+  });
   const footerRef  = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+
+  // Auto-expand accordion based on current path
+  useEffect(() => {
+    NAV.forEach(item => {
+      if (item.subItems && pathname.startsWith(item.href)) {
+        setExpanded(prev => new Set([...prev, item.id]));
+      }
+    });
+  }, [pathname]);
 
   useEffect(() => {
     function onOutside(e: MouseEvent) {
@@ -91,6 +115,14 @@ export function AdminSidebar({ name, initials, userId, initialTheme = "dark", av
     document.documentElement.style.setProperty("--sidebar-w", next ? "60px" : "224px");
   }
 
+  function toggleExpand(id: string) {
+    setExpanded(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  }
+
   function handleSignOut() {
     startTrans(async () => {
       const result = await signOut();
@@ -106,6 +138,31 @@ export function AdminSidebar({ name, initials, userId, initialTheme = "dark", av
     return acc;
   }, {});
 
+  function isItemActive(item: NavItem) {
+    if (item.subItems) {
+      // Active if any sub-item matches
+      return item.subItems.some(s => pathname === s.href || pathname.startsWith(s.href + "/"))
+          || pathname === item.href;
+    }
+    return pathname === item.href || pathname.startsWith(item.href + "/");
+  }
+
+  const navLinkStyle = (active: boolean): React.CSSProperties => ({
+    display: "flex", alignItems: "center",
+    justifyContent: collapsed ? "center" : "flex-start",
+    gap: collapsed ? 0 : 9,
+    padding: collapsed ? "8px 0" : "6px 10px",
+    borderRadius: "var(--r-md)",
+    fontSize: "13px", fontWeight: active ? 600 : 500,
+    textDecoration: "none",
+    color: active ? "var(--text)" : "var(--text-muted)",
+    background: active ? "var(--surface-2)" : "transparent",
+    transition: "background 0.12s, color 0.12s",
+    whiteSpace: "nowrap", overflow: "hidden",
+    marginBottom: 2,
+    cursor: "pointer",
+  });
+
   const sidebar = (
     <aside
       className={`portal-sidebar${mobileOpen ? " open" : ""}`}
@@ -113,25 +170,19 @@ export function AdminSidebar({ name, initials, userId, initialTheme = "dark", av
     >
       <div style={{
         display: "flex", flexDirection: "column", height: "100%",
-        padding: collapsed ? "16px 0" : "16px 12px",
+        padding: collapsed ? "16px 0" : "16px 10px",
         transition: "padding 0.22s cubic-bezier(0.4,0,0.2,1)",
         overflow: "hidden",
       }}>
 
-        {/* ── Header: logo + collapse toggle ── */}
+        {/* Header */}
         <div style={{
           display: "flex", alignItems: "center",
           justifyContent: collapsed ? "center" : "space-between",
-          marginBottom: 20, paddingLeft: collapsed ? 0 : 2,
-          flexShrink: 0,
+          marginBottom: 20, paddingLeft: collapsed ? 0 : 2, flexShrink: 0,
         }}>
           {collapsed ? (
-            /* Collapsed: logo icon centered + clicável para expandir */
-            <button
-              onClick={toggleCollapse}
-              title="Expandir menu"
-              style={{ background: "none", border: "none", cursor: "pointer", padding: 0, display: "flex", alignItems: "center", justifyContent: "center" }}
-            >
+            <button onClick={toggleCollapse} title="Expandir menu" style={{ background: "none", border: "none", cursor: "pointer", padding: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
               <Image src="/logo-icon.png" alt="Fropty Hub" width={28} height={28} style={{ objectFit: "contain", borderRadius: 6 }} />
             </button>
           ) : (
@@ -149,54 +200,97 @@ export function AdminSidebar({ name, initials, userId, initialTheme = "dark", av
           )}
         </div>
 
-        {/* ── Nav groups ── */}
+        {/* Nav */}
         <nav style={{ display: "flex", flexDirection: "column", gap: 0, flex: 1, overflowY: "auto", overflowX: "hidden" }}>
           {Object.entries(groups).map(([groupKey, items]) => (
-            <div key={groupKey} style={{ marginBottom: collapsed ? 2 : 12 }}>
+            <div key={groupKey} style={{ marginBottom: collapsed ? 4 : 16 }}>
               {!collapsed && (
                 <p style={{
                   fontSize: "9.5px", fontWeight: 800, letterSpacing: "0.10em",
                   textTransform: "uppercase", color: "var(--text-faint)",
-                  padding: "0 10px", margin: "0 0 3px 0",
+                  padding: "0 10px", margin: "0 0 5px 0",
                 }}>
                   {GROUP_LABELS[groupKey] ?? groupKey}
                 </p>
               )}
-              {items.map(({ id, href, Icon, label }) => {
-                const active = pathname === href || pathname.startsWith(href + "/");
+              {items.map((item) => {
+                const { id, href, Icon, label, subItems } = item;
+                const active     = isItemActive(item);
+                const isExpanded = expanded.has(id);
+
+                if (subItems && !collapsed) {
+                  return (
+                    <div key={id} style={{ marginBottom: 2 }}>
+                      {/* Accordion trigger */}
+                      <button
+                        onClick={() => toggleExpand(id)}
+                        style={{
+                          width: "100%", display: "flex", alignItems: "center",
+                          gap: 9, padding: "6px 10px", borderRadius: "var(--r-md)",
+                          fontSize: "13px", fontWeight: active ? 600 : 500,
+                          color: active ? "var(--text)" : "var(--text-muted)",
+                          background: active && !isExpanded ? "var(--surface-2)" : "transparent",
+                          border: "none", cursor: "pointer", fontFamily: "inherit",
+                          transition: "background 0.12s, color 0.12s",
+                          whiteSpace: "nowrap", overflow: "hidden",
+                        }}
+                        onMouseEnter={e => { if (!active || isExpanded) (e.currentTarget as HTMLButtonElement).style.background = "var(--sidebar-item-hover)"; (e.currentTarget as HTMLButtonElement).style.color = "var(--text)"; }}
+                        onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = (active && !isExpanded) ? "var(--surface-2)" : "transparent"; (e.currentTarget as HTMLButtonElement).style.color = active ? "var(--text)" : "var(--text-muted)"; }}
+                      >
+                        <span style={{ flexShrink: 0, display: "flex", opacity: active ? 1 : 0.65 }}>
+                          <Icon size={16} />
+                        </span>
+                        <span style={{ flex: 1, textAlign: "left", overflow: "hidden", textOverflow: "ellipsis" }}>{label}</span>
+                        <span style={{ flexShrink: 0, color: "var(--text-faint)", transition: "transform 0.2s", transform: isExpanded ? "rotate(0deg)" : "rotate(-90deg)", display: "flex" }}>
+                          <ChevronDown size={13} />
+                        </span>
+                      </button>
+
+                      {/* Sub-items */}
+                      {isExpanded && (
+                        <div style={{ paddingLeft: 26, paddingTop: 2 }}>
+                          {subItems.map(sub => {
+                            const subActive = pathname === sub.href || pathname.startsWith(sub.href + "/");
+                            const SubIcon = sub.Icon;
+                            return (
+                              <Link
+                                key={sub.id}
+                                href={sub.href}
+                                onClick={() => setMobileOpen(false)}
+                                style={{
+                                  display: "flex", alignItems: "center", gap: 8,
+                                  padding: "5px 10px", borderRadius: "var(--r-md)",
+                                  fontSize: "12.5px", fontWeight: subActive ? 600 : 500,
+                                  color: subActive ? "var(--text)" : "var(--text-muted)",
+                                  background: subActive ? "var(--surface-2)" : "transparent",
+                                  textDecoration: "none", marginBottom: 1,
+                                  transition: "background 0.12s, color 0.12s",
+                                  whiteSpace: "nowrap",
+                                }}
+                                onMouseEnter={e => { if (!subActive) { (e.currentTarget as HTMLAnchorElement).style.background = "var(--sidebar-item-hover)"; (e.currentTarget as HTMLAnchorElement).style.color = "var(--text)"; } }}
+                                onMouseLeave={e => { if (!subActive) { (e.currentTarget as HTMLAnchorElement).style.background = "transparent"; (e.currentTarget as HTMLAnchorElement).style.color = "var(--text-muted)"; } }}
+                              >
+                                {SubIcon && <SubIcon size={13} style={{ opacity: subActive ? 1 : 0.6, flexShrink: 0 }} />}
+                                {sub.label}
+                              </Link>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  );
+                }
+
+                // Regular item (or collapsed with subItems → just show icon, link to main href)
                 return (
                   <Link
                     key={id}
                     href={href}
                     onClick={() => setMobileOpen(false)}
                     title={collapsed ? label : undefined}
-                    style={{
-                      display: "flex", alignItems: "center",
-                      justifyContent: collapsed ? "center" : "flex-start",
-                      gap: collapsed ? 0 : 9,
-                      padding: collapsed ? "9px 0" : "7px 10px",
-                      borderRadius: "var(--r-md)",
-                      fontSize: "13px", fontWeight: active ? 600 : 500,
-                      textDecoration: "none",
-                      color: active ? "var(--text)" : "var(--text-muted)",
-                      background: active ? "var(--surface-2)" : "transparent",
-                      borderLeft: "none",
-                      paddingLeft: 10,
-                      transition: "background 0.12s, color 0.12s",
-                      whiteSpace: "nowrap", overflow: "hidden", position: "relative",
-                    }}
-                    onMouseEnter={e => {
-                      if (!active) {
-                        (e.currentTarget as HTMLAnchorElement).style.background = "var(--sidebar-item-hover)";
-                        (e.currentTarget as HTMLAnchorElement).style.color = "var(--text)";
-                      }
-                    }}
-                    onMouseLeave={e => {
-                      if (!active) {
-                        (e.currentTarget as HTMLAnchorElement).style.background = "transparent";
-                        (e.currentTarget as HTMLAnchorElement).style.color = "var(--text-muted)";
-                      }
-                    }}
+                    style={navLinkStyle(active)}
+                    onMouseEnter={e => { if (!active) { (e.currentTarget as HTMLAnchorElement).style.background = "var(--sidebar-item-hover)"; (e.currentTarget as HTMLAnchorElement).style.color = "var(--text)"; } }}
+                    onMouseLeave={e => { if (!active) { (e.currentTarget as HTMLAnchorElement).style.background = "transparent"; (e.currentTarget as HTMLAnchorElement).style.color = "var(--text-muted)"; } }}
                   >
                     <span style={{ flexShrink: 0, display: "flex", opacity: active ? 1 : 0.65 }}>
                       <Icon size={16} />
@@ -211,11 +305,9 @@ export function AdminSidebar({ name, initials, userId, initialTheme = "dark", av
           ))}
         </nav>
 
-        {/* ── Footer: user trigger ── */}
+        {/* Footer */}
         <div ref={footerRef} style={{ flexShrink: 0, marginTop: 8 }}>
           <div style={{ height: 1, background: "var(--border)", marginBottom: 6 }} />
-
-          {/* User trigger button */}
           <button
             ref={triggerRef}
             onClick={handleMenuToggle}
@@ -258,29 +350,19 @@ export function AdminSidebar({ name, initials, userId, initialTheme = "dark", av
 
   return (
     <>
-      {/* User popover — fixed position para escapar do overflow:hidden do sidebar */}
       {menuOpen && popPos && (
         <div
           id="admin-user-popover"
           style={{
-            position: "fixed",
-            bottom: popPos.bottom,
-            left: popPos.left,
-            width: 232,
-            background: "var(--surface)",
-            border: "1px solid var(--border)",
-            borderRadius: "var(--r-lg)",
-            boxShadow: "0 8px 32px rgba(0,0,0,0.28)",
-            overflow: "hidden",
-            zIndex: 9999,
+            position: "fixed", bottom: popPos.bottom, left: popPos.left,
+            width: 232, background: "var(--surface)", border: "1px solid var(--border)",
+            borderRadius: "var(--r-lg)", boxShadow: "0 8px 32px rgba(0,0,0,0.28)",
+            overflow: "hidden", zIndex: 9999,
           }}
         >
-          {/* User card header */}
           <div style={{ padding: "14px 14px 12px", display: "flex", alignItems: "center", gap: 10, borderBottom: "1px solid var(--border)" }}>
             <div style={{ width: 38, height: 38, borderRadius: "50%", background: "var(--surface-2)", border: "1.5px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px", fontWeight: 800, color: "var(--text)", flexShrink: 0, overflow: "hidden" }}>
-              {avatarUrl
-                ? <img src={avatarUrl} alt={name} style={{ width: "100%", height: "100%", objectFit: "cover" }} referrerPolicy="no-referrer" />
-                : initials}
+              {avatarUrl ? <img src={avatarUrl} alt={name} style={{ width: "100%", height: "100%", objectFit: "cover" }} referrerPolicy="no-referrer" /> : initials}
             </div>
             <div style={{ overflow: "hidden", flex: 1, minWidth: 0 }}>
               <p style={{ margin: 0, fontSize: "13px", fontWeight: 700, color: "var(--text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{name}</p>
@@ -289,33 +371,19 @@ export function AdminSidebar({ name, initials, userId, initialTheme = "dark", av
               </p>
             </div>
           </div>
-
-          {/* Conta */}
           <div style={{ padding: "6px" }}>
             <p style={{ margin: "2px 10px 3px", fontSize: "9.5px", fontWeight: 800, letterSpacing: "0.09em", textTransform: "uppercase", color: "var(--text-faint)" }}>Conta</p>
-            <Link href="/admin/perfil" onClick={() => setMenuOpen(false)} style={dropItem}
-              onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.background = "var(--surface-2)"}
-              onMouseLeave={e => (e.currentTarget as HTMLAnchorElement).style.background = "transparent"}
-            >
+            <Link href="/admin/perfil" onClick={() => setMenuOpen(false)} style={dropItem} onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.background = "var(--surface-2)"} onMouseLeave={e => (e.currentTarget as HTMLAnchorElement).style.background = "transparent"}>
               <UserCircle size={14} /> Meu Perfil
             </Link>
-            <Link href="/admin/usuarios" onClick={() => setMenuOpen(false)} style={dropItem}
-              onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.background = "var(--surface-2)"}
-              onMouseLeave={e => (e.currentTarget as HTMLAnchorElement).style.background = "transparent"}
-            >
+            <Link href="/admin/usuarios" onClick={() => setMenuOpen(false)} style={dropItem} onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.background = "var(--surface-2)"} onMouseLeave={e => (e.currentTarget as HTMLAnchorElement).style.background = "transparent"}>
               <Users size={14} /> Gerenciar Usuários
             </Link>
-            <Link href="/admin/financeiro" onClick={() => setMenuOpen(false)} style={dropItem}
-              onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.background = "var(--surface-2)"}
-              onMouseLeave={e => (e.currentTarget as HTMLAnchorElement).style.background = "transparent"}
-            >
+            <Link href="/admin/financeiro" onClick={() => setMenuOpen(false)} style={dropItem} onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.background = "var(--surface-2)"} onMouseLeave={e => (e.currentTarget as HTMLAnchorElement).style.background = "transparent"}>
               <CreditCard size={14} /> Financeiro
             </Link>
           </div>
-
           <div style={{ height: 1, background: "var(--border)" }} />
-
-          {/* Preferências */}
           <div style={{ padding: "6px" }}>
             <p style={{ margin: "2px 10px 3px", fontSize: "9.5px", fontWeight: 800, letterSpacing: "0.09em", textTransform: "uppercase", color: "var(--text-faint)" }}>Preferências</p>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "7px 10px", borderRadius: "var(--r-md)" }}>
@@ -333,28 +401,17 @@ export function AdminSidebar({ name, initials, userId, initialTheme = "dark", av
               <NotificationBell userId={userId} />
             </div>
           </div>
-
           <div style={{ height: 1, background: "var(--border)" }} />
-
-          {/* Sistema */}
           <div style={{ padding: "6px" }}>
             <p style={{ margin: "2px 10px 3px", fontSize: "9.5px", fontWeight: 800, letterSpacing: "0.09em", textTransform: "uppercase", color: "var(--text-faint)" }}>Sistema</p>
-            <Link href="/admin/analytics" onClick={() => setMenuOpen(false)} style={dropItem}
-              onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.background = "var(--surface-2)"}
-              onMouseLeave={e => (e.currentTarget as HTMLAnchorElement).style.background = "transparent"}
-            >
+            <Link href="/admin/analytics" onClick={() => setMenuOpen(false)} style={dropItem} onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.background = "var(--surface-2)"} onMouseLeave={e => (e.currentTarget as HTMLAnchorElement).style.background = "transparent"}>
               <BarChart2 size={14} /> Analytics
             </Link>
-            <Link href="/admin/audit" onClick={() => setMenuOpen(false)} style={dropItem}
-              onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.background = "var(--surface-2)"}
-              onMouseLeave={e => (e.currentTarget as HTMLAnchorElement).style.background = "transparent"}
-            >
+            <Link href="/admin/audit" onClick={() => setMenuOpen(false)} style={dropItem} onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.background = "var(--surface-2)"} onMouseLeave={e => (e.currentTarget as HTMLAnchorElement).style.background = "transparent"}>
               <ShieldCheck size={14} /> Auditoria
             </Link>
           </div>
-
           <div style={{ height: 1, background: "var(--border)" }} />
-
           <div style={{ padding: "6px" }}>
             <button
               onClick={handleSignOut}
@@ -370,7 +427,6 @@ export function AdminSidebar({ name, initials, userId, initialTheme = "dark", av
         </div>
       )}
 
-      {/* Mobile topbar */}
       <div className="portal-topbar">
         <button onClick={() => setMobileOpen(true)} aria-label="Abrir menu" style={{ width: 36, height: 36, borderRadius: "var(--r-md)", background: "var(--surface)", border: "1px solid var(--border)", cursor: "pointer", color: "var(--text-muted)", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
           <Menu size={17} />
@@ -385,9 +441,7 @@ export function AdminSidebar({ name, initials, userId, initialTheme = "dark", av
         <PortalThemeToggle initialTheme={initialTheme} />
       </div>
 
-      {/* Overlay mobile */}
       <div className={`portal-overlay${mobileOpen ? " open" : ""}`} onClick={() => setMobileOpen(false)} aria-hidden />
-
       {sidebar}
     </>
   );

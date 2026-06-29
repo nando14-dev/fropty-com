@@ -13,6 +13,8 @@ interface User {
   plan: "sem_plano" | "basico" | "pro";
   token_balance: number;
   is_active: boolean;
+  phone?: string | null;
+  created_at?: string | null;
 }
 
 interface Props {
@@ -112,54 +114,59 @@ export function BulkUsuariosClient({ users }: Props) {
         </div>
       )}
 
-      <div style={{ background: "var(--card-bg)", border: "1px solid var(--card-border)", borderRadius: 14, overflow: "hidden" }}>
-        <div style={{ overflowX: "auto" }}>
-          {/* Header */}
-          <div style={{ display: "grid", gridTemplateColumns: "40px 1.4fr 180px 90px 130px 130px 80px 110px", padding: "12px 20px", borderBottom: "1px solid var(--border)", fontSize: "11px", fontWeight: 700, color: "var(--text-faint)", textTransform: "uppercase", letterSpacing: "0.05em", minWidth: 920 }}>
-            <button
-              onClick={toggleAll}
-              style={{ background: "none", border: "none", cursor: "pointer", padding: 0, color: allSelected ? "var(--primary)" : someSelected ? "var(--primary)" : "var(--text-faint)", display: "flex", alignItems: "center" }}
-            >
-              {allSelected
-                ? <CheckSquare size={15} />
-                : someSelected
-                  ? <CheckSquare size={15} style={{ opacity: 0.5 }} />
-                  : <Square size={15} />}
-            </button>
-            <span>Nome / Email</span>
-            <span>ID</span>
-            <span>Role</span>
-            <span>Plano</span>
-            <span>Tokens</span>
-            <span style={{ textAlign: "center" }}>Status</span>
-            <span style={{ textAlign: "center" }}>Acesso</span>
-          </div>
+      <div style={{ overflowX: "auto" }}>
+        {/* Header */}
+        <div style={{ display: "grid", gridTemplateColumns: "40px minmax(200px,2fr) 140px 100px 120px 110px 80px 120px", padding: "10px 20px", borderBottom: "1px solid var(--border)", fontSize: "10.5px", fontWeight: 800, color: "var(--text-faint)", textTransform: "uppercase", letterSpacing: "0.06em", minWidth: 1000, gap: 8 }}>
+          <button
+            onClick={toggleAll}
+            style={{ background: "none", border: "none", cursor: "pointer", padding: 0, color: allSelected ? "var(--primary)" : someSelected ? "var(--primary)" : "var(--text-faint)", display: "flex", alignItems: "center" }}
+          >
+            {allSelected ? <CheckSquare size={14} /> : someSelected ? <CheckSquare size={14} style={{ opacity: 0.5 }} /> : <Square size={14} />}
+          </button>
+          <span>Usuário</span>
+          <span>Telefone</span>
+          <span>Papel</span>
+          <span>Plano</span>
+          <span>Tokens</span>
+          <span style={{ textAlign: "center" }}>Status</span>
+          <span style={{ textAlign: "center" }}>Acesso</span>
+        </div>
 
-          {users.map((u, i) => (
+        {users.map((u, i) => {
+          const initials = (u.name || u.email || "?").slice(0, 2).toUpperCase();
+          const dateStr  = u.created_at ? new Date(u.created_at).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" }) : "";
+          return (
             <div
               key={u.id}
               style={{
-                display: "grid", gridTemplateColumns: "40px 1.4fr 180px 90px 130px 130px 80px 110px",
-                padding: "14px 20px", borderBottom: i < users.length - 1 ? "1px solid var(--border)" : "none",
-                alignItems: "center", gap: 8, minWidth: 920,
+                display: "grid", gridTemplateColumns: "40px minmax(200px,2fr) 140px 100px 120px 110px 80px 120px",
+                padding: "12px 20px", borderBottom: i < users.length - 1 ? "1px solid var(--border)" : "none",
+                alignItems: "center", gap: 8, minWidth: 1000,
                 background: selected.has(u.id) ? "rgba(91,87,232,0.04)" : "transparent",
                 transition: "background 0.1s",
               }}
+              onMouseEnter={e => { if (!selected.has(u.id)) (e.currentTarget as HTMLDivElement).style.background = "var(--surface-2)"; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.background = selected.has(u.id) ? "rgba(91,87,232,0.04)" : "transparent"; }}
             >
-              <button
-                onClick={() => toggle(u.id)}
-                style={{ background: "none", border: "none", cursor: "pointer", padding: 0, color: selected.has(u.id) ? "var(--primary)" : "var(--text-faint)", display: "flex", alignItems: "center" }}
-              >
-                {selected.has(u.id) ? <CheckSquare size={15} /> : <Square size={15} />}
+              <button onClick={() => toggle(u.id)} style={{ background: "none", border: "none", cursor: "pointer", padding: 0, color: selected.has(u.id) ? "var(--primary)" : "var(--text-faint)", display: "flex", alignItems: "center" }}>
+                {selected.has(u.id) ? <CheckSquare size={14} /> : <Square size={14} />}
               </button>
 
-              <div>
-                <p style={{ margin: "0 0 2px", fontSize: "13px", fontWeight: 700, color: "var(--text)" }}>{u.name || ""}</p>
-                <p style={{ margin: 0, fontSize: "11px", color: "var(--text-faint)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={u.email ?? ""}>{u.email ?? ""}</p>
+              {/* Avatar + Nome + Email */}
+              <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
+                <div style={{ width: 34, height: 34, borderRadius: "50%", background: "var(--surface-2)", border: "1.5px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "12px", fontWeight: 800, color: "var(--text)", flexShrink: 0, overflow: "hidden" }}>
+                  {initials}
+                </div>
+                <div style={{ minWidth: 0 }}>
+                  <p style={{ margin: 0, fontSize: "13px", fontWeight: 700, color: "var(--text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{u.name || <span style={{ color: "var(--text-faint)", fontWeight: 400 }}>—</span>}</p>
+                  <p style={{ margin: 0, fontSize: "11px", color: "var(--text-faint)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }} title={u.email ?? ""}>{u.email ?? ""}</p>
+                  {dateStr && <p style={{ margin: 0, fontSize: "10px", color: "var(--text-faint)", opacity: 0.7 }}>Desde {dateStr}</p>}
+                </div>
               </div>
 
-              <span title={u.id} style={{ fontSize: "11px", color: "var(--text-faint)", fontFamily: "monospace", cursor: "help", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                {u.id.slice(0, 8)}…
+              {/* Telefone */}
+              <span style={{ fontSize: "12px", color: u.phone ? "var(--text)" : "var(--text-faint)", fontWeight: u.phone ? 500 : 400 }}>
+                {u.phone || "—"}
               </span>
 
               <UserRowActions
@@ -171,10 +178,14 @@ export function BulkUsuariosClient({ users }: Props) {
                 isActive={u.is_active}
               />
             </div>
-          ))}
+          );
+        })}
 
-          {users.length === 0 && <p style={{ padding: "32px", textAlign: "center", color: "var(--text-faint)", fontSize: "13px", margin: 0 }}>Nenhum usuário ainda.</p>}
-        </div>
+        {users.length === 0 && (
+          <div style={{ padding: "48px 20px", textAlign: "center" }}>
+            <p style={{ margin: 0, fontSize: "13px", color: "var(--text-faint)" }}>Nenhum usuário encontrado.</p>
+          </div>
+        )}
       </div>
     </>
   );

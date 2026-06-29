@@ -390,6 +390,7 @@ export type Database = {
           name: string
           onboarding_completed: boolean
           onboarding_step: number
+          phone_number: string | null
           plan: string | null
           plan_renewal: string | null
           role: string
@@ -411,6 +412,7 @@ export type Database = {
           name?: string
           onboarding_completed?: boolean
           onboarding_step?: number
+          phone_number?: string | null
           plan?: string | null
           plan_renewal?: string | null
           role?: string
@@ -432,6 +434,7 @@ export type Database = {
           name?: string
           onboarding_completed?: boolean
           onboarding_step?: number
+          phone_number?: string | null
           plan?: string | null
           plan_renewal?: string | null
           role?: string
