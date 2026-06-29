@@ -104,10 +104,8 @@ export default function PasswordChangeForm() {
     }
     setSmsLoad(true);
     const supabase = createClient();
-    const opts = channel === "whatsapp"
-      ? { phone, options: { channel: "whatsapp" as const } }
-      : { phone };
-    const { error } = await supabase.auth.signInWithOtp(opts);
+    // updateUser({ phone }) envia OTP para o número sem criar novo usuário
+    const { error } = await supabase.auth.updateUser({ phone });
     setSmsLoad(false);
     if (error) { setSmsMsg({ type: "error", text: error.message }); return; }
     setSmsStep("code");
@@ -119,7 +117,7 @@ export default function PasswordChangeForm() {
     if (smsCode.length !== 6) { setSmsMsg({ type: "error", text: "Digite o código de 6 dígitos." }); return; }
     setSmsLoad(true);
     const supabase = createClient();
-    const { error } = await supabase.auth.verifyOtp({ phone: smsPhone.trim(), token: smsCode, type: "sms" });
+    const { error } = await supabase.auth.verifyOtp({ phone: smsPhone.trim(), token: smsCode, type: "phone_change" });
     setSmsLoad(false);
     if (error) { setSmsMsg({ type: "error", text: "Código inválido ou expirado." }); return; }
     setSmsStep("newpwd");
