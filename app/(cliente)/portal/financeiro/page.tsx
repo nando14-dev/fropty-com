@@ -9,6 +9,7 @@ import {
   TrendingUp, TrendingDown,
 } from "lucide-react";
 import { TokenChart } from "@/app/components/cliente/TokenChart";
+import { HubEmptyState } from "@/app/components/ui/HubEmptyState";
 import { getService } from "@/app/lib/constants/services";
 import type { TokenTransaction } from "@/app/lib/types/cliente";
 import type { Database } from "@/app/lib/supabase/types";
@@ -330,9 +331,7 @@ export default async function FinanceiroPage({ searchParams }: Props) {
         </div>
 
         {transactions.length === 0 ? (
-          <div style={{ padding: "40px 24px", textAlign: "center" }}>
-            <p style={{ margin: 0, fontSize: "13px", color: "var(--text-faint)" }}>Nenhuma movimentação ainda.</p>
-          </div>
+          <HubEmptyState variant="financeiro" />
         ) : (
           <>
             {/* Column headers */}

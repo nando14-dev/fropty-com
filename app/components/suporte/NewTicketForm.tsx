@@ -3,7 +3,7 @@
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { createTicket } from "@/app/actions/suporte";
-import { CheckCircle, Paperclip, File, X, AlertCircle, Loader2, Send, ArrowDown, ArrowRight, ArrowUp, LucideIcon } from "lucide-react";
+import { CheckCircle, Paperclip, File, X, AlertCircle, Loader2, Send, ArrowDown, ArrowRight, ArrowUp, LucideIcon, Coins } from "lucide-react";
 import { createClient } from "@/app/lib/supabase/browser";
 
 interface Props {
@@ -14,10 +14,10 @@ interface Props {
 
 const CATEGORIES = ["Bug / Erro", "Nova funcionalidade", "Dúvida", "Performance", "Outros"];
 
-const PRIORITIES: { value: string; label: string; color: string; Icon: LucideIcon; desc: string }[] = [
-  { value: "baixa", label: "Baixa",  color: "#94a3b8", Icon: ArrowDown,  desc: "Não urgente" },
-  { value: "media", label: "Média",  color: "#EF9F27", Icon: ArrowRight, desc: "Impacto moderado" },
-  { value: "alta",  label: "Alta",   color: "#ef4444", Icon: ArrowUp,    desc: "Bloqueando uso" },
+const PRIORITIES: { value: string; label: string; color: string; Icon: LucideIcon; desc: string; tokens: number }[] = [
+  { value: "baixa", label: "Baixa",  color: "#94a3b8", Icon: ArrowDown,  desc: "Não urgente",      tokens: 5  },
+  { value: "media", label: "Média",  color: "#EF9F27", Icon: ArrowRight, desc: "Impacto moderado", tokens: 10 },
+  { value: "alta",  label: "Alta",   color: "#ef4444", Icon: ArrowUp,    desc: "Bloqueando uso",   tokens: 20 },
 ];
 
 const inputStyle: React.CSSProperties = {
@@ -191,7 +191,15 @@ export function NewTicketForm({ onClose, isAdmin, clients }: Props) {
 
       {/* Prioridade */}
       <div>
-        <label style={labelStyle}>Prioridade</label>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 7 }}>
+          <label style={{ ...labelStyle, marginBottom: 0 }}>Prioridade</label>
+          {!isAdmin && (
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: "11px", fontWeight: 700, color: "#EF9F27", background: "rgba(239,159,39,0.10)", border: "1px solid rgba(239,159,39,0.25)", borderRadius: 99, padding: "2px 10px" }}>
+              <Coins size={11} />
+              {PRIORITIES.find((p) => p.value === priority)?.tokens ?? 10} tokens
+            </span>
+          )}
+        </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
           {PRIORITIES.map((p) => (
             <button

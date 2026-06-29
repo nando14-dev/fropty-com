@@ -416,7 +416,7 @@ export async function getTicketDetail(ticketId: string) {
 
   const { data: ticket } = await supabase
     .from("tickets")
-    .select("id, subject, category, status, priority, client_id, ticket_number, created_at, updated_at, profiles:client_id(name)")
+    .select("id, subject, category, status, priority, client_id, ticket_number, created_at, updated_at, first_response_at, resolved_at, profiles:client_id(name)")
     .eq("id", ticketId)
     .single();
 

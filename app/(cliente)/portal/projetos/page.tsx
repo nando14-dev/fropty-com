@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { FolderOpen, Calendar, DollarSign, ChevronRight, MessageSquarePlus } from "lucide-react";
+import { FolderOpen, Calendar, ChevronRight, MessageSquarePlus } from "lucide-react";
 import { getClientProjects } from "@/app/actions/projects";
 import { PROJECT_STATUSES, PROJECT_PRIORITY_MAP } from "@/app/lib/constants/projects";
 import { HubEmptyState } from "@/app/components/ui/HubEmptyState";
@@ -69,7 +69,7 @@ export default async function ProjetosPage() {
           {/* Column headers */}
           <div style={{
             display: "grid",
-            gridTemplateColumns: "2fr 130px 110px 120px 110px 32px",
+            gridTemplateColumns: "2fr 130px 110px 120px 140px 32px",
             padding: "9px 20px",
             background: "var(--surface-2)",
             borderBottom: "1px solid var(--border)",
@@ -81,15 +81,16 @@ export default async function ProjetosPage() {
             <span>Status</span>
             <span>Prioridade</span>
             <span>Prazo</span>
-            <span style={{ textAlign: "right" }}>Valor est.</span>
+            <span>Progresso</span>
             <span />
           </div>
 
           {/* Rows */}
           {projects.map((project, i) => {
-            const st     = PROJECT_STATUSES[project.status]       ?? { label: project.status,   color: "#94a3b8", Icon: FolderOpen };
-            const pr     = PROJECT_PRIORITY_MAP[project.priority] ?? { label: project.priority, color: "#94a3b8" };
-            const StIcon = st.Icon;
+            const st       = PROJECT_STATUSES[project.status]       ?? { label: project.status,   color: "#94a3b8", Icon: FolderOpen };
+            const pr       = PROJECT_PRIORITY_MAP[project.priority] ?? { label: project.priority, color: "#94a3b8" };
+            const StIcon   = st.Icon;
+            const progress = (project as unknown as Record<string, unknown>).progress as number | null ?? null;
 
             return (
               <Link
@@ -97,7 +98,7 @@ export default async function ProjetosPage() {
                 href={`/portal/projetos/${project.id}`}
                 style={{
                   display: "grid",
-                  gridTemplateColumns: "2fr 130px 110px 120px 110px 32px",
+                  gridTemplateColumns: "2fr 130px 110px 120px 140px 32px",
                   padding: "13px 20px",
                   alignItems: "center",
                   borderBottom: i < projects.length - 1 ? "1px solid var(--border)" : "none",
@@ -149,10 +150,25 @@ export default async function ProjetosPage() {
                   {fDate(project.due_date)}
                 </span>
 
-                {/* Valor */}
-                <span style={{ fontSize: "12px", color: "var(--text-faint)", textAlign: "right" }}>
-                  {fCurrency(project.estimated_cost) ?? "—"}
-                </span>
+                {/* Progresso */}
+                <div style={{ paddingRight: 8 }}>
+                  {progress != null ? (
+                    <div>
+                      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+                        <span style={{ fontSize: "10px", color: "var(--text-faint)" }}>{progress}%</span>
+                      </div>
+                      <div style={{ height: 5, background: "var(--surface-2)", borderRadius: 99, overflow: "hidden" }}>
+                        <div style={{
+                          height: "100%", borderRadius: 99,
+                          background: progress >= 100 ? "#22c55e" : `linear-gradient(90deg, var(--primary), var(--brand-accent))`,
+                          width: `${Math.min(progress, 100)}%`,
+                        }} />
+                      </div>
+                    </div>
+                  ) : (
+                    <span style={{ fontSize: "11px", color: "var(--text-faint)" }}>—</span>
+                  )}
+                </div>
 
                 <ChevronRight size={14} style={{ color: "var(--text-faint)" }} />
               </Link>

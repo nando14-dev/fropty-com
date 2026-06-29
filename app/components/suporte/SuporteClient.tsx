@@ -87,7 +87,11 @@ export function SuporteClient({ tickets, isAdmin, tokenBalance = 0 }: Props) {
           .suporte-root-wrap { padding: 16px 14px !important; }
           .suporte-stats { grid-template-columns: 1fr 1fr !important; }
           .suporte-filters { flex-direction: column !important; }
-          .sup-col-cat, .sup-col-priority, .sup-col-date { display: none !important; }
+          .sup-table-view { display: none !important; }
+          .sup-card-view  { display: flex !important; }
+        }
+        @media (min-width: 641px) {
+          .sup-card-view { display: none !important; }
         }
       `}</style>
 
@@ -203,89 +207,115 @@ export function SuporteClient({ tickets, isAdmin, tokenBalance = 0 }: Props) {
             </span>
           </div>
 
-          {/* Column headers */}
-          <div style={{
-            display: "grid",
-            gridTemplateColumns: "2fr 110px 90px 110px 120px 32px",
-            padding: "9px 20px", background: "var(--surface-2)",
-            borderBottom: "1px solid var(--border)",
-            fontSize: "11px", fontWeight: 700,
-            textTransform: "uppercase", letterSpacing: "0.07em", color: "var(--text-faint)",
-          }}>
-            <span>Chamado</span>
-            <span className="sup-col-cat">Categoria</span>
-            <span>Status</span>
-            <span className="sup-col-priority">Prioridade</span>
-            <span className="sup-col-date" style={{ textAlign: "right" }}>Atualizado</span>
-            <span />
+          {/* ── Tabela (desktop) ── */}
+          <div className="sup-table-view">
+            {/* Column headers */}
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: "2fr 110px 90px 110px 120px 32px",
+              padding: "9px 20px", background: "var(--surface-2)",
+              borderBottom: "1px solid var(--border)",
+              fontSize: "11px", fontWeight: 700,
+              textTransform: "uppercase", letterSpacing: "0.07em", color: "var(--text-faint)",
+            }}>
+              <span>Chamado</span>
+              <span>Categoria</span>
+              <span>Status</span>
+              <span>Prioridade</span>
+              <span style={{ textAlign: "right" }}>Atualizado</span>
+              <span />
+            </div>
+
+            {filtered.map((t, i) => {
+              const st  = TICKET_STATUS_MAP[t.status];
+              const pri = TICKET_PRIORITY_MAP[t.priority];
+              const updatedDate = new Date(t.updatedAt).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" });
+
+              return (
+                <Link
+                  key={t.id}
+                  href={`/portal/suporte/${t.id}`}
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "2fr 110px 90px 110px 120px 32px",
+                    padding: "13px 20px", alignItems: "center",
+                    borderBottom: i < filtered.length - 1 ? "1px solid var(--border)" : "none",
+                    textDecoration: "none", color: "inherit",
+                    borderLeft: `3px solid ${pri.color}`,
+                    transition: "background 0.1s",
+                  }}
+                  onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.background = "var(--surface-2)"}
+                  onMouseLeave={e => (e.currentTarget as HTMLAnchorElement).style.background = "transparent"}
+                >
+                  <div style={{ minWidth: 0 }}>
+                    <p style={{ margin: 0, fontSize: "13.5px", fontWeight: 600, color: "var(--text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      {t.subject}
+                    </p>
+                    <p style={{ margin: "2px 0 0", fontSize: "11px", color: "var(--text-faint)" }}>
+                      {t.ticketNumber && <span style={{ fontWeight: 700, marginRight: 4 }}>UFT{String(t.ticketNumber).padStart(4, "0")} ·</span>}
+                      {isAdmin && t.clientName && <span style={{ color: "var(--text-muted)", fontWeight: 600 }}>{t.clientName} · </span>}
+                    </p>
+                  </div>
+                  <span style={{ fontSize: "12px", color: "var(--text-muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    {t.category}
+                  </span>
+                  <span style={{ fontSize: "11px", fontWeight: 700, padding: "3px 9px", borderRadius: "var(--r-full)", whiteSpace: "nowrap", color: st.color, background: `${st.color}15`, border: `1px solid ${st.color}28`, display: "inline-block" }}>
+                    {st.label}
+                  </span>
+                  <span style={{ fontSize: "11px", fontWeight: 700, padding: "3px 9px", borderRadius: "var(--r-full)", whiteSpace: "nowrap", color: pri.color, background: `${pri.color}12`, border: `1px solid ${pri.color}22`, display: "inline-block" }}>
+                    {pri.label}
+                  </span>
+                  <span style={{ fontSize: "12px", color: "var(--text-faint)", textAlign: "right" }}>
+                    {updatedDate}
+                  </span>
+                  <ChevronRight size={14} style={{ color: "var(--text-faint)" }} />
+                </Link>
+              );
+            })}
           </div>
 
-          {filtered.map((t, i) => {
-            const st  = TICKET_STATUS_MAP[t.status];
-            const pri = TICKET_PRIORITY_MAP[t.priority];
-            const updatedDate = new Date(t.updatedAt).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" });
+          {/* ── Cards (mobile) ── */}
+          <div className="sup-card-view" style={{ flexDirection: "column" }}>
+            {filtered.map((t, i) => {
+              const st  = TICKET_STATUS_MAP[t.status];
+              const pri = TICKET_PRIORITY_MAP[t.priority];
+              const updatedDate = new Date(t.updatedAt).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" });
 
-            return (
-              <Link
-                key={t.id}
-                href={`/portal/suporte/${t.id}`}
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "2fr 110px 90px 110px 120px 32px",
-                  padding: "13px 20px", alignItems: "center",
-                  borderBottom: i < filtered.length - 1 ? "1px solid var(--border)" : "none",
-                  textDecoration: "none", color: "inherit",
-                  borderLeft: `3px solid ${pri.color}`,
-                  transition: "background 0.1s",
-                }}
-                onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.background = "var(--surface-2)"}
-                onMouseLeave={e => (e.currentTarget as HTMLAnchorElement).style.background = "transparent"}
-              >
-                {/* Assunto */}
-                <div style={{ minWidth: 0 }}>
-                  <p style={{ margin: 0, fontSize: "13.5px", fontWeight: 600, color: "var(--text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                    {t.subject}
-                  </p>
-                  <p style={{ margin: "2px 0 0", fontSize: "11px", color: "var(--text-faint)" }}>
-                    {t.ticketNumber && <span style={{ fontWeight: 700, marginRight: 4 }}>UFT{String(t.ticketNumber).padStart(4, "0")} ·</span>}
-                    {isAdmin && t.clientName && <span style={{ color: "var(--text-muted)", fontWeight: 600 }}>{t.clientName} · </span>}
-                  </p>
-                </div>
-
-                {/* Categoria */}
-                <span className="sup-col-cat" style={{ fontSize: "12px", color: "var(--text-muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                  {t.category}
-                </span>
-
-                {/* Status */}
-                <span style={{
-                  fontSize: "11px", fontWeight: 700, padding: "3px 9px",
-                  borderRadius: "var(--r-full)", whiteSpace: "nowrap",
-                  color: st.color, background: `${st.color}15`, border: `1px solid ${st.color}28`,
-                  display: "inline-block",
-                }}>
-                  {st.label}
-                </span>
-
-                {/* Prioridade */}
-                <span className="sup-col-priority" style={{
-                  fontSize: "11px", fontWeight: 700, padding: "3px 9px",
-                  borderRadius: "var(--r-full)", whiteSpace: "nowrap",
-                  color: pri.color, background: `${pri.color}12`, border: `1px solid ${pri.color}22`,
-                  display: "inline-block",
-                }}>
-                  {pri.label}
-                </span>
-
-                {/* Data */}
-                <span className="sup-col-date" style={{ fontSize: "12px", color: "var(--text-faint)", textAlign: "right" }}>
-                  {updatedDate}
-                </span>
-
-                <ChevronRight size={14} style={{ color: "var(--text-faint)" }} />
-              </Link>
-            );
-          })}
+              return (
+                <Link
+                  key={t.id}
+                  href={`/portal/suporte/${t.id}`}
+                  style={{
+                    display: "block", padding: "14px 16px", textDecoration: "none", color: "inherit",
+                    borderBottom: i < filtered.length - 1 ? "1px solid var(--border)" : "none",
+                    borderLeft: `3px solid ${pri.color}`,
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 8, marginBottom: 8 }}>
+                    <p style={{ margin: 0, fontSize: "13px", fontWeight: 700, color: "var(--text)", lineHeight: 1.3 }}>
+                      {t.subject}
+                    </p>
+                    <span style={{ fontSize: "11px", fontWeight: 700, padding: "3px 9px", borderRadius: "var(--r-full)", whiteSpace: "nowrap", color: st.color, background: `${st.color}15`, border: `1px solid ${st.color}28`, flexShrink: 0 }}>
+                      {st.label}
+                    </span>
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                    {t.ticketNumber && (
+                      <span style={{ fontSize: "10.5px", fontWeight: 700, color: "var(--text-faint)", background: "var(--surface-2)", borderRadius: 6, padding: "1px 6px" }}>
+                        UFT{String(t.ticketNumber).padStart(4, "0")}
+                      </span>
+                    )}
+                    <span style={{ fontSize: "11px", fontWeight: 700, color: pri.color, background: `${pri.color}12`, border: `1px solid ${pri.color}22`, borderRadius: "var(--r-full)", padding: "2px 8px" }}>
+                      {pri.label}
+                    </span>
+                    <span style={{ fontSize: "11px", color: "var(--text-faint)", marginLeft: "auto" }}>
+                      {updatedDate}
+                    </span>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
         </div>
       )}
     </div>

@@ -6,6 +6,7 @@ import { TicketConversation } from "@/app/components/suporte/TicketConversation"
 import { AdminTicketActions } from "@/app/components/suporte/AdminTicketActions";
 import { TICKET_STATUS_MAP, TICKET_PRIORITY_MAP } from "@/app/lib/constants/status";
 import { ArrowLeft, ChevronRight, Clock } from "lucide-react";
+import { SlaBars } from "@/app/components/suporte/SlaBars";
 
 export const metadata: Metadata = { title: "Chamado" };
 
@@ -80,6 +81,15 @@ export default async function TicketDetailPage({ params }: Props) {
         </div>
 
       </div>
+
+      {/* ── SLA bars (todos os usuários) ── */}
+      <SlaBars
+        priority={ticket.priority as "baixa" | "media" | "alta"}
+        createdAt={ticket.created_at}
+        firstResponseAt={(ticket as Record<string, unknown>).first_response_at as string | null ?? null}
+        resolvedAt={(ticket as Record<string, unknown>).resolved_at as string | null ?? null}
+        status={ticket.status}
+      />
 
       {/* ── Admin actions ── */}
       {isAdmin && (
