@@ -870,10 +870,12 @@ a { color: inherit; text-decoration: none; }
 }
 
 ::view-transition-old(root) {
-  animation: 180ms ease-out both fadeOut;
+  animation: none;
+  mix-blend-mode: normal;
 }
 ::view-transition-new(root) {
-  animation: 220ms ease-out both fadeIn;
+  animation: none;
+  mix-blend-mode: normal;
 }
 
 /* Respeita prefers-reduced-motion */
