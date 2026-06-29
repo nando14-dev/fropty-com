@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { getProfile } from "@/app/lib/auth/session";
 import { createClient } from "@/app/lib/supabase/server";
 import { AdminSidebar } from "@/app/components/admin/AdminSidebar";
-import { PortalFloatingControls } from "@/app/components/PortalFloatingControls";
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 
@@ -19,7 +18,6 @@ export default async function AdminPortalLayout({ children }: { children: React.
     <div style={{ display: "flex", minHeight: "100vh", background: "var(--bg)", color: "var(--text)" }}>
       <AdminSidebar name={name} initials={initials} userId={user?.id ?? ""} initialTheme={initialTheme} />
       <main className="portal-main-content" style={{ flex: 1, overflow: "hidden" }}>{children}</main>
-      <PortalFloatingControls userId={user?.id ?? ""} initialTheme={initialTheme} />
     </div>
   );
 }

@@ -8,8 +8,9 @@ import { PortalThemeToggle } from "@/app/components/cliente/PortalThemeToggle";
 import {
   LayoutDashboard, Users, CreditCard, MessageCircle, BarChart2, ShieldCheck,
   UserCircle, BookOpen, Map, MessageSquarePlus, FolderKanban, FileSignature,
-  HeartPulse, X, Menu, LogOut, Loader2, PanelLeftClose, PanelLeftOpen, Shield,
+  HeartPulse, Menu, LogOut, Loader2, PanelLeftClose, PanelLeftOpen, Shield,
 } from "lucide-react";
+import { NotificationBell } from "@/app/components/NotificationBell";
 import Image from "next/image";
 import type { LucideIcon } from "lucide-react";
 
@@ -42,7 +43,7 @@ interface Props {
   initialTheme?: "dark" | "light";
 }
 
-export function AdminSidebar({ name, initials, initialTheme = "dark" }: Props) {
+export function AdminSidebar({ name, initials, userId, initialTheme = "dark" }: Props) {
   const pathname              = usePathname();
   const [pending, startTrans] = useTransition();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -79,21 +80,6 @@ export function AdminSidebar({ name, initials, initialTheme = "dark" }: Props) {
       className={`portal-sidebar${mobileOpen ? " open" : ""}`}
       style={{ width: W, transition: "width 0.22s cubic-bezier(0.4,0,0.2,1)", overflow: "hidden" }}
     >
-      {/* Close button — mobile only */}
-      <button
-        className="portal-sidebar-close"
-        onClick={() => setMobileOpen(false)}
-        aria-label="Fechar menu"
-        style={{
-          position: "absolute", top: 14, right: 14, width: 28, height: 28,
-          borderRadius: "var(--r-sm)", border: "1px solid var(--border)",
-          background: "var(--surface-2)", cursor: "pointer", color: "var(--text-faint)",
-          display: "flex", alignItems: "center", justifyContent: "center",
-        }}
-      >
-        <X size={13} />
-      </button>
-
       <div style={{
         display: "flex", flexDirection: "column", height: "100%",
         padding: collapsed ? "16px 0" : "16px 12px",
@@ -124,7 +110,7 @@ export function AdminSidebar({ name, initials, initialTheme = "dark" }: Props) {
               transition: "opacity 0.18s, max-width 0.22s",
               overflow: "hidden",
             }}>
-              Fropty<span style={{ color: "var(--primary)" }}>Hub</span>
+              Fropty<span style={{ background: "linear-gradient(90deg,#9333ea,#3b82f6,#22c55e,#f97316)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>Hub</span>
             </span>
           </Link>
 
@@ -287,6 +273,13 @@ export function AdminSidebar({ name, initials, initialTheme = "dark" }: Props) {
               </div>
             )}
 
+            {/* Notification bell — expanded */}
+            {!collapsed && (
+              <div style={{ flexShrink: 0 }}>
+                <NotificationBell userId={userId} />
+              </div>
+            )}
+
             {/* Logout — expanded */}
             {!collapsed && (
               <button
@@ -331,7 +324,7 @@ export function AdminSidebar({ name, initials, initialTheme = "dark" }: Props) {
         <Link href="/admin/overview" style={{ display: "flex", alignItems: "center", gap: 8, textDecoration: "none", flex: 1 }}>
           <Image src="/logo-icon.png" alt="Fropty Hub" width={22} height={22} style={{ objectFit: "contain", borderRadius: 5 }} />
           <span style={{ fontSize: "14px", fontWeight: 700, color: "var(--text)" }}>
-            Fropty<span style={{ color: "var(--primary)" }}>Hub</span>
+            Fropty<span style={{ background: "linear-gradient(90deg,#9333ea,#3b82f6,#22c55e,#f97316)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>Hub</span>
             <span style={{ fontSize: "11px", fontWeight: 600, color: "var(--text-faint)", marginLeft: 5 }}>Admin</span>
           </span>
         </Link>

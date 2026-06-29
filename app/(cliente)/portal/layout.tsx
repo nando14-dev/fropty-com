@@ -7,7 +7,6 @@ import { ClientSidebar } from "@/app/components/cliente/ClientSidebar";
 import { AdminSidebar } from "@/app/components/admin/AdminSidebar";
 import { UserAvatarMenu } from "@/app/components/auth/UserAvatarMenu";
 import { PullToRefresh } from "@/app/components/PullToRefresh";
-import { PortalFloatingControls } from "@/app/components/PortalFloatingControls";
 import { CommandPalette } from "@/app/components/CommandPalette";
 
 export const metadata: Metadata = {
@@ -136,8 +135,6 @@ export default async function PortalLayout({
       {/* Busca global Cmd+K */}
       <CommandPalette />
 
-      {/* Notificações + tema flutuantes no canto inferior direito */}
-      <PortalFloatingControls userId={profile?.id ?? ""} initialTheme={(profile?.theme ?? "dark") as "dark" | "light"} />
     </div>
   );
 }
