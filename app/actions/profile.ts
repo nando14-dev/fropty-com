@@ -160,3 +160,30 @@ export async function updateTheme(theme: "dark" | "light"): Promise<void> {
   const supabase = await createClient();
   await supabase.from("profiles").update({ theme }).eq("id", userId);
 }
+
+const PLAN_NAME: Record<string, string> = {
+  basico:    "Básico",
+  pro:       "Pro",
+  enterprise: "Enterprise",
+};
+
+export async function requestPlanUpgrade(plan: string): Promise<{ error?: string; success?: string }> {
+  const userId = await requireAuth();
+  const planLabel = PLAN_NAME[plan] ?? plan;
+
+  const supabase = await createClient();
+  const { error } = await supabase.from("tickets").insert({
+    client_id: userId,
+    subject:   `Upgrade de plano para ${planLabel}`,
+    category:  "Comercial",
+    body:      `Solicitação de upgrade para o plano ${planLabel}.`,
+    priority:  "alta",
+    status:    "aberto",
+  } as never);
+
+  if (error) return { error: "Não foi possível criar o chamado. Tente novamente." };
+
+  revalidatePath("/portal/planos");
+  revalidatePath("/portal/suporte");
+  return { success: `Solicitação de upgrade para o plano ${planLabel} enviada! Nossa equipe entrará em contato.` };
+}

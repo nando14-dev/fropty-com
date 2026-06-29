@@ -5,6 +5,7 @@ import { createClient } from "@/app/lib/supabase/server";
 import { getProfile } from "@/app/lib/auth/session";
 import { ArrowLeft, ClipboardCheck } from "lucide-react";
 import { ResolutionReview } from "@/app/components/suporte/ResolutionReview";
+import { NpsReview } from "@/app/components/suporte/NpsReview";
 import type { Database } from "@/app/lib/supabase/types";
 
 type TicketRow = Database["public"]["Tables"]["tickets"]["Row"];
@@ -70,6 +71,22 @@ export default async function AvaliarPage({ params }: Props) {
         </ul>
 
         <ResolutionReview ticketId={ticketId} />
+
+        {/* Divider */}
+        <div style={{ borderTop: "1px solid var(--card-border)", margin: "24px 0" }} />
+
+        {/* NPS / CSAT */}
+        <div style={{ marginBottom: 4 }}>
+          <div style={{ marginBottom: 16 }}>
+            <h2 style={{ margin: "0 0 4px", fontSize: "1rem", fontWeight: 700, color: "var(--text)" }}>
+              Avalie o atendimento
+            </h2>
+            <p style={{ margin: 0, fontSize: "13px", color: "var(--text-muted)" }}>
+              Independentemente da sua decisão acima, seu feedback nos ajuda a melhorar.
+            </p>
+          </div>
+          <NpsReview ticketId={ticketId} />
+        </div>
       </div>
     </div>
   );

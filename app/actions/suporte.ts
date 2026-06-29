@@ -402,6 +402,44 @@ export async function respondResolution(formData: FormData) {
   return { success: true };
 }
 
+// Cliente envia avaliação NPS/CSAT após fechar chamado.
+// Salva como ticket_message com sender_role "cliente" para não exigir schema change.
+export async function submitTicketNps(ticketId: string, rating: number, comment: string) {
+  const userId  = await requireAuth();
+  const supabase = await createClient();
+
+  // Valida que o chamado pertence ao cliente
+  const { data: ticket } = await supabase
+    .from("tickets")
+    .select("id, status, client_id")
+    .eq("id", ticketId)
+    .eq("client_id", userId)
+    .single();
+
+  if (!ticket) return { error: "Chamado não encontrado." };
+  if (!["resolvido", "fechado"].includes(ticket.status)) {
+    return { error: "Não é possível avaliar um chamado que ainda não foi resolvido." };
+  }
+
+  const safeRating = Math.min(5, Math.max(1, Math.round(rating)));
+  const stars = "⭐".repeat(safeRating);
+  const body = `${stars} Avaliação: ${safeRating}/5${comment ? ` — ${comment.trim().slice(0, 1000)}` : ""}`;
+
+  const { error } = await supabase.from("ticket_messages").insert({
+    ticket_id:   ticketId,
+    sender_id:   userId,
+    sender_role: "cliente" as const,
+    body,
+    attachments: [],
+  });
+
+  if (error) return { error: "Erro ao registrar avaliação. Tente novamente." };
+
+  revalidatePath(`/portal/suporte/${ticketId}`);
+  revalidatePath(`/portal/suporte/${ticketId}/avaliar`);
+  return { success: true };
+}
+
 export async function getTicketDetail(ticketId: string) {
   const userId  = await requireAuth();
   const supabase = await createClient();

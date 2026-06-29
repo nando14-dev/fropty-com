@@ -178,6 +178,90 @@ export default async function FinanceiroPage({ searchParams }: Props) {
         </div>
       </div>
 
+      {/* ── Saldo de Tokens — card detalhado ── */}
+      {(() => {
+        const planLimits: Record<string, number> = { sem_plano: 100, basico: 500, pro: 2000 };
+        const limit = planLimits[plan] ?? 100;
+        const pct   = Math.min(100, Math.round((tokenBalance / limit) * 100));
+        const recentTx = transactions.slice(0, 5);
+
+        return (
+          <div className="hub-card" style={{ marginBottom: 24, padding: "20px 24px" }}>
+            {/* Header */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginBottom: 16 }}>
+              <h2 style={{ margin: 0, fontSize: "14px", fontWeight: 700, color: "var(--text)", display: "flex", alignItems: "center", gap: 8 }}>
+                <Coins size={14} style={{ color: "var(--brand-accent)" }} /> Saldo de Tokens
+              </h2>
+              <span style={{ fontSize: "11px", color: "var(--text-faint)", fontWeight: 500 }}>
+                {pct}% do limite do plano
+              </span>
+            </div>
+
+            {/* Balance + bar */}
+            <div style={{ marginBottom: 18 }}>
+              <p style={{ margin: "0 0 10px", fontSize: "36px", fontWeight: 900, color: "var(--text)", letterSpacing: "-0.05em", lineHeight: 1 }}>
+                {tokenBalance}
+                <span style={{ fontSize: "14px", fontWeight: 500, color: "var(--text-faint)", marginLeft: 6 }}>tokens</span>
+              </p>
+              {/* Progress bar */}
+              <div style={{ height: 8, borderRadius: 99, background: "var(--surface-2)", overflow: "hidden", position: "relative" }}>
+                <div style={{
+                  height: "100%", borderRadius: 99,
+                  width: `${pct}%`,
+                  background: pct > 80
+                    ? "var(--c-success)"
+                    : pct > 40
+                    ? "var(--primary)"
+                    : "var(--c-danger)",
+                  transition: "width 0.4s ease",
+                }} />
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6, fontSize: "11px", color: "var(--text-faint)" }}>
+                <span>0</span>
+                <span>Limite do plano: {limit}</span>
+              </div>
+            </div>
+
+            {/* Recent transactions mini-list */}
+            {recentTx.length > 0 && (
+              <>
+                <p style={{ margin: "0 0 10px", fontSize: "11px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: "var(--text-faint)" }}>
+                  Últimas movimentações
+                </p>
+                <div style={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                  {recentTx.map((tx) => (
+                    <div key={tx.id} style={{
+                      display: "flex", alignItems: "center", gap: 10,
+                      padding: "8px 0", borderBottom: "1px solid var(--border)",
+                    }}>
+                      <div style={{
+                        width: 26, height: 26, borderRadius: "var(--r-sm)", flexShrink: 0,
+                        background: tx.type === "credit" ? "var(--c-success-bg)" : "rgba(220,38,38,0.10)",
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                      }}>
+                        {tx.type === "credit"
+                          ? <TrendingUp  size={12} style={{ color: "var(--c-success)" }} />
+                          : <TrendingDown size={12} style={{ color: "var(--c-danger)" }} />
+                        }
+                      </div>
+                      <span style={{ flex: 1, fontSize: "12.5px", color: "var(--text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                        {tx.description}
+                      </span>
+                      <span style={{ fontSize: "12px", fontWeight: 700, color: tx.type === "credit" ? "var(--c-success)" : "var(--c-danger)", flexShrink: 0 }}>
+                        {tx.type === "credit" ? "+" : "-"}{tx.amount}
+                      </span>
+                      <span style={{ fontSize: "11px", color: "var(--text-faint)", flexShrink: 0, minWidth: 72, textAlign: "right" }}>
+                        {new Date(tx.date).toLocaleDateString("pt-BR")}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+        );
+      })()}
+
       {/* ── Serviços contratados ── */}
       {(services.length > 0 || contractStart) && (
         <div className="hub-card" style={{ marginBottom: 24, padding: "20px 24px" }}>

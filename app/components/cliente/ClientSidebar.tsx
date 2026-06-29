@@ -9,7 +9,7 @@ import type { ClientUser } from "../../lib/types/cliente";
 import {
   LayoutDashboard, MessageCircle, CreditCard, UserCircle, BookOpen, Map,
   MessageSquarePlus, FolderKanban, FileSignature, LogOut, Loader2,
-  Menu, X, PanelLeftClose, PanelLeftOpen, Search, Coins,
+  Menu, X, PanelLeftClose, PanelLeftOpen, Search, Coins, Sparkles,
 } from "lucide-react";
 import Image from "next/image";
 
@@ -33,6 +33,7 @@ const DEFAULT_NAV: NavItem[] = [
   { id: "projetos",          href: "/portal/projetos",          icon: "FolderKanban",      label: "Projetos" },
   { id: "contratos",         href: "/portal/contratos",         icon: "FileSignature",     label: "Contratos" },
   { id: "financeiro",        href: "/portal/financeiro",        icon: "CreditCard",        label: "Financeiro" },
+  { id: "planos",            href: "/portal/planos",            icon: "Sparkles",          label: "Planos" },
   { id: "roadmap",           href: "/portal/roadmap",           icon: "Map",               label: "Roadmap" },
   { id: "feedback",          href: "/portal/feedback",          icon: "MessageSquarePlus", label: "Feedback" },
   { id: "base-conhecimento", href: "/portal/base-conhecimento", icon: "BookOpen",          label: "Base de Conhecimento" },
@@ -41,7 +42,7 @@ const DEFAULT_NAV: NavItem[] = [
 
 const ICON_MAP: Record<string, React.ComponentType<{ size?: number }>> = {
   LayoutDashboard, MessageCircle, CreditCard, UserCircle, BookOpen, Map,
-  MessageSquarePlus, FolderKanban, FileSignature,
+  MessageSquarePlus, FolderKanban, FileSignature, Sparkles,
 };
 
 function NavIcon({ name, size = 16 }: { name: string; size?: number }) {

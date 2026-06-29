@@ -1,27 +1,42 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { FolderOpen, Calendar, ChevronRight, MessageSquarePlus } from "lucide-react";
+import { FolderOpen, Calendar, ChevronRight, MessageSquarePlus, List, LayoutGrid, CalendarDays } from "lucide-react";
 import { getClientProjects } from "@/app/actions/projects";
 import { PROJECT_STATUSES, PROJECT_PRIORITY_MAP } from "@/app/lib/constants/projects";
 import { HubEmptyState } from "@/app/components/ui/HubEmptyState";
+import { ProjectsKanban } from "@/app/components/projetos/ProjectsKanban";
+import { ProjectsCalendar } from "@/app/components/projetos/ProjectsCalendar";
 
 export const metadata: Metadata = { title: "Projetos" };
+
+type ViewMode = "lista" | "kanban" | "calendario";
 
 function fDate(d?: string | null) {
   if (!d) return "—";
   return new Date(d).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" });
 }
 
-function fCurrency(v?: number | null) {
-  if (v == null) return null;
-  return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-}
+const VIEW_BUTTONS: { view: ViewMode; Icon: typeof List; label: string }[] = [
+  { view: "lista",     Icon: List,        label: "Lista" },
+  { view: "kanban",    Icon: LayoutGrid,  label: "Kanban" },
+  { view: "calendario", Icon: CalendarDays, label: "Calendário" },
+];
 
-export default async function ProjetosPage() {
+export default async function ProjetosPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ view?: string }>;
+}) {
+  const params = await searchParams;
+  const view: ViewMode =
+    params.view === "kanban" || params.view === "calendario"
+      ? params.view
+      : "lista";
+
   const projects = await getClientProjects();
 
   return (
-    <div style={{ padding: "36px 32px", maxWidth: 1020, margin: "0 auto" }}>
+    <div style={{ padding: "36px 32px", maxWidth: view === "kanban" ? "none" : 1020, margin: "0 auto" }}>
 
       {/* ── Page header ── */}
       <div style={{
@@ -36,24 +51,68 @@ export default async function ProjetosPage() {
             Acompanhe o andamento e entregas dos seus projetos
           </p>
         </div>
-        <Link
-          href="/portal/suporte/novo"
-          style={{
-            display: "inline-flex", alignItems: "center", gap: 7,
-            background: "var(--cta-bg)", color: "var(--cta-text)",
-            borderRadius: "var(--r-md)", padding: "9px 18px",
-            fontSize: "13px", fontWeight: 700, textDecoration: "none",
-            boxShadow: "var(--shadow-brand)",
-          }}
-        >
-          <MessageSquarePlus size={14} /> Solicitar projeto
-        </Link>
+
+        <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+          {/* View toggle */}
+          <div style={{
+            display: "flex",
+            background: "var(--surface-2)",
+            border: "1px solid var(--border)",
+            borderRadius: "var(--r-md)",
+            padding: 3,
+            gap: 2,
+          }}>
+            {VIEW_BUTTONS.map(({ view: v, Icon, label }) => (
+              <Link
+                key={v}
+                href={`/portal/projetos?view=${v}`}
+                title={label}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 5,
+                  padding: "6px 12px",
+                  borderRadius: "calc(var(--r-md) - 3px)",
+                  fontSize: "12px",
+                  fontWeight: 600,
+                  textDecoration: "none",
+                  transition: "background 0.15s, color 0.15s",
+                  background: view === v ? "var(--card-bg)" : "transparent",
+                  color: view === v ? "var(--text)" : "var(--text-faint)",
+                  boxShadow: view === v ? "0 1px 3px rgba(0,0,0,0.08)" : "none",
+                }}
+              >
+                <Icon size={13} />
+                <span style={{ display: "none" }}>{label}</span>
+                <Icon size={0} style={{ display: "none" }} />
+                {label}
+              </Link>
+            ))}
+          </div>
+
+          <Link
+            href="/portal/suporte/novo"
+            style={{
+              display: "inline-flex", alignItems: "center", gap: 7,
+              background: "var(--cta-bg)", color: "var(--cta-text)",
+              borderRadius: "var(--r-md)", padding: "9px 18px",
+              fontSize: "13px", fontWeight: 700, textDecoration: "none",
+              boxShadow: "var(--shadow-brand)",
+            }}
+          >
+            <MessageSquarePlus size={14} /> Solicitar projeto
+          </Link>
+        </div>
       </div>
 
       {projects.length === 0 ? (
         <div className="hub-card">
           <HubEmptyState variant="projetos" />
         </div>
+      ) : view === "kanban" ? (
+        <ProjectsKanban projects={projects} />
+      ) : view === "calendario" ? (
+        <ProjectsCalendar projects={projects} />
       ) : (
         <div className="hub-card" style={{ overflow: "hidden" }}>
           {/* Table toolbar */}
