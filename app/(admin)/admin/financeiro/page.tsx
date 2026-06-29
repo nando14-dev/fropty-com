@@ -3,7 +3,7 @@ import { createClient } from "@/app/lib/supabase/server";
 import { TrendingUp, Users, ArrowDownLeft, ArrowUpRight } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
-export const metadata: Metadata = { title: "Financeiro "” Admin" };
+export const metadata: Metadata = { title: "Financeiro — Admin" };
 
 export default async function AdminFinanceiroPage() {
   const supabase = await createClient();
@@ -107,7 +107,7 @@ export default async function AdminFinanceiroPage() {
                     <td style={{ padding: "11px 16px" }}>
                       <p style={{ margin: "0 0 2px", fontSize: "12px", fontWeight: 600, color: "var(--text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 140 }}>{tx.description}</p>
                       {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                      <p style={{ margin: 0, fontSize: "11px", color: "var(--text-faint)" }}>{(tx.profiles as any)?.name ?? ""”"}</p>
+                      <p style={{ margin: 0, fontSize: "11px", color: "var(--text-faint)" }}>{(tx.profiles as any)?.name ?? ""}</p>
                     </td>
                     <td style={{ padding: "11px 16px" }}>
                       <span style={{ fontSize: "10px", fontWeight: 700, padding: "2px 8px", borderRadius: 99, background: tx.type === "credit" ? "rgba(34,197,94,0.12)" : "rgba(239,68,68,0.12)", color: tx.type === "credit" ? "#22c55e" : "#ef4444" }}>

@@ -5,10 +5,10 @@ import { getAllProjects } from "@/app/actions/projects";
 import { PROJECT_STATUSES, PROJECT_PRIORITY_MAP } from "@/app/lib/constants/projects";
 import type { ProjectStatus } from "@/app/lib/types/projects";
 
-export const metadata: Metadata = { title: "Admin "” Projetos" };
+export const metadata: Metadata = { title: "Admin — Projetos" };
 
 function formatDate(d?: string) {
-  if (!d) return ""”";
+  if (!d) return "";
   return new Date(d).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" });
 }
 
@@ -116,7 +116,7 @@ export default async function AdminProjetosPage({
                       {project.title}
                     </p>
                     <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: "12px", color: "var(--text-faint)" }}>
-                      <User size={11} /> {project.client_name ?? ""”"}
+                      <User size={11} /> {project.client_name ?? ""}
                     </span>
                   </div>
                   <span style={{

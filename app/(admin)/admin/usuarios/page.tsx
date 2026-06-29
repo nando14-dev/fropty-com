@@ -5,7 +5,7 @@ import { UserRowActions } from "@/app/components/admin/UserRowActions";
 import InviteForm from "./InviteForm";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-export const metadata: Metadata = { title: "Usuários "” Admin" };
+export const metadata: Metadata = { title: "Usuários — Admin" };
 
 const PAGE_SIZE = 20;
 
@@ -40,7 +40,7 @@ export default async function AdminUsuariosPage({ searchParams }: Props) {
         </p>
       </div>
 
-      {/* Invite form "” convidar novo cliente */}
+      {/* Invite form — convidar novo cliente */}
       <InviteForm />
 
       <div style={{ background: "var(--card-bg)", border: "1px solid var(--card-border)", borderRadius: 14, overflow: "hidden" }}>
@@ -61,11 +61,11 @@ export default async function AdminUsuariosPage({ searchParams }: Props) {
 
             {/* Nome + email */}
             <div>
-              <p style={{ margin: "0 0 2px", fontSize: "13px", fontWeight: 700, color: "var(--text)" }}>{u.name || ""”"}</p>
-              <p style={{ margin: 0, fontSize: "11px", color: "var(--text-faint)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={u.email ?? ""}>{u.email ?? ""”"}</p>
+              <p style={{ margin: "0 0 2px", fontSize: "13px", fontWeight: 700, color: "var(--text)" }}>{u.name || ""}</p>
+              <p style={{ margin: 0, fontSize: "11px", color: "var(--text-faint)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={u.email ?? ""}>{u.email ?? ""}</p>
             </div>
 
-            {/* ID "” encurtado, com ID completo no hover */}
+            {/* ID — encurtado, com ID completo no hover */}
             <span
               title={u.id}
               style={{ fontSize: "11px", color: "var(--text-faint)", fontFamily: "monospace", cursor: "help", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { getAllRoadmapAdmin } from "@/app/actions/roadmap";
 import { Map, Plus, ThumbsUp, Lightbulb, Calendar, Rocket, CheckCircle2, XCircle, Globe, Lock } from "lucide-react";
 
-export const metadata: Metadata = { title: "Roadmap "” Admin" };
+export const metadata: Metadata = { title: "Roadmap — Admin" };
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; Icon: React.ComponentType<{ size?: number; style?: React.CSSProperties }> }> = {
   ideia:              { label: "Ideia",            color: "#94a3b8",        bg: "rgba(148,163,184,0.12)", Icon: Lightbulb },

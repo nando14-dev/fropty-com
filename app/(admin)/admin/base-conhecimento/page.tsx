@@ -4,7 +4,7 @@ import { getAllArticlesAdmin } from "@/app/actions/knowledge";
 import { BookOpen, Plus, Eye, ThumbsUp, ThumbsDown, Pencil, FileText, CheckCircle2 } from "lucide-react";
 import { TogglePublishedButton } from "@/app/components/knowledge/TogglePublishedButton";
 
-export const metadata: Metadata = { title: "Base de Conhecimento "” Admin" };
+export const metadata: Metadata = { title: "Base de Conhecimento — Admin" };
 
 const CATEGORY_LABELS: Record<string, string> = {
   geral: "Geral", suporte: "Suporte", produto: "Produto",
