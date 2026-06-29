@@ -30,7 +30,6 @@ const NAV: NavItem[] = [
   { id: "base-conhecimento", href: "/admin/base-conhecimento", Icon: BookOpen,          label: "Base de Conhecimento",group: "produto" },
   { id: "analytics",         href: "/admin/analytics",         Icon: BarChart2,         label: "Analytics",           group: "sistema" },
   { id: "audit",             href: "/admin/audit",             Icon: ShieldCheck,       label: "Auditoria",           group: "sistema" },
-  { id: "perfil",            href: "/admin/perfil",            Icon: UserCircle,        label: "Meu Perfil",          group: "sistema" },
 ];
 
 const GROUP_LABELS: Record<string, string> = {
@@ -50,15 +49,32 @@ export function AdminSidebar({ name, initials, userId, initialTheme = "dark" }: 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [collapsed,  setCollapsed]  = useState(false);
   const [menuOpen,   setMenuOpen]   = useState(false);
-  const footerRef = useRef<HTMLDivElement>(null);
+  const [popPos,     setPopPos]     = useState<{ bottom: number; left: number } | null>(null);
+  const footerRef  = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     function onOutside(e: MouseEvent) {
-      if (footerRef.current && !footerRef.current.contains(e.target as Node)) setMenuOpen(false);
+      const popEl = document.getElementById("admin-user-popover");
+      if (
+        footerRef.current && !footerRef.current.contains(e.target as Node) &&
+        (!popEl || !popEl.contains(e.target as Node))
+      ) setMenuOpen(false);
     }
     if (menuOpen) document.addEventListener("mousedown", onOutside);
     return () => document.removeEventListener("mousedown", onOutside);
   }, [menuOpen]);
+
+  function handleMenuToggle() {
+    if (!menuOpen && triggerRef.current) {
+      const r = triggerRef.current.getBoundingClientRect();
+      setPopPos({
+        bottom: window.innerHeight - r.top + 8,
+        left: collapsed ? r.right + 8 : r.left,
+      });
+    }
+    setMenuOpen(o => !o);
+  }
 
   useEffect(() => {
     const saved = localStorage.getItem("hub-admin-sidebar-collapsed");
@@ -108,56 +124,27 @@ export function AdminSidebar({ name, initials, userId, initialTheme = "dark" }: 
           marginBottom: 20, paddingLeft: collapsed ? 0 : 2,
           flexShrink: 0,
         }}>
-          <Link href="/admin/overview" style={{ display: "flex", alignItems: "center", gap: 9, textDecoration: "none", overflow: "hidden" }}>
-            <Image
-              src="/logo-icon.png"
-              alt="Fropty Hub"
-              width={28}
-              height={28}
-              style={{ objectFit: "contain", flexShrink: 0, borderRadius: 6 }}
-            />
-            <span style={{
-              fontSize: "14px", fontWeight: 700, color: "var(--text)",
-              whiteSpace: "nowrap", letterSpacing: "-0.01em",
-              opacity: collapsed ? 0 : 1,
-              maxWidth: collapsed ? 0 : 160,
-              transition: "opacity 0.18s, max-width 0.22s",
-              overflow: "hidden",
-            }}>
-              Fropty<span style={{ background: "linear-gradient(90deg,#9333ea,#3b82f6,#22c55e,#f97316)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>Hub</span>
-            </span>
-          </Link>
-
-          {!collapsed && (
-            <button
-              onClick={toggleCollapse}
-              title="Recolher menu"
-              className="portal-sidebar-toggle"
-              style={{
-                width: 26, height: 26, borderRadius: "var(--r-sm)",
-                border: "1px solid var(--border)", background: "var(--surface-2)",
-                cursor: "pointer", color: "var(--text-faint)",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                flexShrink: 0,
-              }}
-            >
-              <PanelLeftClose size={13} />
-            </button>
-          )}
-
-          {collapsed && (
+          {collapsed ? (
+            /* Collapsed: logo icon centered + clicável para expandir */
             <button
               onClick={toggleCollapse}
               title="Expandir menu"
-              style={{
-                width: 30, height: 30, borderRadius: "var(--r-sm)",
-                border: "1px solid var(--border)", background: "var(--surface-2)",
-                cursor: "pointer", color: "var(--text-faint)",
-                display: "flex", alignItems: "center", justifyContent: "center",
-              }}
+              style={{ background: "none", border: "none", cursor: "pointer", padding: 0, display: "flex", alignItems: "center", justifyContent: "center" }}
             >
-              <PanelLeftOpen size={13} />
+              <Image src="/logo-icon.png" alt="Fropty Hub" width={28} height={28} style={{ objectFit: "contain", borderRadius: 6 }} />
             </button>
+          ) : (
+            <>
+              <Link href="/admin/overview" style={{ display: "flex", alignItems: "center", gap: 9, textDecoration: "none", overflow: "hidden" }}>
+                <Image src="/logo-icon.png" alt="Fropty Hub" width={28} height={28} style={{ objectFit: "contain", flexShrink: 0, borderRadius: 6 }} />
+                <span style={{ fontSize: "14px", fontWeight: 700, color: "var(--text)", whiteSpace: "nowrap", letterSpacing: "-0.01em" }}>
+                  Fropty<span style={{ background: "linear-gradient(90deg,#9333ea,#3b82f6,#22c55e,#f97316)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>Hub</span>
+                </span>
+              </Link>
+              <button onClick={toggleCollapse} title="Recolher menu" className="portal-sidebar-toggle" style={{ width: 26, height: 26, borderRadius: "var(--r-sm)", border: "1px solid var(--border)", background: "var(--surface-2)", cursor: "pointer", color: "var(--text-faint)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                <PanelLeftClose size={13} />
+              </button>
+            </>
           )}
         </div>
 
@@ -223,74 +210,14 @@ export function AdminSidebar({ name, initials, userId, initialTheme = "dark" }: 
           ))}
         </nav>
 
-        {/* ── Footer: user trigger + dropdown ── */}
-        <div ref={footerRef} style={{ flexShrink: 0, marginTop: 8, position: "relative" }}>
+        {/* ── Footer: user trigger ── */}
+        <div ref={footerRef} style={{ flexShrink: 0, marginTop: 8 }}>
           <div style={{ height: 1, background: "var(--border)", marginBottom: 6 }} />
-
-          {/* Dropdown popover */}
-          {menuOpen && (
-            <div style={{
-              position: "absolute", bottom: "calc(100% + 8px)",
-              left: collapsed ? -8 : 0, right: 0,
-              minWidth: 210,
-              background: "var(--surface)", border: "1px solid var(--border)",
-              borderRadius: "var(--r-lg)", boxShadow: "0 8px 32px rgba(0,0,0,0.25)",
-              overflow: "hidden", zIndex: 200,
-            }}>
-              {/* User card header */}
-              <div style={{ padding: "12px 14px 10px", display: "flex", alignItems: "center", gap: 10, borderBottom: "1px solid var(--border)" }}>
-                <div style={{ width: 36, height: 36, borderRadius: "50%", background: "var(--surface-2)", border: "1.5px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "13px", fontWeight: 800, color: "var(--text)", flexShrink: 0 }}>
-                  {initials}
-                </div>
-                <div style={{ overflow: "hidden" }}>
-                  <p style={{ margin: 0, fontSize: "13px", fontWeight: 700, color: "var(--text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{name}</p>
-                  <p style={{ margin: 0, fontSize: "10.5px", color: "var(--text-faint)", display: "flex", alignItems: "center", gap: 3 }}>
-                    <Shield size={8} style={{ color: "var(--primary)" }} /> Administrador
-                  </p>
-                </div>
-              </div>
-
-              {/* Items */}
-              <div style={{ padding: "6px" }}>
-                <Link href="/admin/perfil" onClick={() => setMenuOpen(false)} style={dropItem}>
-                  <UserCircle size={14} /> Meu Perfil
-                </Link>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "7px 10px", borderRadius: "var(--r-md)" }}>
-                  <span style={{ display: "flex", alignItems: "center", gap: 8, fontSize: "13px", color: "var(--text-muted)", fontWeight: 500 }}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
-                    Tema
-                  </span>
-                  <PortalThemeToggle initialTheme={initialTheme} />
-                </div>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "7px 10px", borderRadius: "var(--r-md)" }}>
-                  <span style={{ display: "flex", alignItems: "center", gap: 8, fontSize: "13px", color: "var(--text-muted)", fontWeight: 500 }}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
-                    Notificações
-                  </span>
-                  <NotificationBell userId={userId} />
-                </div>
-              </div>
-
-              <div style={{ height: 1, background: "var(--border)" }} />
-
-              <div style={{ padding: "6px" }}>
-                <button
-                  onClick={handleSignOut}
-                  disabled={pending}
-                  style={{ width: "100%", display: "flex", alignItems: "center", gap: 8, padding: "7px 10px", borderRadius: "var(--r-md)", fontSize: "13px", fontWeight: 500, color: "var(--c-danger)", background: "none", border: "none", cursor: pending ? "not-allowed" : "pointer", fontFamily: "inherit", opacity: pending ? 0.5 : 1 }}
-                  onMouseEnter={e => (e.currentTarget.style.background = "rgba(220,38,38,0.07)")}
-                  onMouseLeave={e => (e.currentTarget.style.background = "none")}
-                >
-                  {pending ? <Loader2 size={13} style={{ animation: "spin 0.8s linear infinite" }} /> : <LogOut size={13} />}
-                  {pending ? "Saindo…" : "Sair"}
-                </button>
-              </div>
-            </div>
-          )}
 
           {/* User trigger button */}
           <button
-            onClick={() => setMenuOpen(o => !o)}
+            ref={triggerRef}
+            onClick={handleMenuToggle}
             title={collapsed ? name : undefined}
             style={{
               width: "100%", display: "flex", alignItems: "center",
@@ -328,6 +255,116 @@ export function AdminSidebar({ name, initials, userId, initialTheme = "dark" }: 
 
   return (
     <>
+      {/* User popover — fixed position para escapar do overflow:hidden do sidebar */}
+      {menuOpen && popPos && (
+        <div
+          id="admin-user-popover"
+          style={{
+            position: "fixed",
+            bottom: popPos.bottom,
+            left: popPos.left,
+            width: 232,
+            background: "var(--surface)",
+            border: "1px solid var(--border)",
+            borderRadius: "var(--r-lg)",
+            boxShadow: "0 8px 32px rgba(0,0,0,0.28)",
+            overflow: "hidden",
+            zIndex: 9999,
+          }}
+        >
+          {/* User card header */}
+          <div style={{ padding: "14px 14px 12px", display: "flex", alignItems: "center", gap: 10, borderBottom: "1px solid var(--border)" }}>
+            <div style={{ width: 38, height: 38, borderRadius: "50%", background: "var(--surface-2)", border: "1.5px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px", fontWeight: 800, color: "var(--text)", flexShrink: 0 }}>
+              {initials}
+            </div>
+            <div style={{ overflow: "hidden", flex: 1, minWidth: 0 }}>
+              <p style={{ margin: 0, fontSize: "13px", fontWeight: 700, color: "var(--text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{name}</p>
+              <p style={{ margin: 0, fontSize: "10.5px", color: "var(--text-faint)", display: "flex", alignItems: "center", gap: 3 }}>
+                <Shield size={8} style={{ color: "var(--primary)" }} /> Administrador · Fropty Hub
+              </p>
+            </div>
+          </div>
+
+          {/* Conta */}
+          <div style={{ padding: "6px" }}>
+            <p style={{ margin: "2px 10px 3px", fontSize: "9.5px", fontWeight: 800, letterSpacing: "0.09em", textTransform: "uppercase", color: "var(--text-faint)" }}>Conta</p>
+            <Link href="/admin/perfil" onClick={() => setMenuOpen(false)} style={dropItem}
+              onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.background = "var(--surface-2)"}
+              onMouseLeave={e => (e.currentTarget as HTMLAnchorElement).style.background = "transparent"}
+            >
+              <UserCircle size={14} /> Meu Perfil
+            </Link>
+            <Link href="/admin/usuarios" onClick={() => setMenuOpen(false)} style={dropItem}
+              onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.background = "var(--surface-2)"}
+              onMouseLeave={e => (e.currentTarget as HTMLAnchorElement).style.background = "transparent"}
+            >
+              <Users size={14} /> Gerenciar Usuários
+            </Link>
+            <Link href="/admin/financeiro" onClick={() => setMenuOpen(false)} style={dropItem}
+              onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.background = "var(--surface-2)"}
+              onMouseLeave={e => (e.currentTarget as HTMLAnchorElement).style.background = "transparent"}
+            >
+              <CreditCard size={14} /> Financeiro
+            </Link>
+          </div>
+
+          <div style={{ height: 1, background: "var(--border)" }} />
+
+          {/* Preferências */}
+          <div style={{ padding: "6px" }}>
+            <p style={{ margin: "2px 10px 3px", fontSize: "9.5px", fontWeight: 800, letterSpacing: "0.09em", textTransform: "uppercase", color: "var(--text-faint)" }}>Preferências</p>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "7px 10px", borderRadius: "var(--r-md)" }}>
+              <span style={{ display: "flex", alignItems: "center", gap: 8, fontSize: "13px", color: "var(--text-muted)", fontWeight: 500 }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+                Tema
+              </span>
+              <PortalThemeToggle initialTheme={initialTheme} />
+            </div>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "7px 10px", borderRadius: "var(--r-md)" }}>
+              <span style={{ display: "flex", alignItems: "center", gap: 8, fontSize: "13px", color: "var(--text-muted)", fontWeight: 500 }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+                Notificações
+              </span>
+              <NotificationBell userId={userId} />
+            </div>
+          </div>
+
+          <div style={{ height: 1, background: "var(--border)" }} />
+
+          {/* Sistema */}
+          <div style={{ padding: "6px" }}>
+            <p style={{ margin: "2px 10px 3px", fontSize: "9.5px", fontWeight: 800, letterSpacing: "0.09em", textTransform: "uppercase", color: "var(--text-faint)" }}>Sistema</p>
+            <Link href="/admin/analytics" onClick={() => setMenuOpen(false)} style={dropItem}
+              onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.background = "var(--surface-2)"}
+              onMouseLeave={e => (e.currentTarget as HTMLAnchorElement).style.background = "transparent"}
+            >
+              <BarChart2 size={14} /> Analytics
+            </Link>
+            <Link href="/admin/audit" onClick={() => setMenuOpen(false)} style={dropItem}
+              onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.background = "var(--surface-2)"}
+              onMouseLeave={e => (e.currentTarget as HTMLAnchorElement).style.background = "transparent"}
+            >
+              <ShieldCheck size={14} /> Auditoria
+            </Link>
+          </div>
+
+          <div style={{ height: 1, background: "var(--border)" }} />
+
+          <div style={{ padding: "6px" }}>
+            <button
+              onClick={handleSignOut}
+              disabled={pending}
+              style={{ width: "100%", display: "flex", alignItems: "center", gap: 8, padding: "7px 10px", borderRadius: "var(--r-md)", fontSize: "13px", fontWeight: 500, color: "var(--c-danger)", background: "none", border: "none", cursor: pending ? "not-allowed" : "pointer", fontFamily: "inherit", opacity: pending ? 0.5 : 1 }}
+              onMouseEnter={e => (e.currentTarget.style.background = "rgba(220,38,38,0.07)")}
+              onMouseLeave={e => (e.currentTarget.style.background = "none")}
+            >
+              {pending ? <Loader2 size={13} style={{ animation: "spin 0.8s linear infinite" }} /> : <LogOut size={13} />}
+              {pending ? "Saindo…" : "Sair"}
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Mobile topbar */}
       <div className="portal-topbar">
         <button onClick={() => setMobileOpen(true)} aria-label="Abrir menu" style={{ width: 36, height: 36, borderRadius: "var(--r-md)", background: "var(--surface)", border: "1px solid var(--border)", cursor: "pointer", color: "var(--text-muted)", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
