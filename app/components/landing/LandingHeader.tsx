@@ -65,7 +65,7 @@ export function LandingHeader() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginLeft: 'auto' }}>
           <AnimatedThemeToggler size={32} />
           <RainbowButton asChild size="sm">
-            <a href="#acesso" style={{ textDecoration: 'none' }}>Solicitar acesso</a>
+            <a href="#acesso" style={{ textDecoration: 'none' }}>Ativar meu portal</a>
           </RainbowButton>
           <button
             className="lp-mobile-btn"
@@ -97,7 +97,7 @@ export function LandingHeader() {
           ))}
           <RainbowButton asChild className="w-full mt-4">
             <a href="#acesso" onClick={() => setOpen(false)} style={{ textDecoration: 'none', display: 'block', textAlign: 'center' }}>
-              Solicitar acesso
+              Ativar meu portal
             </a>
           </RainbowButton>
         </div>

@@ -19,10 +19,10 @@ const AUDIENCES = [
 ]
 
 const DIFFERENTIALS = [
-  { title: 'Não é um formulário de contato', desc: 'O Hub é uma plataforma operacional completa, não uma caixa de entrada disfarçada de portal.' },
-  { title: 'Suporte que gera dados', desc: 'Cada chamado vira dado. Health score, NPS, CSAT — tudo medido automaticamente, sem planilha.' },
-  { title: 'Transparência total', desc: 'O cliente vê o que está acontecendo em tempo real — sem precisar enviar e-mail para perguntar.' },
-  { title: 'Upsell natural', desc: 'Projetos solicitados dentro do Hub são 3× mais fáceis de aprovar. O contexto já existe.' },
+  { title: 'Não é mais um help desk', desc: 'Zendesk e Freshdesk gerenciam tickets. O Hub gerencia relacionamentos — chamados, projetos, contratos e receita no mesmo lugar.' },
+  { title: 'Cada chamado vira dado', desc: 'Ao resolver um ticket, o Hub atualiza automaticamente o Health Score do cliente — satisfação, uso e engajamento em tempo real, sem planilha.' },
+  { title: 'O cliente sabe o que está acontecendo', desc: 'Progresso do projeto, status do chamado e faturas disponíveis 24/7. Sem e-mail de atualização, sem reunião de status, sem "qual é o prazo?".' },
+  { title: 'Upsell que surge do contexto', desc: 'Quando o cliente abre um chamado, você vê o histórico completo dele. Propor um novo projeto ali é natural — não é cold sell.' },
 ]
 
 export function LandingAbout() {
@@ -36,12 +36,12 @@ export function LandingAbout() {
               Quem usa o Hub
             </p>
             <h2 style={{ fontSize: 'clamp(26px, 3.2vw, 40px)', fontWeight: 800, letterSpacing: '-1.5px', lineHeight: 1.1, margin: 0 }}>
-              Um portal.<br />Todos os clientes do ecossistema.
+              Um lugar.<br />Para tudo.
             </h2>
           </div>
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <p style={{ fontSize: 15, color: 'var(--text-muted)', lineHeight: 1.75, margin: 0 }}>
-              O Fropty Hub atende todos os produtos e serviços da Fropty. Independente de ser cliente de SaaS, projeto ou segurança — o portal é o único ponto de contato com nossa equipe.
+              O Fropty Hub é o portal único de todos os clientes da Fropty — independente do produto contratado. Suporte, projeto, segurança ou SaaS: um login, uma interface, tudo visível.
             </p>
           </div>
         </div>

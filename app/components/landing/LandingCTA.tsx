@@ -54,10 +54,10 @@ export function LandingCTA() {
                 Comece agora
               </p>
               <h2 style={{ fontSize: 'clamp(24px, 3vw, 36px)', fontWeight: 800, letterSpacing: '-1px', lineHeight: 1.1, marginBottom: 16 }}>
-                O portal que transforma suporte em relacionamento.
+                Seu portal está pronto. Vamos ativar.
               </h2>
               <p style={{ fontSize: 14, opacity: 0.58, lineHeight: 1.7, marginBottom: 36, maxWidth: 360 }}>
-                Um ponto de contato. Múltiplos produtos. Suporte com SLA, projetos com visibilidade e financeiro organizado.
+                Incluído no seu plano. Nossa equipe ativa o acesso em até 24h úteis — com onboarding guiado e dados do seu contrato já configurados.
               </p>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gridAutoRows: '90px', gap: 10, maxWidth: 340 }}>
                 {STATS.map(s => (
@@ -81,15 +81,15 @@ export function LandingCTA() {
             {success ? (
               <div style={{ textAlign: 'center', padding: '40px 0' }}>
                 <CheckCircle size={40} style={{ color: 'var(--c-success)', marginBottom: 16 }} />
-                <h3 style={{ fontSize: 20, fontWeight: 800, color: 'var(--text)', marginBottom: 8 }}>Solicitação enviada!</h3>
+                <h3 style={{ fontSize: 20, fontWeight: 800, color: 'var(--text)', marginBottom: 8 }}>Pronto! Seu portal está em ativação.</h3>
                 <p style={{ fontSize: 14, color: 'var(--text-muted)', lineHeight: 1.65 }}>
-                  Entraremos em contato em até 24h úteis com as instruções de acesso ao seu portal.
+                  Nossa equipe entra em contato em até 2h úteis para confirmar os dados e ativar seu acesso. Você receberá as credenciais por e-mail com um guia de onboarding.
                 </p>
               </div>
             ) : (
               <>
-                <h3 style={{ fontSize: 20, fontWeight: 800, color: 'var(--text)', marginBottom: 6 }}>Solicitar acesso</h3>
-                <p style={{ fontSize: 13.5, color: 'var(--text-muted)', marginBottom: 28 }}>Preencha e entraremos em contato em até 24h úteis.</p>
+                <h3 style={{ fontSize: 20, fontWeight: 800, color: 'var(--text)', marginBottom: 6 }}>Ativar meu portal</h3>
+                <p style={{ fontSize: 13.5, color: 'var(--text-muted)', marginBottom: 28 }}>Incluso no plano. Ativamos em até 24h úteis após o preenchimento.</p>
                 <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }} noValidate>
                   {[
                     { key: 'name', label: 'Nome completo', type: 'text', placeholder: 'Seu nome' },
@@ -136,7 +136,7 @@ export function LandingCTA() {
                     className="w-full"
                     style={{ width: '100%' }}
                   >
-                    {loading ? 'Enviando...' : 'Solicitar acesso →'}
+                    {loading ? 'Ativando...' : 'Ativar meu portal →'}
                   </RainbowButton>
                 </form>
               </>

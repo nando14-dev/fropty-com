@@ -201,8 +201,8 @@ import type React from 'react'
 
 const STAT_ITEMS = [
   { value: '< 4h', label: 'tempo de resposta' },
-  { value: '99.9%', label: 'disponibilidade' },
-  { value: '7', label: 'módulos integrados' },
+  { value: '98%', label: 'CSAT médio' },
+  { value: '200+', label: 'clientes ativos' },
 ]
 
 export function LandingHero() {
@@ -220,17 +220,23 @@ export function LandingHero() {
           </div>
 
           <h1 style={{ fontSize: 'clamp(36px, 5vw, 62px)', fontWeight: 800, lineHeight: 1.05, letterSpacing: '-2px', margin: '0 0 20px' }}>
-            Suporte que vira<br />
-            <span style={{ color: 'var(--brand-500)' }}>relacionamento.</span>
+            Seu cliente merece<br />
+            <span style={{ color: 'var(--brand-500)' }}>mais que um ticket.</span>
           </h1>
 
-          <p style={{ fontSize: 17, color: 'var(--text-muted)', lineHeight: 1.7, maxWidth: 460, margin: '0 0 32px' }}>
-            O Fropty Hub é o portal central de todos os clientes do ecossistema. Chamados, projetos, contratos e financeiro — tudo em um lugar.
+          <p style={{ fontSize: 17, color: 'var(--text-muted)', lineHeight: 1.7, maxWidth: 460, margin: '0 0 20px' }}>
+            Um portal onde cada cliente acompanha chamados, projetos, contratos e saldo — em tempo real, sem e-mail, sem planilha, sem WhatsApp.
           </p>
+
+          {/* Preço incluso — principal objeção respondida no hero */}
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, background: 'rgba(34,197,94,.08)', border: '1px solid rgba(34,197,94,.22)', borderRadius: 8, padding: '6px 12px', marginBottom: 32 }}>
+            <span style={{ fontSize: 13, color: 'var(--c-success)' }}>✓</span>
+            <span style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--c-success)' }}>Incluído em todos os planos Fropty — sem custo adicional</span>
+          </div>
 
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 40 }}>
             <RainbowButton asChild size="lg">
-              <a href="#acesso" style={{ textDecoration: 'none' }}>Solicitar acesso →</a>
+              <a href="#acesso" style={{ textDecoration: 'none' }}>Ativar meu portal →</a>
             </RainbowButton>
             <a href="#modulos" style={{
               display: 'inline-flex', alignItems: 'center',

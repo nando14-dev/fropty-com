@@ -1030,6 +1030,18 @@ a { color: inherit; text-decoration: none; }
    ANIMAÇÕES DO ECOSSISTEMA FROPTY
    ══════════════════════════════════════════════════════════════════ */
 
+/* ── Grids novos: LandingProblem + LandingHealthScore ──────────── */
+.lp-problem-grid {
+  grid-template-columns: 1fr 1fr;
+}
+.lp-hs-grid {
+  grid-template-columns: 1fr 1fr;
+}
+@media (max-width: 768px) {
+  .lp-problem-grid,
+  .lp-hs-grid { grid-template-columns: 1fr; }
+}
+
 /* Scroll reveal */
 .sr {
   opacity:   0;

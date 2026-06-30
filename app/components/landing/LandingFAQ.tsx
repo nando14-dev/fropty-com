@@ -3,13 +3,13 @@ import { useState } from 'react'
 import { ChevronDown } from 'lucide-react'
 
 const FAQS = [
-  { q: 'O acesso ao Hub tem custo adicional?', a: 'Não. O Fropty Hub é incluído em todos os planos de produto e serviço da Fropty. Não há cobrança separada pelo portal.' },
-  { q: 'Quanto tempo leva para ter acesso após contratar?', a: 'O acesso é criado em até 24h úteis após a contratação. Você recebe um e-mail de boas-vindas com as credenciais e um guia de onboarding.' },
-  { q: 'Posso adicionar mais usuários da minha empresa?', a: 'Sim. Dependendo do plano, você pode adicionar múltiplos usuários com diferentes permissões — gestor, financeiro, técnico e visualizador.' },
-  { q: 'O que acontece se meu chamado ultrapassar o SLA?', a: 'O chamado é escalado automaticamente para o nível sênior e você recebe uma notificação. O SLA descumprido é registrado e refletido no relatório mensal.' },
-  { q: 'O Hub se integra com outras ferramentas que usamos?', a: 'Sim. O Hub possui integração com Slack para notificações, e-mail para fallback de comunicação, e webhooks para conectar com sistemas internos. Novas integrações podem ser solicitadas via roadmap.' },
-  { q: 'Posso solicitar novos projetos pelo Hub?', a: 'Sim. O módulo de Projetos permite abrir solicitações de desenvolvimento, acompanhar propostas, aprovar escopo e acompanhar entregas — tudo dentro do portal.' },
-  { q: 'O Hub substitui completamente o e-mail de suporte?', a: 'O Hub é o canal primário e recomendado. O e-mail existe como fallback, mas todas as interações são centralizadas no portal para garantir rastreabilidade e SLA.' },
+  { q: 'O acesso ao Hub tem algum custo?', a: 'Não. O Fropty Hub é incluído em todos os planos — produto, projeto ou segurança. Sem taxa de ativação, sem mensalidade separada, sem surpresa na fatura.' },
+  { q: 'Já usamos Zendesk / Freshdesk. Vale migrar?', a: 'O Hub não é apenas um help desk. Ele une chamados, projetos, contratos, financeiro e Health Score no mesmo portal. Se você usa mais de uma ferramenta para gerenciar clientes hoje, o Hub substitui todas elas — sem custo adicional, incluído no plano Fropty.' },
+  { q: 'Quanto tempo leva para ter acesso?', a: 'Em até 24h úteis após a contratação você recebe um e-mail com credenciais e guia de onboarding. O portal já vem configurado com os dados do seu contrato.' },
+  { q: 'O que acontece com meu acesso se eu cancelar um produto Fropty?', a: 'O acesso ao Hub permanece ativo enquanto houver qualquer contrato ativo com a Fropty. O histórico de chamados, projetos e documentos fica disponível para consulta mesmo após o encerramento.' },
+  { q: 'Posso adicionar outros usuários da minha empresa?', a: 'Sim. Dependendo do plano, você pode convidar usuários com perfis diferentes — gestor, financeiro, técnico e visualizador — cada um com acesso restrito ao que precisa.' },
+  { q: 'O Hub funciona para todos os produtos da Fropty?', a: 'Sim. Um login acessa tudo: chamados do Boost, projetos do FroptyApps, alertas do Sentinel, financeiro de qualquer produto. Sem portais separados por produto.' },
+  { q: 'Existe integração com Slack ou outras ferramentas?', a: 'Sim. O Hub envia notificações de chamado e status de projeto via Slack. Webhooks permitem conectar com ERPs, CRMs e sistemas internos. Novas integrações podem ser votadas no módulo Roadmap.' },
 ]
 
 export function LandingFAQ() {

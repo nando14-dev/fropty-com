@@ -52,6 +52,14 @@ const MODULES = [
     features: ['Health score', 'NPS automatizado', 'Onboarding guiado', 'Check-ins periódicos', 'Alertas de churn'],
     desc: 'Acompanhamento proativo da saúde do cliente — health score, NPS e check-ins para antecipar problemas.',
   },
+  {
+    id: 'health',
+    name: 'Health Score',
+    tagline: 'Saiba quem está prestes a cancelar',
+    color: '#22c55e',
+    features: ['Score composto em tempo real', 'Alertas de churn preventivos', 'Análise de satisfação', 'Métricas de uso e engajamento', 'Análise de receita'],
+    desc: 'Score composto (satisfação + tickets + uso + engajamento + receita) que avisa quando um cliente está em risco — antes de ele cancelar.',
+  },
 ]
 
 const DURATION = 4500
