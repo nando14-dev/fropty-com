@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -20,12 +20,12 @@ type SubItem = { id: string; href: string; label: string; Icon?: LucideIcon };
 type NavItem = { id: string; href: string; Icon: LucideIcon; label: string; group?: string; subItems?: SubItem[] };
 
 const NAV: NavItem[] = [
-  { id: "overview",          href: "/admin/overview",          Icon: LayoutDashboard,   label: "Visão Geral",         group: "main" },
+  { id: "overview",          href: "/admin/overview",          Icon: LayoutDashboard,   label: "VisÃ£o Geral",         group: "main" },
   {
-    id: "usuarios", href: "/admin/usuarios", Icon: Users, label: "Usuários", group: "main",
+    id: "usuarios", href: "/admin/usuarios", Icon: Users, label: "UsuÃ¡rios", group: "main",
     subItems: [
-      { id: "usuarios-overview", href: "/admin/usuarios",      label: "Visão Geral",   Icon: ListFilter },
-      { id: "usuarios-novo",     href: "/admin/usuarios/novo", label: "Novo Usuário",  Icon: UserPlus },
+      { id: "usuarios-overview", href: "/admin/usuarios",      label: "VisÃ£o Geral",   Icon: ListFilter },
+      { id: "usuarios-novo",     href: "/admin/usuarios/novo", label: "Novo UsuÃ¡rio",  Icon: UserPlus },
     ],
   },
   { id: "customer-success",  href: "/admin/customer-success",  Icon: HeartPulse,        label: "Customer Success",    group: "main" },
@@ -35,7 +35,7 @@ const NAV: NavItem[] = [
   { id: "suporte",           href: "/portal/suporte",          Icon: MessageCircle,     label: "Suporte",             group: "ops" },
   { id: "chat",              href: "/portal/chat",             Icon: MessagesSquare,    label: "Chat",                group: "ops" },
   { id: "kanban",            href: "/portal/kanban",           Icon: LayoutGrid,        label: "Kanban",              group: "ops" },
-  { id: "calendario",        href: "/portal/calendario",       Icon: CalendarDays,      label: "Calendário",          group: "ops" },
+  { id: "calendario",        href: "/portal/calendario",       Icon: CalendarDays,      label: "CalendÃ¡rio",          group: "ops" },
   { id: "planos",            href: "/portal/planos",           Icon: Sparkles,          label: "Planos",              group: "ops" },
   { id: "roadmap",           href: "/admin/roadmap",           Icon: Map,               label: "Roadmap",             group: "produto" },
   { id: "feedback",          href: "/admin/feedback",          Icon: MessageSquarePlus, label: "Feedback",            group: "produto" },
@@ -45,7 +45,7 @@ const NAV: NavItem[] = [
 ];
 
 const GROUP_LABELS: Record<string, string> = {
-  main: "Principal", ops: "Operações", produto: "Produto", sistema: "Sistema",
+  main: "Principal", ops: "OperaÃ§Ãµes", produto: "Produto", sistema: "Sistema",
 };
 
 interface Props {
@@ -188,12 +188,12 @@ export function AdminSidebar({ name, initials, userId, initialTheme = "dark", av
         }}>
           {collapsed ? (
             <button onClick={toggleCollapse} title="Expandir menu" style={{ background: "none", border: "none", cursor: "pointer", padding: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <Image src="/logo-icon.png" alt="Fropty Hub" width={28} height={28} style={{ objectFit: "contain", borderRadius: 6 }} />
+              <Image src="/logo-icon.png" alt="Fropty Hub" width={28} height={28} style={{ objectFit: "contain",  }} />
             </button>
           ) : (
             <>
               <Link href="/admin/overview" style={{ display: "flex", alignItems: "center", gap: 9, textDecoration: "none", overflow: "hidden" }}>
-                <Image src="/logo-icon.png" alt="Fropty Hub" width={28} height={28} style={{ objectFit: "contain", flexShrink: 0, borderRadius: 6 }} />
+                <Image src="/logo-icon.png" alt="Fropty Hub" width={28} height={28} style={{ objectFit: "contain", flexShrink: 0,  }} />
                 <span style={{ fontSize: "14px", fontWeight: 700, color: "var(--text)", whiteSpace: "nowrap", letterSpacing: "-0.01em" }}>
                   Fropty<span style={{ background: "linear-gradient(90deg,#9333ea,#3b82f6,#22c55e,#f97316)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>Hub</span>
                 </span>
@@ -286,7 +286,7 @@ export function AdminSidebar({ name, initials, userId, initialTheme = "dark", av
                   );
                 }
 
-                // Regular item (or collapsed with subItems → just show icon, link to main href)
+                // Regular item (or collapsed with subItems â†’ just show icon, link to main href)
                 return (
                   <Link
                     key={id}
@@ -374,7 +374,7 @@ export function AdminSidebar({ name, initials, userId, initialTheme = "dark", av
             <div style={{ overflow: "hidden", flex: 1, minWidth: 0 }}>
               <p style={{ margin: 0, fontSize: "13px", fontWeight: 700, color: "var(--text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{name}</p>
               <p style={{ margin: 0, fontSize: "10.5px", color: "var(--text-faint)", display: "flex", alignItems: "center", gap: 3 }}>
-                <Shield size={8} style={{ color: "var(--primary)" }} /> Administrador · Fropty Hub
+                <Shield size={8} style={{ color: "var(--primary)" }} /> Administrador Â· Fropty Hub
               </p>
             </div>
           </div>
@@ -384,7 +384,7 @@ export function AdminSidebar({ name, initials, userId, initialTheme = "dark", av
               <UserCircle size={14} /> Meu Perfil
             </Link>
             <Link href="/admin/usuarios" onClick={() => setMenuOpen(false)} style={dropItem} onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.background = "var(--surface-2)"} onMouseLeave={e => (e.currentTarget as HTMLAnchorElement).style.background = "transparent"}>
-              <Users size={14} /> Gerenciar Usuários
+              <Users size={14} /> Gerenciar UsuÃ¡rios
             </Link>
             <Link href="/admin/financeiro" onClick={() => setMenuOpen(false)} style={dropItem} onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.background = "var(--surface-2)"} onMouseLeave={e => (e.currentTarget as HTMLAnchorElement).style.background = "transparent"}>
               <CreditCard size={14} /> Financeiro
@@ -392,7 +392,7 @@ export function AdminSidebar({ name, initials, userId, initialTheme = "dark", av
           </div>
           <div style={{ height: 1, background: "var(--border)" }} />
           <div style={{ padding: "6px" }}>
-            <p style={{ margin: "2px 10px 3px", fontSize: "9.5px", fontWeight: 800, letterSpacing: "0.09em", textTransform: "uppercase", color: "var(--text-faint)" }}>Preferências</p>
+            <p style={{ margin: "2px 10px 3px", fontSize: "9.5px", fontWeight: 800, letterSpacing: "0.09em", textTransform: "uppercase", color: "var(--text-faint)" }}>PreferÃªncias</p>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "7px 10px", borderRadius: "var(--r-md)" }}>
               <span style={{ display: "flex", alignItems: "center", gap: 8, fontSize: "13px", color: "var(--text-muted)", fontWeight: 500 }}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
@@ -403,7 +403,7 @@ export function AdminSidebar({ name, initials, userId, initialTheme = "dark", av
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "7px 10px", borderRadius: "var(--r-md)" }}>
               <span style={{ display: "flex", alignItems: "center", gap: 8, fontSize: "13px", color: "var(--text-muted)", fontWeight: 500 }}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
-                Notificações
+                NotificaÃ§Ãµes
               </span>
               <NotificationBell userId={userId} />
             </div>
@@ -428,7 +428,7 @@ export function AdminSidebar({ name, initials, userId, initialTheme = "dark", av
               onMouseLeave={e => (e.currentTarget.style.background = "none")}
             >
               {pending ? <Loader2 size={13} style={{ animation: "spin 0.8s linear infinite" }} /> : <LogOut size={13} />}
-              {pending ? "Saindo…" : "Sair"}
+              {pending ? "Saindoâ€¦" : "Sair"}
             </button>
           </div>
         </div>
@@ -439,7 +439,7 @@ export function AdminSidebar({ name, initials, userId, initialTheme = "dark", av
           <Menu size={17} />
         </button>
         <Link href="/admin/overview" style={{ display: "flex", alignItems: "center", gap: 8, textDecoration: "none", flex: 1 }}>
-          <Image src="/logo-icon.png" alt="Fropty Hub" width={22} height={22} style={{ objectFit: "contain", borderRadius: 5 }} />
+          <Image src="/logo-icon.png" alt="Fropty Hub" width={22} height={22} style={{ objectFit: "contain",  }} />
           <span style={{ fontSize: "14px", fontWeight: 700, color: "var(--text)" }}>
             Fropty<span style={{ background: "linear-gradient(90deg,#9333ea,#3b82f6,#22c55e,#f97316)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>Hub</span>
             <span style={{ fontSize: "11px", fontWeight: 600, color: "var(--text-faint)", marginLeft: 5 }}>Admin</span>
@@ -460,3 +460,4 @@ const dropItem: React.CSSProperties = {
   fontSize: "13px", fontWeight: 500, color: "var(--text-muted)",
   textDecoration: "none", transition: "background 0.1s",
 };
+

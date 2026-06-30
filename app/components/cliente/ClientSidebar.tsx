@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -42,7 +42,7 @@ function NavIcon({ name, size = 16 }: { name: string; size?: number }) {
   return Icon ? <Icon size={size} /> : null;
 }
 
-const PLAN_LABEL: Record<string, string> = { basico: "Básico", pro: "Pro", sem_plano: "Sem plano" };
+const PLAN_LABEL: Record<string, string> = { basico: "BÃ¡sico", pro: "Pro", sem_plano: "Sem plano" };
 
 export function ClientSidebar({ user, navItems, initialTheme = "dark" }: Props) {
   const pathname              = usePathname();
@@ -79,7 +79,7 @@ export function ClientSidebar({ user, navItems, initialTheme = "dark" }: Props) 
       className={`portal-sidebar${mobileOpen ? " open" : ""}`}
       style={{ width: W, transition: "width 0.22s cubic-bezier(0.4,0,0.2,1)", overflow: "hidden" }}
     >
-      {/* Close button — mobile only */}
+      {/* Close button â€” mobile only */}
       <button
         className="portal-sidebar-close"
         onClick={() => setMobileOpen(false)}
@@ -101,7 +101,7 @@ export function ClientSidebar({ user, navItems, initialTheme = "dark" }: Props) 
         overflow: "hidden",
       }}>
 
-        {/* ── Header: logo + collapse toggle ── */}
+        {/* â”€â”€ Header: logo + collapse toggle â”€â”€ */}
         <div style={{
           display: "flex", alignItems: "center",
           justifyContent: collapsed ? "center" : "space-between",
@@ -114,7 +114,7 @@ export function ClientSidebar({ user, navItems, initialTheme = "dark" }: Props) 
               alt="Fropty Hub"
               width={28}
               height={28}
-              style={{ objectFit: "contain", flexShrink: 0, borderRadius: 6 }}
+              style={{ objectFit: "contain", flexShrink: 0,  }}
             />
             <span style={{
               fontSize: "14px", fontWeight: 700, color: "var(--text)",
@@ -161,7 +161,7 @@ export function ClientSidebar({ user, navItems, initialTheme = "dark" }: Props) 
           )}
         </div>
 
-        {/* ── Search ── */}
+        {/* â”€â”€ Search â”€â”€ */}
         {!collapsed ? (
           <button
             onClick={() => window.dispatchEvent(new KeyboardEvent("keydown", { key: "k", ctrlKey: true, metaKey: true, bubbles: true }))}
@@ -175,8 +175,8 @@ export function ClientSidebar({ user, navItems, initialTheme = "dark" }: Props) 
             }}
           >
             <Search size={13} style={{ flexShrink: 0 }} />
-            <span style={{ flex: 1 }}>Buscar…</span>
-            <kbd style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: 3, padding: "1px 5px", fontSize: "10px", fontFamily: "inherit", lineHeight: "15px" }}>⌘K</kbd>
+            <span style={{ flex: 1 }}>Buscarâ€¦</span>
+            <kbd style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: 3, padding: "1px 5px", fontSize: "10px", fontFamily: "inherit", lineHeight: "15px" }}>âŒ˜K</kbd>
           </button>
         ) : (
           <button
@@ -193,7 +193,7 @@ export function ClientSidebar({ user, navItems, initialTheme = "dark" }: Props) 
           </button>
         )}
 
-        {/* ── Nav ── */}
+        {/* â”€â”€ Nav â”€â”€ */}
         <nav style={{ display: "flex", flexDirection: "column", gap: 1, flex: 1, overflowY: "auto", overflowX: "hidden" }}>
           {nav.map(({ id, href, icon, label, badge }) => {
             const active = pathname === href || pathname.startsWith(href + "/");
@@ -248,11 +248,11 @@ export function ClientSidebar({ user, navItems, initialTheme = "dark" }: Props) 
           })}
         </nav>
 
-        {/* ── Footer: theme + user + logout ── */}
+        {/* â”€â”€ Footer: theme + user + logout â”€â”€ */}
         <div style={{ flexShrink: 0, marginTop: 8 }}>
           <div style={{ height: 1, background: "var(--border)", marginBottom: 8 }} />
 
-          {/* Theme row — only when expanded */}
+          {/* Theme row â€” only when expanded */}
           {!collapsed && (
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "4px 10px", marginBottom: 4 }}>
               <span style={{ fontSize: "12px", color: "var(--text-faint)", fontWeight: 500 }}>Tema</span>
@@ -280,7 +280,7 @@ export function ClientSidebar({ user, navItems, initialTheme = "dark" }: Props) 
               {user.avatarInitials}
             </div>
 
-            {/* Name + plan — expanded */}
+            {/* Name + plan â€” expanded */}
             {!collapsed && (
               <div style={{ flex: 1, overflow: "hidden", minWidth: 0 }}>
                 <p style={{ margin: 0, fontSize: "12.5px", fontWeight: 600, color: "var(--text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
@@ -305,7 +305,7 @@ export function ClientSidebar({ user, navItems, initialTheme = "dark" }: Props) 
               </div>
             )}
 
-            {/* Logout — expanded */}
+            {/* Logout â€” expanded */}
             {!collapsed && (
               <button
                 onClick={handleSignOut}
@@ -345,7 +345,7 @@ export function ClientSidebar({ user, navItems, initialTheme = "dark" }: Props) 
           <Menu size={17} />
         </button>
         <Link href="/portal/dashboard" style={{ display: "flex", alignItems: "center", gap: 8, textDecoration: "none", flex: 1 }}>
-          <Image src="/logo-icon.png" alt="Fropty Hub" width={22} height={22} style={{ objectFit: "contain", borderRadius: 5 }} />
+          <Image src="/logo-icon.png" alt="Fropty Hub" width={22} height={22} style={{ objectFit: "contain",  }} />
           <span style={{ fontSize: "14px", fontWeight: 700, color: "var(--text)" }}>
             Fropty<span style={{ color: "var(--primary)" }}>Hub</span>
           </span>
@@ -360,3 +360,4 @@ export function ClientSidebar({ user, navItems, initialTheme = "dark" }: Props) 
     </>
   );
 }
+

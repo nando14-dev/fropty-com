@@ -35,7 +35,7 @@ export function LandingHeader() {
 
         {/* Logo */}
         <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none', flexShrink: 0 }}>
-          <Image src="/logo-icon.png" alt="Fropty" width={26} height={26} className="logo-icon" />
+          <Image src="/logo-icon.png" alt="Fropty" width={26} height={26} style={{ flexShrink: 0, objectFit: 'contain' }} />
           <span style={{ fontSize: 14.5, fontWeight: 700, letterSpacing: '-0.3px', color: 'var(--text)' }}>
             Fropty <span style={{ color: 'var(--brand-500)' }}>Hub</span>
           </span>

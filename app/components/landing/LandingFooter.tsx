@@ -98,7 +98,7 @@ export function LandingFooter() {
           {/* Brand column */}
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
-              <Image src="/logo-icon.png" alt="Fropty" width={22} height={22} className="logo-icon" />
+              <Image src="/logo-icon.png" alt="Fropty" width={22} height={22} style={{ flexShrink: 0, objectFit: 'contain' }} />
               <span style={{ fontSize: 15, fontWeight: 700 }}>Fropty</span>
             </div>
             <p style={{ fontSize: 13, color: 'var(--t2)', lineHeight: 1.7, maxWidth: 200, margin: '0 0 20px' }}>
