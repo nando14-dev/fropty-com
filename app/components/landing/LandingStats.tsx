@@ -26,10 +26,10 @@ function Counter({ to, prefix = '', suffix = '', duration = 1800 }: { to: number
 }
 
 const STATS = [
-  { prefix: '< ', to: 4, suffix: 'h', label: 'tempo médio de resposta', note: 'nos chamados abertos' },
+  { prefix: '', to: 4, suffix: 'h', label: 'tempo médio de resposta', note: 'nos chamados abertos', custom: '< 4h' },
   { prefix: '', to: 98, suffix: '%', label: 'índice de satisfação', note: 'CSAT dos últimos 90 dias' },
   { prefix: '', to: 999, suffix: '%', label: 'disponibilidade', note: '99.9% de uptime garantido', custom: '99.9%' },
-  { prefix: '', to: 7, suffix: '', label: 'módulos integrados', note: 'um portal, tudo conectado' },
+  { prefix: '', to: 13, suffix: '', label: 'módulos integrados', note: 'um portal, tudo conectado' },
 ]
 
 export function LandingStats() {

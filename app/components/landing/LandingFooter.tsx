@@ -173,9 +173,25 @@ export function LandingFooter() {
           display: 'flex', justifyContent: 'space-between', alignItems: 'center',
           flexWrap: 'wrap', gap: 12,
         }}>
-          <p style={{ fontSize: 12, color: 'var(--t3)', margin: 0 }}>
-            © {year} Fropty. Todos os direitos reservados.
-          </p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <p style={{ fontSize: 12, color: 'var(--t3)', margin: 0 }}>
+              © {year} Fropty. Todos os direitos reservados.
+            </p>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              {[
+                { label: '🔒 LGPD', title: 'Em conformidade com a Lei Geral de Proteção de Dados' },
+                { label: '🛡️ Dados protegidos', title: 'Infraestrutura Supabase + Vercel com criptografia em trânsito e repouso' },
+                { label: '⚡ 99.9% uptime', title: 'SLA de disponibilidade garantido por contrato' },
+              ].map(s => (
+                <span key={s.label} title={s.title} style={{
+                  fontSize: 11, fontWeight: 600, color: 'var(--t3)',
+                  border: '1px solid var(--border)',
+                  borderRadius: 6, padding: '2px 8px',
+                  cursor: 'default',
+                }}>{s.label}</span>
+              ))}
+            </div>
+          </div>
           <div style={{ display: 'flex', gap: 16 }}>
             {['Privacidade', 'Termos', 'LGPD'].map(l => (
               <a

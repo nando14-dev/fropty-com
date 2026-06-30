@@ -8,7 +8,7 @@ import { LandingModules } from './components/landing/LandingModules'
 import { LandingHealthScore } from './components/landing/LandingHealthScore'
 import { LandingHowItWorks } from './components/landing/LandingHowItWorks'
 import { LandingStats } from './components/landing/LandingStats'
-import { LandingTestimonials } from './components/landing/LandingTestimonials'
+import { LandingEarlyAccess } from './components/landing/LandingEarlyAccess'
 import { LandingFAQ } from './components/landing/LandingFAQ'
 import { LandingCTA } from './components/landing/LandingCTA'
 import { LandingFooter } from './components/landing/LandingFooter'
@@ -28,7 +28,7 @@ export default function HomePage() {
         <LandingHealthScore />
         <LandingHowItWorks />
         <LandingStats />
-        <LandingTestimonials />
+        <LandingEarlyAccess />
         <LandingFAQ />
         <LandingCTA />
       </main>
