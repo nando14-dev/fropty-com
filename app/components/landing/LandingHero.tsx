@@ -229,7 +229,7 @@ export function LandingHero() {
           </p>
 
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 40 }}>
-            <RainbowButton asChild size="lg">
+            <RainbowButton asChild size="lg" variant="outline">
               <a href="#acesso" style={{ textDecoration: 'none' }}>Solicitar acesso →</a>
             </RainbowButton>
             <a href="#modulos" style={{
