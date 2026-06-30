@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { Menu, X } from 'lucide-react'
 import { AnimatedThemeToggler } from './AnimatedThemeToggler'
+import { RainbowButton } from '../RainbowButton'
 import Image from 'next/image'
 
 const NAV = [
@@ -58,17 +59,9 @@ export function LandingHeader() {
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginLeft: 'auto' }}>
           <AnimatedThemeToggler size={32} />
-          <a href="#acesso" style={{
-            fontSize: 13, fontWeight: 600, color: '#fff',
-            background: 'var(--brand-500)', borderRadius: 8,
-            padding: '6px 16px', textDecoration: 'none',
-            transition: 'opacity 0.15s',
-          }}
-          onMouseEnter={e => (e.target as HTMLElement).style.opacity = '0.85'}
-          onMouseLeave={e => (e.target as HTMLElement).style.opacity = '1'}
-          >
-            Solicitar acesso
-          </a>
+          <RainbowButton asChild size="sm">
+            <a href="#acesso" style={{ textDecoration: 'none' }}>Solicitar acesso</a>
+          </RainbowButton>
           <button
             className="lp-mobile-btn"
             onClick={() => setOpen(v => !v)}
@@ -97,14 +90,11 @@ export function LandingHeader() {
               {n.label}
             </a>
           ))}
-          <a href="#acesso" onClick={() => setOpen(false)} style={{
-            display: 'block', marginTop: 16, textAlign: 'center',
-            background: 'var(--brand-500)', color: '#fff',
-            borderRadius: 8, padding: '10px 0',
-            fontSize: 14, fontWeight: 600, textDecoration: 'none',
-          }}>
-            Solicitar acesso
-          </a>
+          <RainbowButton asChild className="w-full mt-4">
+            <a href="#acesso" onClick={() => setOpen(false)} style={{ textDecoration: 'none', display: 'block', textAlign: 'center' }}>
+              Solicitar acesso
+            </a>
+          </RainbowButton>
         </div>
       )}
     </header>

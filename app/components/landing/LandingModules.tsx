@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
 import type React from 'react'
+import { ShineBorder } from '../ShineBorder'
 
 const MODULES = [
   {
@@ -236,7 +237,8 @@ export function LandingModules() {
           </div>
 
           {/* Detail panel */}
-          <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 14, padding: 28, boxShadow: 'var(--shadow-card)' }}>
+          <ShineBorder borderRadius={14} borderWidth={1.5} duration={12} shineColor={[mod.color === 'var(--brand-500)' ? '#5B57E8' : mod.color, '#e040fb', '#FE8FB5']}>
+          <div style={{ background: 'var(--surface)', borderRadius: 14, padding: 28, boxShadow: 'var(--shadow-card)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
               <div style={{ width: 36, height: 36, borderRadius: 9, background: mod.color + '18', border: `1px solid ${mod.color}30`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <div style={{ width: 10, height: 10, borderRadius: '50%', background: mod.color }} />
@@ -262,6 +264,7 @@ export function LandingModules() {
               <ModuleMockup mod={mod} />
             </div>
           </div>
+          </ShineBorder>
         </div>
       </div>
     </section>

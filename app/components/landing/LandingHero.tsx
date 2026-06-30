@@ -1,5 +1,7 @@
 'use client'
 
+import { RainbowButton } from '../RainbowButton'
+
 /* ─── Mini mockup cards ─────────────────────────────────────── */
 
 function CardDashboard() {
@@ -227,15 +229,9 @@ export function LandingHero() {
           </p>
 
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 40 }}>
-            <a href="#acesso" style={{
-              display: 'inline-flex', alignItems: 'center', gap: 6,
-              background: 'var(--brand-500)', color: '#fff',
-              borderRadius: 10, padding: '11px 22px',
-              fontSize: 14, fontWeight: 700, textDecoration: 'none',
-              boxShadow: 'var(--shadow-brand)',
-            }}>
-              Solicitar acesso →
-            </a>
+            <RainbowButton asChild size="lg">
+              <a href="#acesso" style={{ textDecoration: 'none' }}>Solicitar acesso →</a>
+            </RainbowButton>
             <a href="#modulos" style={{
               display: 'inline-flex', alignItems: 'center',
               background: 'var(--surface)', color: 'var(--text)',

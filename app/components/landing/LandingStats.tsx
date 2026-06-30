@@ -1,5 +1,6 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
+import { ShineBorder } from '../ShineBorder'
 
 function Counter({ to, prefix = '', suffix = '', duration = 1800 }: { to: number; prefix?: string; suffix?: string; duration?: number }) {
   const [val, setVal] = useState(0)
@@ -44,7 +45,8 @@ export function LandingStats() {
           </h2>
         </div>
 
-        <div style={{ border: '1px solid var(--border)', borderRadius: 16, overflow: 'hidden', position: 'relative' }}>
+        <ShineBorder borderRadius={16} borderWidth={1.5} duration={14} shineColor={['#5B57E8', '#e040fb', '#3b82f6', '#FFBE7B']}>
+        <div style={{ borderRadius: 16, overflow: 'hidden', position: 'relative' }}>
           {/* Corner marks */}
           {[['top-0 left-0', '-top-px -left-px'], ['top-0 right-0', '-top-px -right-px'], ['bottom-0 left-0', '-bottom-px -left-px'], ['bottom-0 right-0', '-bottom-px -right-px']].map(([, pos], i) => (
             <div key={i} style={{
@@ -74,6 +76,7 @@ export function LandingStats() {
             ))}
           </div>
         </div>
+        </ShineBorder>
       </div>
     </section>
   )

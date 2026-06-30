@@ -1,6 +1,8 @@
 'use client'
 import { useState } from 'react'
 import { CheckCircle } from 'lucide-react'
+import { RainbowButton } from '../RainbowButton'
+import { ShineBorder } from '../ShineBorder'
 
 const STATS = [
   { value: '< 4h', label: 'tempo de resposta' },
@@ -74,7 +76,8 @@ export function LandingCTA() {
           </div>
 
           {/* Right — form */}
-          <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 16, padding: '40px 36px', boxShadow: 'var(--shadow-card)' }}>
+          <ShineBorder borderRadius={16} borderWidth={1.5} duration={10} shineColor={['#e040fb', '#5B57E8', '#3b82f6', '#FE8FB5']}>
+          <div style={{ background: 'var(--surface)', borderRadius: 16, padding: '40px 36px', boxShadow: 'var(--shadow-card)' }}>
             {success ? (
               <div style={{ textAlign: 'center', padding: '40px 0' }}>
                 <CheckCircle size={40} style={{ color: 'var(--c-success)', marginBottom: 16 }} />
@@ -127,20 +130,19 @@ export function LandingCTA() {
                       }}
                     />
                   </div>
-                  <button type="submit" disabled={loading} style={{
-                    all: 'unset', cursor: loading ? 'default' : 'pointer',
-                    background: loading ? 'var(--text-faint)' : 'var(--brand-500)',
-                    color: '#fff', borderRadius: 9, padding: '12px',
-                    fontSize: 14, fontWeight: 700, textAlign: 'center',
-                    transition: 'opacity 0.15s',
-                    opacity: loading ? 0.7 : 1,
-                  }}>
+                  <RainbowButton
+                    type="submit"
+                    disabled={loading}
+                    className="w-full"
+                    style={{ width: '100%' }}
+                  >
                     {loading ? 'Enviando...' : 'Solicitar acesso →'}
-                  </button>
+                  </RainbowButton>
                 </form>
               </>
             )}
           </div>
+          </ShineBorder>
         </div>
       </div>
     </section>
