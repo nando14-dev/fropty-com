@@ -2,7 +2,8 @@
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { Menu, X } from 'lucide-react'
-import { ThemeToggle } from '../ThemeToggle'
+import { AnimatedThemeToggler } from './AnimatedThemeToggler'
+import Image from 'next/image'
 
 const NAV = [
   { label: 'Visão geral', href: '#visao-geral' },
@@ -33,12 +34,7 @@ export function LandingHeader() {
 
         {/* Logo */}
         <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none', flexShrink: 0 }}>
-          <div style={{ width: 26, height: 26, borderRadius: 7, background: 'var(--brand-500)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-              <polyline points="9 22 9 12 15 12 15 22"/>
-            </svg>
-          </div>
+          <Image src="/logo-icon.png" alt="Fropty" width={26} height={26} className="logo-icon" />
           <span style={{ fontSize: 14.5, fontWeight: 700, letterSpacing: '-0.3px', color: 'var(--text)' }}>
             Fropty <span style={{ color: 'var(--brand-500)' }}>Hub</span>
           </span>
@@ -61,7 +57,7 @@ export function LandingHeader() {
         </nav>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginLeft: 'auto' }}>
-          <ThemeToggle />
+          <AnimatedThemeToggler size={32} />
           <a href="#acesso" style={{
             fontSize: 13, fontWeight: 600, color: '#fff',
             background: 'var(--brand-500)', borderRadius: 8,

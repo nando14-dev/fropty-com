@@ -140,6 +140,20 @@
   --t3:  var(--text-faint);
   --bd:  var(--border);
   --bd2: var(--border-hover);
+
+  /* CTA section — light mode */
+  --cta-l:        var(--bg2);
+  --cta-l-text:   var(--text);
+  --cta-r:        var(--surface);
+  --cta-r-bd:     var(--border);
+  --cta-f:        var(--bg2);
+  --cta-f-bd:     var(--border);
+  --cta-btn:      var(--text);
+  --cta-btn-c:    var(--surface);
+  --cta-stripe:   rgba(0,0,0,0.04);
+  --cta-glow:     rgba(91,87,232,0.08);
+  --cta-stat-bd:  rgba(0,0,0,0.08);
+  --cta-stat-bg:  rgba(0,0,0,0.04);
 }
 
 /* ══════════════════════════════════════════════════════════════════
@@ -218,6 +232,20 @@
   --t3:  var(--text-faint);
   --bd:  var(--border);
   --bd2: var(--border-hover);
+
+  /* CTA section — dark mode */
+  --cta-l:        var(--surface);
+  --cta-l-text:   var(--text);
+  --cta-r:        var(--bg2);
+  --cta-r-bd:     var(--border);
+  --cta-f:        var(--surface-2);
+  --cta-f-bd:     var(--border);
+  --cta-btn:      #efefef;
+  --cta-btn-c:    #111111;
+  --cta-stripe:   rgba(255,255,255,0.025);
+  --cta-glow:     rgba(91,87,232,0.10);
+  --cta-stat-bd:  rgba(255,255,255,0.10);
+  --cta-stat-bg:  rgba(255,255,255,0.05);
 }
 
 /* ── Theme bridge para Tailwind v4 ───────────────────────────────── */
@@ -1891,6 +1919,64 @@ a { color: inherit; text-decoration: none; }
 }
 @media (max-width: 960px) { .lp-footer-grid { grid-template-columns: 1fr 1fr 1fr; } }
 @media (max-width: 560px) { .lp-footer-grid { grid-template-columns: 1fr 1fr; } }
+
+/* ── Logo icon — dark mode aware (igual fropty-site) ─────────────── */
+.logo-icon {
+  mix-blend-mode: multiply;
+  flex-shrink: 0;
+  object-fit: contain;
+}
+.dark .logo-icon {
+  mix-blend-mode: screen;
+  filter: invert(1);
+}
+
+/* ── Header background blur ─────────────────────────────────────── */
+.lp-header-bg {
+  background: rgba(245, 244, 240, 0.88);
+  backdrop-filter: blur(12px) saturate(130%);
+}
+.dark .lp-header-bg {
+  background: rgba(13, 13, 13, 0.88);
+}
+
+/* ── grid-footer (idêntico ao fropty-site) ───────────────────────── */
+.grid-footer {
+  display: grid;
+  grid-template-columns: 200px repeat(4, 1fr);
+  gap: 32px;
+  margin-bottom: 48px;
+}
+@media (max-width: 960px) { .grid-footer { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .grid-footer { grid-template-columns: 1fr; } }
+
+/* ── Marquee TrustBar (idêntico ao fropty-site) ─────────────────── */
+@keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+.marquee-outer {
+  overflow: hidden;
+  flex: 1;
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+.marquee-outer--fullbleed {
+  flex: none;
+  width: 100%;
+  mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+}
+.marquee-track {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: max-content;
+  animation: ticker 28s linear infinite;
+}
+.marquee-track--products {
+  gap: 8px;
+  animation-duration: 40s;
+}
+.marquee-track:hover { animation-play-state: paused; }
 
 /* ── Header nav desktop/mobile ───────────────────────────────────── */
 .lp-mobile-btn { display: none; }

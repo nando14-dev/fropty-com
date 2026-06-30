@@ -1,43 +1,160 @@
-import Link from 'next/link'
+import type React from 'react'
+import Image from 'next/image'
 
-const LINKS = {
-  'Módulos': ['Service Desk', 'Projetos', 'Financeiro', 'Knowledge Base', 'Roadmap', 'Customer Success'],
-  'Ecossistema': ['Fropty Boost', 'Fropty Cash', 'Fropty Invest', 'Fropty Apps', 'Fropty Sentinel'],
-  'Suporte': ['Abrir chamado', 'Base de conhecimento', 'Status do sistema', 'SLA e prioridades'],
-  'Contato': ['hub.fropty.com', 'suporte@fropty.com', 'WhatsApp', 'LinkedIn'],
+const COLS = [
+  {
+    title: 'Módulos',
+    links: [
+      { label: 'Service Desk', href: '#modulos' },
+      { label: 'Projetos', href: '#modulos' },
+      { label: 'Financeiro', href: '#modulos' },
+      { label: 'Knowledge Base', href: '#modulos' },
+      { label: 'Roadmap', href: '#modulos' },
+    ],
+  },
+  {
+    title: 'Ecossistema',
+    links: [
+      { label: 'Fropty Boost', href: 'https://fropty.com' },
+      { label: 'Fropty Cash', href: 'https://fropty.com' },
+      { label: 'Fropty Invest', href: 'https://fropty.com' },
+      { label: 'Fropty Apps', href: 'https://fropty.com' },
+      { label: 'Fropty Sentinel', href: 'https://fropty.com' },
+    ],
+  },
+  {
+    title: 'Suporte',
+    links: [
+      { label: 'Abrir chamado', href: '/area-cliente' },
+      { label: 'Status do sistema', href: '#' },
+      { label: 'SLA e prioridades', href: '#' },
+      { label: 'Política de privacidade', href: '#' },
+    ],
+  },
+  {
+    title: 'Contato',
+    links: [
+      { label: 'hub.fropty.com', href: 'https://hub.fropty.com' },
+      { label: 'suporte@fropty.com', href: 'mailto:suporte@fropty.com' },
+      { label: 'LinkedIn', href: 'https://linkedin.com/company/fropty' },
+      { label: 'WhatsApp', href: '#' },
+    ],
+  },
+]
+
+const SOCIAL = [
+  {
+    href: 'https://github.com/Fropty-org',
+    label: 'GitHub',
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+      </svg>
+    ),
+  },
+  {
+    href: 'https://linkedin.com/company/fropty',
+    label: 'LinkedIn',
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+      </svg>
+    ),
+  },
+  {
+    href: 'https://instagram.com/fropty',
+    label: 'Instagram',
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+      </svg>
+    ),
+  },
+  {
+    href: 'https://x.com/fropty',
+    label: 'X (Twitter)',
+    icon: (
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.259 5.63L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/>
+      </svg>
+    ),
+  },
+]
+
+const linkStyle: React.CSSProperties = {
+  fontSize: 13,
+  color: 'var(--t2)',
+  textDecoration: 'none',
+  transition: 'color 0.15s',
 }
 
 export function LandingFooter() {
+  const year = new Date().getFullYear()
   return (
     <footer style={{ background: 'var(--bg)', borderTop: '1px solid var(--border)' }}>
       <div style={{ maxWidth: 1280, margin: '0 auto', padding: '56px 32px 32px' }}>
-        <div className="lp-footer-grid">
-          {/* Brand */}
+        <div className="grid-footer">
+          {/* Brand column */}
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
-              <div style={{ width: 26, height: 26, borderRadius: 7, background: 'var(--brand-500)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                  <polyline points="9 22 9 12 15 12 15 22"/>
-                </svg>
-              </div>
-              <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)' }}>
-                Fropty <span style={{ color: 'var(--brand-500)' }}>Hub</span>
-              </span>
+              <Image src="/logo-icon.png" alt="Fropty" width={22} height={22} className="logo-icon" />
+              <span style={{ fontSize: 15, fontWeight: 700 }}>Fropty</span>
             </div>
-            <p style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.7, maxWidth: 220 }}>
+            <p style={{ fontSize: 13, color: 'var(--t2)', lineHeight: 1.7, maxWidth: 200, margin: '0 0 20px' }}>
               O centro operacional de relacionamento, suporte e crescimento do ecossistema Fropty.
             </p>
+            <div style={{ display: 'flex', gap: 8 }}>
+              {SOCIAL.map(s => (
+                <a
+                  key={s.label}
+                  href={s.href}
+                  aria-label={s.label}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    width: 30, height: 30, borderRadius: 7,
+                    border: '1px solid var(--bd)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    color: 'var(--t3)', transition: 'color 0.15s, border-color 0.15s',
+                    textDecoration: 'none',
+                  }}
+                  onMouseEnter={e => {
+                    const el = e.currentTarget
+                    el.style.color = 'var(--t)'
+                    el.style.borderColor = 'var(--bd2)'
+                  }}
+                  onMouseLeave={e => {
+                    const el = e.currentTarget
+                    el.style.color = 'var(--t3)'
+                    el.style.borderColor = 'var(--bd)'
+                  }}
+                >
+                  {s.icon}
+                </a>
+              ))}
+            </div>
           </div>
 
-          {/* Links */}
-          {Object.entries(LINKS).map(([title, items]) => (
-            <div key={title}>
-              <p style={{ fontSize: 11.5, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--text-faint)', marginBottom: 16 }}>{title}</p>
-              <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: 8 }}>
-                {items.map(item => (
-                  <li key={item}>
-                    <span style={{ fontSize: 13, color: 'var(--text-muted)', cursor: 'default' }}>{item}</span>
+          {/* Link columns */}
+          {COLS.map(col => (
+            <div key={col.title}>
+              <p style={{
+                fontSize: 11.5, fontWeight: 700, letterSpacing: '0.08em',
+                textTransform: 'uppercase', color: 'var(--t3)', margin: '0 0 16px',
+              }}>
+                {col.title}
+              </p>
+              <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {col.links.map(link => (
+                  <li key={link.label}>
+                    <a
+                      href={link.href}
+                      style={linkStyle}
+                      onMouseEnter={e => (e.currentTarget.style.color = 'var(--t)')}
+                      onMouseLeave={e => (e.currentTarget.style.color = 'var(--t2)')}
+                    >
+                      {link.label}
+                    </a>
                   </li>
                 ))}
               </ul>
@@ -45,13 +162,25 @@ export function LandingFooter() {
           ))}
         </div>
 
-        <div style={{ marginTop: 48, paddingTop: 24, borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
-          <p style={{ fontSize: 12, color: 'var(--text-faint)', margin: 0 }}>
-            © 2025 Fropty. Todos os direitos reservados.
+        <div style={{
+          paddingTop: 24, borderTop: '1px solid var(--border)',
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          flexWrap: 'wrap', gap: 12,
+        }}>
+          <p style={{ fontSize: 12, color: 'var(--t3)', margin: 0 }}>
+            © {year} Fropty. Todos os direitos reservados.
           </p>
           <div style={{ display: 'flex', gap: 16 }}>
-            {['Privacidade', 'Termos', 'SLA'].map(l => (
-              <span key={l} style={{ fontSize: 12, color: 'var(--text-faint)', cursor: 'default' }}>{l}</span>
+            {['Privacidade', 'Termos', 'LGPD'].map(l => (
+              <a
+                key={l}
+                href="#"
+                style={{ fontSize: 12, color: 'var(--t3)', textDecoration: 'none', transition: 'color 0.15s' }}
+                onMouseEnter={e => (e.currentTarget.style.color = 'var(--t2)')}
+                onMouseLeave={e => (e.currentTarget.style.color = 'var(--t3)')}
+              >
+                {l}
+              </a>
             ))}
           </div>
         </div>

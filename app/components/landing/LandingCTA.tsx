@@ -39,33 +39,34 @@ export function LandingCTA() {
       <div style={{ maxWidth: 1280, margin: '0 auto', padding: '80px 32px' }}>
         <div className="lp-cta-grid">
           {/* Left — brand panel */}
-          <div style={{ background: 'var(--text)', borderRadius: 16, padding: '48px 40px', position: 'relative', overflow: 'hidden' }}>
-            <div style={{
-              position: 'absolute', inset: 0, opacity: 0.04,
-              backgroundImage: 'repeating-linear-gradient(45deg, #fff 0, #fff 1px, transparent 0, transparent 50%)',
-              backgroundSize: '20px 20px',
-            }} />
-            <div style={{ position: 'relative', zIndex: 1 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 28 }}>
-                <div style={{ width: 30, height: 30, borderRadius: 8, background: 'var(--brand-500)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                    <polyline points="9 22 9 12 15 12 15 22"/>
-                  </svg>
-                </div>
-                <span style={{ fontSize: 14, fontWeight: 700, color: '#fff' }}>Fropty Hub</span>
-              </div>
-              <h2 style={{ fontSize: 'clamp(24px, 3vw, 36px)', fontWeight: 800, letterSpacing: '-1px', color: '#fff', lineHeight: 1.15, marginBottom: 16 }}>
+          <div style={{
+            background: 'var(--cta-l)',
+            backgroundImage: [
+              'repeating-linear-gradient(-45deg, transparent, transparent 28px, var(--cta-stripe) 28px, var(--cta-stripe) 29px)',
+              'radial-gradient(ellipse 65% 55% at 20% 50%, var(--cta-glow) 0%, transparent 70%)',
+            ].join(', '),
+            borderRadius: 16, padding: '48px 40px', position: 'relative', overflow: 'hidden',
+          }}>
+            <div style={{ position: 'relative', zIndex: 1, color: 'var(--cta-l-text)' }}>
+              <p style={{ fontSize: 11.5, fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', opacity: 0.45, marginBottom: 16 }}>
+                Comece agora
+              </p>
+              <h2 style={{ fontSize: 'clamp(24px, 3vw, 36px)', fontWeight: 800, letterSpacing: '-1px', lineHeight: 1.1, marginBottom: 16 }}>
                 O portal que transforma suporte em relacionamento.
               </h2>
-              <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.6)', lineHeight: 1.7, marginBottom: 36 }}>
+              <p style={{ fontSize: 14, opacity: 0.58, lineHeight: 1.7, marginBottom: 36, maxWidth: 360 }}>
                 Um ponto de contato. Múltiplos produtos. Suporte com SLA, projetos com visibilidade e financeiro organizado.
               </p>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gridAutoRows: '90px', gap: 10, maxWidth: 340 }}>
                 {STATS.map(s => (
-                  <div key={s.label} style={{ padding: '16px', background: 'rgba(255,255,255,0.07)', borderRadius: 10, border: '1px solid rgba(255,255,255,0.1)' }}>
-                    <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--brand-500)', letterSpacing: '-0.5px', marginBottom: 2 }}>{s.value}</div>
-                    <div style={{ fontSize: 11.5, color: 'rgba(255,255,255,0.5)' }}>{s.label}</div>
+                  <div key={s.label} style={{
+                    padding: '14px 16px', borderRadius: 10,
+                    border: '1px solid var(--cta-stat-bd)',
+                    background: 'var(--cta-stat-bg)',
+                    display: 'flex', flexDirection: 'column', gap: 4,
+                  }}>
+                    <div style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-1px' }}>{s.value}</div>
+                    <div style={{ fontSize: 11.5, opacity: 0.65, fontWeight: 500, lineHeight: 1.35 }}>{s.label}</div>
                   </div>
                 ))}
               </div>
