@@ -34,6 +34,8 @@
   --brand-950: #0A093F;
   --brand-black: #040316;
   --brand-accent: #EF9F27;
+  /* Gradiente de marca (usado em botões de destaque como "Solicitar projeto") */
+  --grad-brand: linear-gradient(135deg, #6366f1, #8b5cf6);
 }
 
 /* ── Radius scale (ecossistema Fropty) ───────────────────────────── */

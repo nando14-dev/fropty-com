@@ -55,7 +55,7 @@ export function ProjectsKanban({ projects }: Props) {
               {COLUMNS.filter(c => (byStatus[c.key]?.length ?? 0) > 0).length}
             </span>
           </button>
-          <Link href="/portal/suporte/novo" style={{ ...toolBtn as React.CSSProperties, background: "linear-gradient(135deg,#6366f1,#8b5cf6)", color: "#fff", border: "none", textDecoration: "none", display: "inline-flex" }}>
+          <Link href="/portal/suporte/novo" style={{ ...toolBtn as React.CSSProperties, background: "var(--grad-brand)", color: "#fff", border: "none", textDecoration: "none", display: "inline-flex" }}>
             <Plus size={13} /> Novo
           </Link>
         </div>

@@ -27,7 +27,7 @@ export default async function KanbanPage() {
             href="/portal/suporte/novo"
             style={{
               display: "inline-flex", alignItems: "center", gap: 7,
-              background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
+              background: "var(--grad-brand)",
               color: "#fff", borderRadius: 9, padding: "8px 16px",
               fontSize: "12.5px", fontWeight: 700, textDecoration: "none",
             }}

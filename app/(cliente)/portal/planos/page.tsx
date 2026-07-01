@@ -145,7 +145,7 @@ export default function PlanosPage() {
             Anual
             <span style={{
               fontSize: "10px", fontWeight: 800, color: "#fff",
-              background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
+              background: "var(--grad-brand)",
               padding: "2px 8px", borderRadius: 999, letterSpacing: "0.03em",
             }}>
               -10%
@@ -187,7 +187,7 @@ export default function PlanosPage() {
               {plan.popular && (
                 <span style={{
                   position: "absolute", top: -12, left: "50%", transform: "translateX(-50%)",
-                  background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
+                  background: "var(--grad-brand)",
                   color: "#fff", fontSize: "10.5px", fontWeight: 800,
                   padding: "3px 14px", borderRadius: 999, letterSpacing: "0.06em",
                   whiteSpace: "nowrap", textTransform: "uppercase",
@@ -280,7 +280,7 @@ export default function PlanosPage() {
                   style={{
                     width: "100%", padding: "10px 0", borderRadius: 9, border: "none",
                     background: plan.popular
-                      ? "linear-gradient(135deg, #6366f1, #8b5cf6)"
+                      ? "var(--grad-brand)"
                       : "var(--surface-2)",
                     color: plan.popular ? "#fff" : "var(--text-muted)",
                     fontSize: "13px", fontWeight: 700, cursor: "pointer", fontFamily: "inherit",

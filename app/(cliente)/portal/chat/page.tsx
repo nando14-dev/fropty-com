@@ -131,7 +131,7 @@ export default async function ChatPage() {
                 <div style={{ position: "relative", flexShrink: 0 }}>
                   <div style={{
                     width: 38, height: 38, borderRadius: "50%",
-                    background: "linear-gradient(135deg,#6366f1,#8b5cf6)",
+                    background: "var(--grad-brand)",
                     display: "flex", alignItems: "center", justifyContent: "center",
                     fontSize: "13px", fontWeight: 800, color: "#fff",
                   }}>
@@ -186,7 +186,7 @@ export default async function ChatPage() {
               <div style={{ position: "relative" }}>
                 <div style={{
                   width: 38, height: 38, borderRadius: "50%",
-                  background: "linear-gradient(135deg,#6366f1,#8b5cf6)",
+                  background: "var(--grad-brand)",
                   display: "flex", alignItems: "center", justifyContent: "center",
                   fontSize: "13px", fontWeight: 800, color: "#fff",
                 }}>
@@ -243,7 +243,7 @@ export default async function ChatPage() {
                   {/* Avatar */}
                   <div style={{
                     width: 32, height: 32, borderRadius: "50%", flexShrink: 0,
-                    background: isClient ? "var(--surface-2)" : "linear-gradient(135deg,#6366f1,#8b5cf6)",
+                    background: isClient ? "var(--surface-2)" : "var(--grad-brand)",
                     border: isClient ? "1px solid var(--border)" : "none",
                     display: "flex", alignItems: "center", justifyContent: "center",
                     fontSize: "12px", fontWeight: 800,
@@ -254,7 +254,7 @@ export default async function ChatPage() {
                   <div style={{ maxWidth: "65%", display: "flex", flexDirection: "column", alignItems: isClient ? "flex-end" : "flex-start", gap: 2 }}>
                     <div style={{
                       padding: "10px 14px", borderRadius: isClient ? "14px 14px 2px 14px" : "14px 14px 14px 2px",
-                      background: isClient ? "linear-gradient(135deg,#6366f1,#8b5cf6)" : "var(--card-bg)",
+                      background: isClient ? "var(--grad-brand)" : "var(--card-bg)",
                       border: isClient ? "none" : "1px solid var(--border)",
                       color: isClient ? "#fff" : "var(--text)",
                       fontSize: "13px", lineHeight: 1.5,
@@ -286,7 +286,7 @@ export default async function ChatPage() {
             <Link href={`/portal/suporte/${firstTicket.id}`} style={{
               display: "flex", alignItems: "center", justifyContent: "center",
               width: 40, height: 40, borderRadius: "50%",
-              background: "linear-gradient(135deg,#6366f1,#8b5cf6)",
+              background: "var(--grad-brand)",
               color: "#fff", textDecoration: "none", flexShrink: 0,
             }}>
               <Send size={16} />
