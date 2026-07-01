@@ -8,6 +8,7 @@ import {
   BarChart2, Settings, BookOpen, Star, Zap,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { ACTIVE_PROJECT_STATUSES } from "@/app/lib/constants/projects";
 
 export const metadata: Metadata = { title: "Visão Geral — Admin" };
 
@@ -36,7 +37,7 @@ export default async function AdminOverviewPage() {
       .in("status", ["aberto", "em_andamento", "reaberto"])
       .order("created_at", { ascending: true })
       .limit(6),
-    supabase.from("projects").select("*", { count: "exact", head: true }).in("status", ["em_andamento", "revisao"]),
+    supabase.from("projects").select("*", { count: "exact", head: true }).in("status", ACTIVE_PROJECT_STATUSES),
     supabase.from("contracts").select("*", { count: "exact", head: true }).eq("status", "ativo"),
     supabase
       .from("tickets")

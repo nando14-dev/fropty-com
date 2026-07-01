@@ -15,7 +15,7 @@ import { getService } from "@/app/lib/constants/services";
 import { PlanRenewalBanner } from "@/app/components/cliente/PlanRenewalBanner";
 import { getOnboardingSteps } from "@/app/lib/onboarding";
 import { StatusBadge } from "@/app/components/ui/StatusBadge";
-import { PROJECT_STATUSES } from "@/app/lib/constants/projects";
+import { PROJECT_STATUSES, ACTIVE_PROJECT_STATUSES } from "@/app/lib/constants/projects";
 
 export const metadata: Metadata = { title: "Meu Painel" };
 
@@ -43,11 +43,11 @@ export default async function PortalDashboardPage() {
   ] = await Promise.all([
     user
       ? supabase.from("tickets").select("id", { count: "exact", head: true })
-          .eq("client_id", user.id).in("status", ["aberto", "em_andamento"])
+          .eq("client_id", user.id).in("status", ["aberto", "em_andamento", "reaberto"])
       : Promise.resolve({ count: 0 }),
     user
       ? supabase.from("projects").select("id", { count: "exact", head: true })
-          .eq("client_id", user.id).in("status", ["em_andamento", "planejamento"])
+          .eq("client_id", user.id).in("status", ACTIVE_PROJECT_STATUSES)
       : Promise.resolve({ count: 0 }),
     user
       ? supabase.from("tickets")

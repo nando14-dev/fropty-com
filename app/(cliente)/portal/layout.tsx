@@ -6,6 +6,7 @@ import { headers } from "next/headers";
 import { ClientSidebar } from "@/app/components/cliente/ClientSidebar";
 import { AdminSidebar } from "@/app/components/admin/AdminSidebar";
 import { PORTAL_NAV_ITEMS } from "@/app/lib/constants/portal-nav";
+import { ACTIVE_PROJECT_STATUSES } from "@/app/lib/constants/projects";
 import { UserAvatarMenu } from "@/app/components/auth/UserAvatarMenu";
 import { PullToRefresh } from "@/app/components/PullToRefresh";
 import { CommandPalette } from "@/app/components/CommandPalette";
@@ -59,11 +60,11 @@ export default async function PortalLayout({
   const [ticketsRes, projectsRes, contractsRes] = await Promise.all([
     user
       ? supabase.from("tickets").select("id", { count: "exact", head: true })
-          .eq("client_id", user.id).in("status", ["aberto", "em_andamento"])
+          .eq("client_id", user.id).in("status", ["aberto", "em_andamento", "reaberto"])
       : Promise.resolve({ count: 0, error: null }),
     user
       ? supabase.from("projects").select("id", { count: "exact", head: true })
-          .eq("client_id", user.id).in("status", ["em_andamento", "planejamento"])
+          .eq("client_id", user.id).in("status", ACTIVE_PROJECT_STATUSES)
       : Promise.resolve({ count: 0, error: null }),
     user
       ? supabase.from("contracts").select("id", { count: "exact", head: true })

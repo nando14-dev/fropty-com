@@ -17,6 +17,15 @@ export const PROJECT_STATUSES: Record<ProjectStatus, { label: string; color: str
   encerrado: { label: "Encerrado", color: "#94a3b8", Icon: XCircle },
 };
 
+/**
+ * Status considerados "ativos" — projeto em andamento, excluindo `lead`
+ * (pré-venda, ainda não é do cliente) e `encerrado` (finalizado).
+ * Fonte única para contagens de "projetos ativos" (dashboard, overview…).
+ */
+export const ACTIVE_PROJECT_STATUSES: ProjectStatus[] = [
+  "briefing", "escopo", "proposta", "contrato", "execucao", "entrega", "suporte",
+];
+
 export const PROJECT_PRIORITY_MAP: Record<string, { label: string; color: string }> = {
   critica: { label: "Crítica", color: "#ef4444" },
   alta:    { label: "Alta",    color: "#f97316" },
