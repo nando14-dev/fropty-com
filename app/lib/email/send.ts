@@ -257,7 +257,9 @@ export async function sendTicketStatusChange(opts: {
 
       ${opts.note ? `<div style="background:rgba(255,255,255,0.05);border-left:3px solid #5B57E8;border-radius:4px;padding:12px 16px;margin:0 0 20px;"><p style="margin:0 0 6px;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;">Comentário da equipe</p><p style="margin:0;font-size:13px;color:#cbd5e1;line-height:1.6;white-space:pre-wrap;">${escapeHtml(opts.note.slice(0, 800))}</p></div>` : ""}
 
-      ${btn("Ver meu chamado", `${HUB_URL}/portal/suporte/${opts.ticketId}`)}
+      ${opts.newStatus === "resolvido"
+        ? btn("Avaliar resolução", `${HUB_URL}/portal/suporte/${opts.ticketId}/avaliar`)
+        : btn("Ver meu chamado", `${HUB_URL}/portal/suporte/${opts.ticketId}`)}
     `),
   }).catch((e) => console.error("[email] sendTicketStatusChange:", e));
 }
