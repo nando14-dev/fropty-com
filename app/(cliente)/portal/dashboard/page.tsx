@@ -14,32 +14,10 @@ import { WHATSAPP_URL } from "@/app/lib/config";
 import { getService } from "@/app/lib/constants/services";
 import { PlanRenewalBanner } from "@/app/components/cliente/PlanRenewalBanner";
 import { getOnboardingSteps } from "@/app/lib/onboarding";
+import { StatusBadge } from "@/app/components/ui/StatusBadge";
+import { PROJECT_STATUSES } from "@/app/lib/constants/projects";
 
 export const metadata: Metadata = { title: "Meu Painel" };
-
-const STATUS_CONFIG: Record<string, { label: string; color: string; dot: string }> = {
-  aberto:              { label: "Aberto",       color: "var(--c-info)",    dot: "info" },
-  em_andamento:        { label: "Em andamento",  color: "var(--primary)",   dot: "info" },
-  aguardando_cliente:  { label: "Aguardando",    color: "var(--c-warning)", dot: "warning" },
-  resolvido:           { label: "Resolvido",     color: "var(--c-success)", dot: "success" },
-  fechado:             { label: "Fechado",       color: "var(--text-faint)", dot: "" },
-  planejamento:        { label: "Planejamento",  color: "var(--c-warning)", dot: "warning" },
-  em_desenvolvimento:  { label: "Em dev",        color: "var(--primary)",   dot: "info" },
-  concluido:           { label: "Concluído",     color: "var(--c-success)", dot: "success" },
-};
-
-function StatusBadge({ status }: { status: string }) {
-  const cfg = STATUS_CONFIG[status] ?? { label: status, color: "var(--text-faint)", dot: "" };
-  return (
-    <span style={{
-      fontSize: "10.5px", fontWeight: 700, color: cfg.color,
-      background: `${cfg.color}18`, border: `1px solid ${cfg.color}30`,
-      borderRadius: "var(--r-full)", padding: "2px 8px", whiteSpace: "nowrap",
-    }}>
-      {cfg.label}
-    </span>
-  );
-}
 
 function TicketPriorityIcon({ priority }: { priority: string }) {
   if (priority === "critica" || priority === "alta")
@@ -323,7 +301,7 @@ export default async function PortalDashboardPage() {
                       </span>
                     </div>
                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      <StatusBadge status={ticket.status as string} />
+                      <StatusBadge kind="ticket" status={ticket.status as string} size="sm" />
                       <span style={{ fontSize: "11px", color: "var(--text-faint)" }}>
                         {new Date(ticket.updated_at as string).toLocaleDateString("pt-BR", { day: "numeric", month: "short" })}
                       </span>
@@ -371,7 +349,7 @@ export default async function PortalDashboardPage() {
                   >
                     <div style={{
                       width: 8, height: 8, borderRadius: "50%", flexShrink: 0,
-                      background: (STATUS_CONFIG[proj.status as string] ?? {}).color ?? "var(--border-2)",
+                      background: (PROJECT_STATUSES[proj.status as keyof typeof PROJECT_STATUSES] ?? {}).color ?? "var(--border-2)",
                     }} />
                     <span style={{
                       flex: 1, fontSize: "13px", fontWeight: 500, color: "var(--text)",
