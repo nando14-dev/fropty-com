@@ -68,7 +68,7 @@ export default async function PortalLayout({
       : Promise.resolve({ count: 0, error: null }),
     user
       ? supabase.from("contracts").select("id", { count: "exact", head: true })
-          .eq("client_id", user.id).eq("status", "pendente_assinatura")
+          .eq("client_id", user.id).eq("status", "enviado")
       : Promise.resolve({ count: 0, error: null }),
   ]);
 

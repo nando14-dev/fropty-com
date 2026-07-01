@@ -38,7 +38,7 @@ export default async function AdminOverviewPage() {
       .order("created_at", { ascending: true })
       .limit(6),
     supabase.from("projects").select("*", { count: "exact", head: true }).in("status", ACTIVE_PROJECT_STATUSES),
-    supabase.from("contracts").select("*", { count: "exact", head: true }).eq("status", "ativo"),
+    supabase.from("contracts").select("*", { count: "exact", head: true }).eq("status", "assinado"),
     supabase
       .from("tickets")
       .select("id, subject, status, priority, ticket_number, created_at, profiles:client_id(name)")
