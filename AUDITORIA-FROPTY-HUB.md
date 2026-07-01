@@ -367,6 +367,32 @@ DS publicado como pacote npm · compliance export (SOC2/ISO27001) · **cobertura
 
 ---
 
+## Registro de execução — Sprint 1 (quick wins)
+
+Commits no `master`: `74a0685`, `14a1563`, `4c76ca3`, `a66fc59`, `b10793d`. Build validado
+(`npm run build` verde, 66 páginas) a cada leva.
+
+**Concluído:** QW0 (CLAUDE.md reescrito) · QW1 (mojibake corrigido nas sidebars) · QW2
+(dedup seguro de `@keyframes fadeIn`/`spin`) · QW3 (`as any` espúrios removidos no dashboard e
+analytics) · QW4 (`<StatusBadge>` unificado + dashboard usando mapas canônicos) · QW5 (sidebar
+do cliente agrupada) · QW6 (Chat×Suporte esclarecido, Kanban "Somente leitura") · QW7 (`loading.tsx`
+em 11 rotas via `PortalPageLoading`) · QW9 (tooltip de tokens).
+
+**Já estava pronto (auditoria estava incorreta):** QW8 (`HubEmptyState` já tem 8 variantes
+contextuais com CTA) · QW10 (o email automático ao resolver já existia — apenas melhoramos o CTA
+para levar direto à avaliação) · QW12 (Tabler não é carregado globalmente → não-problema).
+
+**Bugs descobertos na execução (para módulos futuros):**
+- **Dashboard, status de projeto inválido:** o filtro de "Projetos ativos" usa
+  `.in("status", ["em_andamento", "planejamento"])`, mas o enum real (`projects.ts`) é
+  `lead/briefing/escopo/proposta/contrato/execucao/entrega/suporte/encerrado`. A contagem tende a
+  ficar sempre 0/errada. Corrigir ao auditar o módulo Projetos.
+
+**Adiado (precisa de passe dedicado com verificação visual, risco maior):**
+- QW11 (cores hard-coded → tokens) — amplo; risco de regressão de dark mode sem preview autenticado.
+- Consolidação de `.sr`/`.dot-bg` no `globals.css` (definições conflitantes com especificidade distinta).
+- Adoção do `HubEmptyState` nas telas que ainda montam vazio à mão (ex. `chat`).
+
 ## FASE 11 — Implementação & próximos passos
 
 **Nada implementado.** Proposta de execução em sprints temáticos, do fundacional ao visível:
