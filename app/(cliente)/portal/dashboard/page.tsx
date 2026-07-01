@@ -139,6 +139,7 @@ export default async function PortalDashboardPage() {
             accent: "var(--primary)",
             bg: "rgba(91,87,232,0.10)",
             href: "/portal/projetos",
+            hint: undefined as string | undefined,
           },
           {
             icon: <Coins size={18} />,
@@ -147,6 +148,7 @@ export default async function PortalDashboardPage() {
             accent: "var(--brand-accent)",
             bg: "rgba(239,159,39,0.10)",
             href: null,
+            hint: "1 token é consumido ao abrir um chamado de suporte. Tokens vêm no seu plano ou podem ser adquiridos avulsos.",
           },
           {
             icon: <MessageCircle size={18} />,
@@ -155,6 +157,7 @@ export default async function PortalDashboardPage() {
             accent: openTickets > 0 ? "var(--c-warning)" : "var(--c-success)",
             bg: openTickets > 0 ? "rgba(245,158,11,0.10)" : "var(--c-success-bg)",
             href: "/portal/suporte",
+            hint: undefined as string | undefined,
           },
           {
             icon: <CheckCircle2 size={18} />,
@@ -163,8 +166,9 @@ export default async function PortalDashboardPage() {
             accent: "var(--c-success)",
             bg: "var(--c-success-bg)",
             href: null,
+            hint: undefined as string | undefined,
           },
-        ].map(({ icon, label, value, accent, bg, href }) => {
+        ].map(({ icon, label, value, accent, bg, href, hint }) => {
           const inner = (
             <>
               <div style={{
@@ -185,13 +189,14 @@ export default async function PortalDashboardPage() {
             <Link
               key={label}
               href={href}
+              title={hint}
               className="hub-stat-card hub-card-hover"
               style={{ textDecoration: "none", display: "flex", flexDirection: "column" }}
             >
               {inner}
             </Link>
           ) : (
-            <div key={label} className="hub-stat-card">{inner}</div>
+            <div key={label} className="hub-stat-card" title={hint} style={hint ? { cursor: "help" } : undefined}>{inner}</div>
           );
         })}
       </div>

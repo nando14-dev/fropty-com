@@ -67,6 +67,12 @@ export default async function ChatPage() {
             </Link>
           </div>
 
+          {/* Clareza Chat × Suporte */}
+          <p style={{ margin: "0 0 10px", fontSize: "11.5px", color: "var(--text-faint)", lineHeight: 1.45 }}>
+            Conversas dos seus chamados. Para abrir uma nova solicitação, use o{" "}
+            <Link href="/portal/suporte/novo" style={{ color: "var(--primary)", fontWeight: 600, textDecoration: "none" }}>Suporte</Link>.
+          </p>
+
           {/* Search */}
           <div style={{ position: "relative" }}>
             <Search size={13} style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", color: "var(--text-faint)", pointerEvents: "none" }} />

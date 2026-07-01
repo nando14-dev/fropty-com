@@ -16,9 +16,14 @@ export default async function KanbanPage() {
       {/* Header */}
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, marginBottom: 24, flexWrap: "wrap" }}>
         <div>
-          <h1 style={{ margin: 0, fontSize: "1.25rem", fontWeight: 800, color: "var(--text)", letterSpacing: "-0.02em" }}>
-            Kanban
-          </h1>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <h1 style={{ margin: 0, fontSize: "1.25rem", fontWeight: 800, color: "var(--text)", letterSpacing: "-0.02em" }}>
+              Kanban
+            </h1>
+            <span className="hub-tag" title="Este quadro reflete o andamento dos seus projetos. A gestão é feita pela equipe Fropty.">
+              Somente leitura
+            </span>
+          </div>
           <p style={{ margin: "4px 0 0", fontSize: "12.5px", color: "var(--text-faint)" }}>
             Visão por status de todos os projetos ativos
           </p>
