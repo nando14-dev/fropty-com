@@ -393,6 +393,14 @@ sempre 0/errada"):
   por `ativo` — ambos inexistentes (enum: `rascunho/enviado/assinado/encerrado/cancelado`).
   Corrigidos para `enviado` e `assinado`. (`2bb8146`)
 
+**Notificações (correção + ampliação):** a infra é ainda mais completa do que se pensava — já
+havia triggers para **todos** os eventos de chamado (novo chamado→admins, mensagem→cliente/admins,
+mudança de status→cliente). O gap real era que **só tickets** geravam notificação. Migration
+`0036` (aplicada em prod + versionada) adiciona triggers para **atualização de projeto**,
+**resposta de feedback** e **contrato enviado/assinado** (todos → cliente), corrige o link
+`/admin/suporte` (inexistente) → `/portal/suporte` nas notificações de ticket, e faz `REVOKE
+EXECUTE` nas novas funções (alinhado ao hardening 0023; advisor de segurança limpo).
+
 Aprendizado para o time: **status são strings livres com CHECK no banco**, sem enum tipado no TS —
 qualquer filtro `.in/.eq("status", …)` deve usar as constantes canônicas (`status.ts`, `projects.ts`),
 nunca literais soltos.
